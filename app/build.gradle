@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 33
+    compileSdk 35
 
     namespace = "org.apertium.android"
 
     defaultConfig {
         applicationId "org.apertium.android"
         minSdkVersion 7
-        targetSdkVersion 27
+        targetSdkVersion 35
     }
 
     android {

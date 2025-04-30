@@ -163,6 +163,7 @@ public class ApertiumInstallation {
         zos.close();
       }
       installedjarfile.setLastModified(tmpjarfile.lastModified());
+      installedjarfile.setReadOnly();
     }
   }
 
