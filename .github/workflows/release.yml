@@ -63,7 +63,10 @@ jobs:
       - if: steps.cache.outputs.cache-hit != 'true'
         name: Cross-compile for ${{ matrix.abi }}
         working-directory: apertium-native
-        run: ABI=${{ matrix.abi }} ./build.sh all
+        # MAX_JOBS=2 keeps link-heavy steps (ICU, boost, OpenFST, cg3) within the
+        # 16 GB ubuntu-latest runner's memory; with unbounded -j the runner OOMs
+        # and drops its agent connection ("runner lost communication").
+        run: ABI=${{ matrix.abi }} MAX_JOBS=2 ./build.sh all
 
       - name: Upload native artifacts
         uses: actions/upload-artifact@v4
