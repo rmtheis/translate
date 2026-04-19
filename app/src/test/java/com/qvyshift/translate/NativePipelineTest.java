@@ -98,13 +98,16 @@ public class NativePipelineTest {
 
   @Test
   public void applyMarkerPrefNormalizesToAsteriskWhenShowing() {
-    // @-marker (bilingual failed): \@good morning  → *good morning
+    // Escaped \@ (bilingual fail)
     assertEquals("*good morning",
         NativePipeline.applyMarkerPref("\\@good morning", true));
-    // #-marker (generator failed): combined with @ in the same sentence
+    // Mix of escaped \@ and \# in one sentence
     assertEquals("*The *gato *ser *happy",
         NativePipeline.applyMarkerPref("\\@The \\#gato \\#ser \\@happy", true));
-    // *-marker (analyzer failed): already asterisk, stays
+    // Unescaped # (seen in real output from the native pipeline)
+    assertEquals(" *Querer *agua.",
+        NativePipeline.applyMarkerPref(" #Querer #agua.", true));
+    // Escaped \* stays *
     assertEquals("*foo",
         NativePipeline.applyMarkerPref("\\*foo", true));
     // No markers — no change
@@ -118,10 +121,22 @@ public class NativePipelineTest {
         NativePipeline.applyMarkerPref("\\@good morning", false));
     assertEquals("The gato ser happy",
         NativePipeline.applyMarkerPref("\\@The \\#gato \\#ser \\@happy", false));
+    assertEquals(" Querer agua.",
+        NativePipeline.applyMarkerPref(" #Querer #agua.", false));
     assertEquals("foo",
         NativePipeline.applyMarkerPref("\\*foo", false));
     assertEquals("Hola mundo",
         NativePipeline.applyMarkerPref("Hola mundo", false));
+  }
+
+  @Test
+  public void applyMarkerPrefIgnoresNonMarkerAsterisks() {
+    // Standalone * separated by whitespace — not a marker
+    assertEquals("a * b * c", NativePipeline.applyMarkerPref("a * b * c", true));
+    assertEquals("a * b * c", NativePipeline.applyMarkerPref("a * b * c", false));
+    // @ inside a word (e.g. email-like) — not a marker
+    assertEquals("me@example.com", NativePipeline.applyMarkerPref("me@example.com", true));
+    assertEquals("me@example.com", NativePipeline.applyMarkerPref("me@example.com", false));
   }
 
   @Test

@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import org.apertium.utils.IOUtils;
 
 public class App extends Application {
   public static boolean isSdk() {
@@ -29,7 +28,6 @@ public class App extends Application {
   public static SharedPreferences prefs;
 
   public static final String PREF_lastModeTitle = "lastModeTitle";
-  public static final String PREF_cacheEnabled = "cacheEnabled";
   public static final String PREF_displayMark = "displayMark";
 
   public static void reportError(Exception ex) {
@@ -62,18 +60,12 @@ public class App extends Application {
     instance = this;
     handler = new Handler();
 
-		// The '2' below is for historic reasons, we keep these names as users have already installed pairs there
-    File packagesDir = new File(getFilesDir(), "packages2"); // where packages' data are installed
-    File bytecodeDir = new File(getFilesDir(), "bytecode2"); // where packages' bytecode are installed. Must be private
-    File bytecodeCacheDir = new File(getCacheDir(), "bytecodecache2"); // where bytecode cache is kept. Must be private
-    IOUtils.cacheDir = new File(getCacheDir(), "apertium-index-cache2"); // where cached transducerindexes are kept
-    apertiumInstallation = new ApertiumInstallation(packagesDir, bytecodeDir, bytecodeCacheDir);
+    // The '2' suffix is legacy — users may already have pairs installed under this path.
+    File packagesDir = new File(getFilesDir(), "packages2");
+    apertiumInstallation = new ApertiumInstallation(packagesDir);
     apertiumInstallation.rescanForPackages();
     installBundledPairs(packagesDir);
     installFromAssetPacks(packagesDir);
-
-    Log.i("TAG", "IOUtils.cacheDir set to " + IOUtils.cacheDir);
-
   }
 
   private void installFromAssetPacks(File packagesDir) {

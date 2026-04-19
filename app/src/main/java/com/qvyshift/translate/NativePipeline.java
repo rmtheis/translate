@@ -102,25 +102,21 @@ public class NativePipeline {
   /**
    * Post-process Apertium output to honor the legacy "mark unknown words" toggle.
    *
-   * <p>Apertium's generator emits three escape-prefixed markers to flag words it couldn't
-   * fully process: {@code \@word} (no bilingual translation), {@code \#word} (bilingual
-   * lookup succeeded but the morphological generator couldn't inflect the result), and
-   * {@code \*word} (analyzer didn't know the source word). When {@code displayMarks} is
-   * true we normalize all three to the classic single-asterisk form so the user can spot
-   * untranslated tokens; when false we strip them entirely for a clean reading.
+   * <p>Apertium's generator flags words it couldn't fully process with three markers:
+   * {@code @word} (no bilingual translation), {@code #word} (bilingual matched but the
+   * morphological generator couldn't inflect the result), and {@code *word} (analyzer
+   * didn't know the source word). Individual stages may emit the marker escaped
+   * ({@code \@}, {@code \#}, {@code \*}) or plain depending on where in the pipeline they
+   * were inserted. We match either form at word boundaries (start of string or after
+   * whitespace, immediately preceding a non-whitespace char) and normalize to a single
+   * asterisk when {@code displayMarks} is true, or strip them outright when false.
    */
+  private static final java.util.regex.Pattern UNKNOWN_WORD_MARKER =
+      java.util.regex.Pattern.compile("(?:^|(?<=\\s))\\\\?[@#*](?=\\S)");
+
   static String applyMarkerPref(String text, boolean displayMarks) {
     if (text == null) return null;
-    if (displayMarks) {
-      return text
-          .replace("\\@", "*")
-          .replace("\\#", "*")
-          .replace("\\*", "*");
-    }
-    return text
-        .replace("\\@", "")
-        .replace("\\#", "")
-        .replace("\\*", "");
+    return UNKNOWN_WORD_MARKER.matcher(text).replaceAll(displayMarks ? "*" : "");
   }
 
   static List<List<String>> parseModeLine(String modeLine, File pairBaseDir) {
