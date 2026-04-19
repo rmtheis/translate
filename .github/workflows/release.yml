@@ -246,10 +246,14 @@ jobs:
         run: cp .ci/prior-pair-inventory.json prior.json 2>/dev/null || echo '[]' > prior.json
 
       - name: Generate release notes
+        # r0adkll/upload-google-play expects files named "whatsnew-<locale>" with
+        # NO .txt extension (it reads them as bytes). Naming them *.txt triggers
+        # "Unrecognized language code: en-US.txt." because the parser treats the
+        # whole filename after "whatsnew-" as the locale.
         run: |
           mkdir -p whatsnew
-          python3 scripts/release-notes.py prior.json pair-inventory.json > whatsnew/whatsnew-en-US.txt
-          cat whatsnew/whatsnew-en-US.txt
+          python3 scripts/release-notes.py prior.json pair-inventory.json > whatsnew/whatsnew-en-US
+          cat whatsnew/whatsnew-en-US
 
       - name: Generate store listing "Languages" section
         run: python3 scripts/store-listing.py pair-inventory.json > listing-languages.txt
