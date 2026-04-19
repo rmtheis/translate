@@ -284,6 +284,52 @@ build_rapidjson() {
   "$NINJA" -C "$BUILD/rapidjson" install
 }
 
+build_openfst() {
+  banner "openfst (HFST backend)"
+  local src="$SCRIPT_DIR/openfst"
+  [ -d "$src" ] || git clone --depth 1 https://github.com/kkm000/openfst.git "$src"
+  pushd "$src" >/dev/null
+  make distclean 2>/dev/null || true
+  ./configure \
+    --host="$TRIPLE" \
+    --prefix="$PREFIX" \
+    --disable-shared --enable-static \
+    --disable-bin \
+    CC="$CC" CXX="$CXX" AR="$AR" RANLIB="$RANLIB" \
+    CPPFLAGS="-I$PREFIX/include" \
+    LDFLAGS="-L$PREFIX/lib $LDFLAGS"
+  make -j"$(sysctl -n hw.ncpu)"
+  make install
+  popd >/dev/null
+}
+
+build_hfst() {
+  banner "hfst"
+  local src="$SCRIPT_DIR/hfst"
+  [ -d "$src" ] || git clone --depth 1 https://github.com/hfst/hfst.git "$src"
+  [ -f "$PREFIX/include/fst/fst.h" ] || build_openfst
+  if [ ! -f "$src/configure" ]; then
+    pushd "$src" >/dev/null
+    autoreconf -fi
+    popd >/dev/null
+  fi
+  pushd "$src" >/dev/null
+  make distclean 2>/dev/null || true
+  ./configure \
+    --host="$TRIPLE" \
+    --prefix="$PREFIX" \
+    --disable-shared --enable-static \
+    --without-sfst --with-openfst --without-openfst-log \
+    --without-foma --without-xfsm --without-readline \
+    CC="$CC" CXX="$CXX" AR="$AR" RANLIB="$RANLIB" \
+    CPPFLAGS="-I$PREFIX/include" \
+    LDFLAGS="-L$PREFIX/lib $LDFLAGS" \
+    PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
+  make -j"$(sysctl -n hw.ncpu)"
+  make install
+  popd >/dev/null
+}
+
 build_cg3() {
   banner "cg3 (GPLv3)"
   local src="$SCRIPT_DIR/cg3"
@@ -319,10 +365,13 @@ case "${1:-all}" in
   recursive) build_recursive ;;
   separable) build_separable ;;
   anaphora)  build_anaphora ;;
+  hfst)      build_hfst ;;
+  openfst)   build_openfst ;;
   deps)      build_utfcpp; build_pcre2; build_libxml2; build_icu ;;
   all)       build_utfcpp; build_pcre2; build_libxml2; build_icu
              build_lttoolbox; build_apertium; build_lex_tools
-             build_recursive; build_separable; build_anaphora; build_cg3 ;;
+             build_recursive; build_separable; build_anaphora
+             build_cg3; build_openfst; build_hfst ;;
   *)         echo "usage: $0 [utfcpp|pcre2|xml2|icu|lttoolbox|apertium|cg3|deps|all]"
              exit 1 ;;
 esac

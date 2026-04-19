@@ -8,6 +8,8 @@ apertium-lex-tools/
 apertium-recursive/
 apertium-separable/
 cg3/
+hfst/
 lttoolbox/
+openfst/
 test-hello/build/
 .DS_Store
