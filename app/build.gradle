@@ -3,10 +3,10 @@ apply plugin: 'com.android.application'
 android {
     compileSdk 35
 
-    namespace = "org.apertium.android"
+    namespace = "com.qvyshift.translate"
 
     defaultConfig {
-        applicationId "org.apertium.android"
+        applicationId "com.qvyshift.translate"
         minSdkVersion 7
         targetSdkVersion 35
     }

@@ -14,13 +14,13 @@
     android:icon="@drawable/ic_launcher"
     android:label="@string/app_name"
     android:theme="@style/AppTheme"
-    android:name="org.apertium.android.App"
+    android:name="com.qvyshift.translate.App"
 >
 <!--
 -->
 
     <activity
-      android:name="org.apertium.android.TranslatorActivity"
+      android:name="com.qvyshift.translate.TranslatorActivity"
       android:label="@string/app_name"
       android:exported="true"
       android:windowSoftInputMode="stateHidden">
@@ -34,10 +34,10 @@
         <data android:mimeType="text/plain" />
       </intent-filter>
     </activity>
-    <activity android:name="org.apertium.android.InstallActivity"
+    <activity android:name="com.qvyshift.translate.InstallActivity"
       android:label="Apertium install language pair"
         android:exported="false" />
-    <activity android:name="org.apertium.android.SettingsActivity"
+    <activity android:name="com.qvyshift.translate.SettingsActivity"
         android:exported="false" />
 
   </application>

@@ -16,13 +16,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  */
-package org.apertium.android;
+package com.qvyshift.translate;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import org.apertium.android.R;
+import com.qvyshift.translate.R;
 
 /**
 

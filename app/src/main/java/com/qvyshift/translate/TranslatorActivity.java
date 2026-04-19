@@ -22,7 +22,7 @@
  @author Arink Verma, Jacob Nordfalk
 
  */
-package org.apertium.android;
+package com.qvyshift.translate;
 
 import org.apertium.Translator;
 
@@ -51,7 +51,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import static org.apertium.android.App.instance;
+import static com.qvyshift.translate.App.instance;
 import org.apertium.pipeline.Program;
 import org.apertium.utils.IOUtils;
 import org.apertium.utils.Timing;

@@ -1,4 +1,4 @@
-package org.apertium.android;
+package com.qvyshift.translate;
 
 import java.util.ArrayList;
 import java.util.HashMap;

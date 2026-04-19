@@ -1,4 +1,4 @@
-package org.apertium.android;
+package com.qvyshift.translate;
 
 import android.app.*;
 import android.content.Context;
