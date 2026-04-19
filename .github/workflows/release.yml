@@ -171,9 +171,11 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y patchelf
 
       - name: Populate jniLibs for both ABIs
+        # actions/upload-artifact@v4 ships a zip which strips Unix exec bits,
+        # so we chmod the NDK-built binaries back to executable before the
+        # install script's [ -x ] guard runs.
         run: |
-          echo "--- natives/arm64-v8a ---" && ls -la natives/arm64-v8a || true
-          echo "--- natives/arm64-v8a/bin ---" && ls -la natives/arm64-v8a/bin | head -10 || true
+          chmod +x natives/arm64-v8a/bin/* natives/armeabi-v7a/bin/*
           ./scripts/install-natives.sh arm64-v8a natives/arm64-v8a
           ./scripts/install-natives.sh armeabi-v7a natives/armeabi-v7a
 
