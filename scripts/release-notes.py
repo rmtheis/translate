@@ -12,6 +12,8 @@ import json
 import sys
 from pathlib import Path
 
+from _pair_catalog import load as load_catalog, pair_label
+
 
 MAX_CHARS = 500
 
@@ -34,23 +36,19 @@ def diff(prior: dict[str, dict], current: dict[str, dict]) -> dict[str, list]:
     return {"added": added, "removed": removed, "changed": changed}
 
 
-def pretty_pair(name: str) -> str:
-    # "apertium-eng-spa" → "eng↔spa"
-    return name.removeprefix("apertium-").replace("-", "↔")
-
-
 def format_notes(d: dict[str, list], current: dict[str, dict], prior: dict[str, dict]) -> str:
+    catalog = load_catalog()
     lines = []
     if d["added"]:
-        lines.append("New: " + ", ".join(pretty_pair(p) for p in d["added"]))
+        lines.append("New: " + ", ".join(pair_label(p, catalog) for p in d["added"]))
     if d["removed"]:
-        lines.append("Removed: " + ", ".join(pretty_pair(p) for p in d["removed"]))
+        lines.append("Removed: " + ", ".join(pair_label(p, catalog) for p in d["removed"]))
     if d["changed"]:
         entries = []
         for p in d["changed"]:
             delta = current[p]["bytes"] - prior[p]["bytes"]
             sign = "+" if delta >= 0 else "-"
-            entries.append(f"{pretty_pair(p)} ({sign}{abs(delta) // 1024}KB)")
+            entries.append(f"{pair_label(p, catalog)} ({sign}{abs(delta) // 1024}KB)")
         lines.append("Updated: " + ", ".join(entries))
     if not lines:
         lines.append("Internal improvements.")
