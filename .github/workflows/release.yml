@@ -187,9 +187,12 @@ jobs:
         # pairs job so the release reflects the latest apertium Debian nightly.
         run: ./scripts/stage-pair-packs.sh pair-jars
 
-      - name: Bump versionCode to yyyymmdd
+      - name: Bump versionCode to yyyymmddHH
         run: |
-          ver=$(date -u +%Y%m%d)
+          # Hour granularity so multiple builds on the same day don't collide with
+          # Play's "versionCode has already been used" rejection. 2026041923 (10 digits)
+          # is still well under Play's 2,100,000,000 cap.
+          ver=$(date -u +%Y%m%d%H)
           sed -i "s/android:versionCode=\"[0-9]*\"/android:versionCode=\"$ver\"/" app/src/main/AndroidManifest.xml
           echo "Built versionCode=$ver"
 
