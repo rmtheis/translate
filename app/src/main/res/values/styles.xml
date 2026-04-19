@@ -1,41 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <!--
-      Base application theme, dependent on API level. This theme is replaced
-      by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-  -->
-  <style name="AppBaseTheme" parent="android:Theme.Light">
-    <!--
-        Theme customizations available in newer API levels can go in
-        res/values-vXX/styles.xml, while customizations related to
-        backward-compatibility can go here.
-    -->
-  </style>
-
-  <!-- Application theme. -->
-  <style name="AppTheme" parent="AppBaseTheme">
-
-    <!-- Button -->
+  <!-- Bridge theme keeps legacy activities (Install, Settings) on their system look while
+       letting Material widgets resolve attributes in any activity that references them. -->
+  <style name="AppTheme" parent="Theme.MaterialComponents.Light.Bridge">
     <item name="android:buttonStyle">@style/MyCustomButton2</item>
-
     <item name="android:colorBackgroundCacheHint">@color/pale_brown</item>
     <item name="android:windowBackground">@color/pale_brown</item>
     <item name="android:listViewStyle">@style/MyCustomListView</item>
-
   </style>
 
+  <!-- Full Material theme for the translator screen; hosts its own MaterialToolbar. -->
+  <style name="Theme.App.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <item name="colorPrimary">@color/dark_red</item>
+    <item name="colorPrimaryDark">@color/dark_red</item>
+    <item name="colorAccent">@color/dark_red</item>
+    <item name="android:windowBackground">@color/pale_brown</item>
+    <item name="android:statusBarColor">@color/dark_red</item>
+  </style>
 
   <style name="MyCustomButton2" parent="android:Widget.Button">
     <item name="android:background">@drawable/botton_selector</item>
     <item name="android:padding">10dp</item>
   </style>
 
-   <style name="MyCustomListView" parent="android:Widget.ListView">
+  <style name="MyCustomListView" parent="android:Widget.ListView">
     <item name="android:background">@drawable/list_selector</item>
     <item name="android:cacheColorHint">@android:color/transparent</item>
-   </style>
-
-
+  </style>
 
 </resources>

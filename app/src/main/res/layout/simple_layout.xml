@@ -1,46 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/inputtext"
-        android:layout_width="fill_parent"
-        android:layout_height="0px"
-        android:layout_weight="0.5"
-        android:inputType="text|textMultiLine"
-        android:hint="Type or paste text here"
-        android:text="" />
-
-    <LinearLayout
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/pale_brown"
+        app:navigationIcon="@drawable/ic_translate_24"
+        app:navigationIconTint="@android:color/black"
+        app:title="@string/app_name"
+        app:titleTextColor="@android:color/black" />
 
-        <Button
-            android:id="@+id/translateButton"
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="@string/translate" />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/languagePairLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="8dp"
+        android:hint="@string/choose_languages"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusTopStart="12dp">
 
-        <Button
-            android:id="@+id/fromButton"
-            android:layout_width="0px"
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/languagePairDropdown"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/choose_languages" />
-    </LinearLayout>
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/outputText"
-        android:layout_width="fill_parent"
-        android:layout_height="0px"
-        android:layout_weight="0.5"
-        android:inputType="text|textMultiLine"
-        android:textColor="#FF808080"
-        android:hint="@string/translateHint"
-        android:selectAllOnFocus="true"
-        android:text="" />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="12dp"
+        android:layout_weight="1"
+        app:boxCornerRadiusBottomEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusTopStart="16dp"
+        app:endIconMode="clear_text">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputtext"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="top|start"
+            android:inputType="text|textMultiLine" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/translateButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:text="@string/translate" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/outputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="12dp"
+        android:layout_weight="1"
+        app:boxCornerRadiusBottomEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusTopStart="16dp"
+        app:endIconMode="clear_text">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/outputText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="top|start"
+            android:inputType="text|textMultiLine"
+            android:textColor="#FF808080" />
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

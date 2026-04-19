@@ -27,7 +27,6 @@ public class App extends Application {
   public static final String PREF_displayMark = "displayMark";
   public static final String PREF_clipBoardGet = "ClipGetPref";
   public static final String PREF_clipBoardPush = "ClipPushPref";
-  public static final String PREF_showInitialText = "show initial text";
 
   public static void reportError(Exception ex) {
     ex.printStackTrace();
