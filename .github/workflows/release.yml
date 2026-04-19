@@ -100,17 +100,19 @@ jobs:
         id: cache
         uses: actions/cache@v4
         with:
-          path: app/src/main/assets/pairs
+          path: pair-jars
           key: pairs-${{ hashFiles('scripts/list-enabled-pairs.sh', 'app/src/main/java/com/qvyshift/translate/PairCatalog.java') }}-${{ github.run_id }}
           restore-keys: |
             pairs-${{ hashFiles('scripts/list-enabled-pairs.sh', 'app/src/main/java/com/qvyshift/translate/PairCatalog.java') }}-
             pairs-
 
       - name: Prep each pair (only if JAR missing)
+        env:
+          PAIRS_DIR: ${{ github.workspace }}/pair-jars
         run: |
-          mkdir -p app/src/main/assets/pairs
+          mkdir -p pair-jars
           while read pair; do
-            jar="app/src/main/assets/pairs/apertium-${pair}.jar"
+            jar="pair-jars/apertium-${pair}.jar"
             if [ -f "$jar" ]; then
               echo "have $pair"
               continue
@@ -121,7 +123,7 @@ jobs:
       - name: Compute pair inventory
         id: hash
         run: |
-          python3 scripts/pair-inventory.py app/src/main/assets/pairs > pair-inventory.json
+          python3 scripts/pair-inventory.py pair-jars > pair-inventory.json
           echo "inventory=$(sha256sum pair-inventory.json | awk '{print $1}')" >> $GITHUB_OUTPUT
 
       - name: Upload pair JARs + inventory
@@ -129,7 +131,7 @@ jobs:
         with:
           name: pairs
           path: |
-            app/src/main/assets/pairs
+            pair-jars
             pair-inventory.json
           retention-days: 7
 
@@ -178,6 +180,12 @@ jobs:
           chmod +x natives/arm64-v8a/bin/* natives/armeabi-v7a/bin/*
           ./scripts/install-natives.sh arm64-v8a natives/arm64-v8a
           ./scripts/install-natives.sh armeabi-v7a natives/armeabi-v7a
+
+      - name: Stage pair JARs into per-pair asset-pack modules
+        # The repo's pair_<code>/src/main/assets/ dirs are populated in the working
+        # tree, but CI always overwrites them with the freshly-prepped JARs from the
+        # pairs job so the release reflects the latest apertium Debian nightly.
+        run: ./scripts/stage-pair-packs.sh pair-jars
 
       - name: Bump versionCode to yyyymmdd
         run: |

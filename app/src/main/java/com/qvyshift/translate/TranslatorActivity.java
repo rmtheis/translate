@@ -35,12 +35,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
@@ -49,7 +53,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
 public class TranslatorActivity extends AppCompatActivity {
   private static final String TAG = "ApertiumActiviy";
@@ -94,8 +98,11 @@ public class TranslatorActivity extends AppCompatActivity {
       PairListAdapter.Item item = pairAdapter.getItem(position);
       if (item == null || item.kind != PairListAdapter.Kind.PAIR) return;
       if (!item.installed) {
-        Toast.makeText(this, R.string.pair_not_installed, Toast.LENGTH_SHORT).show();
+        // Show the user the pair they're about to download, but don't commit it as
+        // the "current" selection until the download finishes (so a failed download
+        // doesn't leave us pointed at an uninstalled pair).
         languagePairDropdown.setText(currentModeTitle == null ? "" : currentModeTitle, false);
+        promptAndDownload(item.pair, item.modeTitle);
         return;
       }
       currentModeTitle = item.modeTitle;
@@ -124,27 +131,42 @@ public class TranslatorActivity extends AppCompatActivity {
 
   Runnable apertiumInstallationObserver = new Runnable() {
     public void run() {
+      java.util.Set<String> installedTitles = App.apertiumInstallation.titleToMode.keySet();
+
+      // 1. Restore last-selected pair from prefs if we haven't picked one yet this lifecycle.
       if (currentModeTitle == null) {
         currentModeTitle = App.prefs.getString(App.PREF_lastModeTitle, null);
       }
-      if (!App.apertiumInstallation.titleToMode.containsKey(currentModeTitle)) {
-        currentModeTitle = null;
-      }
-      if (currentModeTitle == null && App.apertiumInstallation.titleToMode.size() > 0) {
-        ArrayList<String> titles = new ArrayList<>(App.apertiumInstallation.titleToMode.keySet());
-        Collections.sort(titles);
-        currentModeTitle = titles.get(0);
+
+      // 2. If the saved pair is no longer installed, fall back to the first pair in the
+      //    same order the dropdown shows (tier-grouped via PairCatalog.ENABLED, with
+      //    alphabetical ordering inside each tier as declared in the catalog), and
+      //    persist that fallback so subsequent launches reopen on it. Don't crash if
+      //    nothing is installed — just show empty hints.
+      if (currentModeTitle == null || !installedTitles.contains(currentModeTitle)) {
+        currentModeTitle = firstInstalledTitleFromCatalog(installedTitles);
+        if (currentModeTitle != null) {
+          App.prefs.edit().putString(App.PREF_lastModeTitle, currentModeTitle).apply();
+        }
       }
 
-      pairAdapter.setInstalledTitles(App.apertiumInstallation.titleToMode.keySet());
-      if (currentModeTitle != null) {
-        languagePairDropdown.setText(currentModeTitle, false);
-      } else {
-        languagePairDropdown.setText("", false);
-      }
+      pairAdapter.setInstalledTitles(installedTitles);
+      languagePairDropdown.setText(currentModeTitle == null ? "" : currentModeTitle, false);
       updateLanguageHints();
     }
   };
+
+  /** First pair title from {@link PairCatalog#ENABLED} that the user has installed. */
+  private static String firstInstalledTitleFromCatalog(java.util.Set<String> installed) {
+    for (PairCatalog.Pair p : PairCatalog.ENABLED) {
+      for (String mode : new String[]{p.forwardMode, p.backwardMode}) {
+        if (mode == null) continue;
+        String title = LanguageTitles.getTitle(mode);
+        if (installed.contains(title)) return title;
+      }
+    }
+    return null;
+  }
 
   private void updateLanguageHints() {
     String sourceHint = getString(R.string.from);
@@ -230,8 +252,8 @@ public class TranslatorActivity extends AppCompatActivity {
   }
 
   private void onTranslateClicked() {
-    if (App.apertiumInstallation.titleToMode.isEmpty()) {
-      startActivity(new Intent(this, InstallActivity.class));
+    if (App.apertiumInstallation.titleToMode.isEmpty() || currentModeTitle == null) {
+      Toast.makeText(this, R.string.pair_not_installed, Toast.LENGTH_SHORT).show();
       return;
     }
     InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -332,9 +354,144 @@ public class TranslatorActivity extends AppCompatActivity {
     displayMarkSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
         App.prefs.edit().putBoolean(App.PREF_displayMark, isChecked).apply());
 
-    new MaterialAlertDialogBuilder(this)
+    MaterialButton downloadAllButton = content.findViewById(R.id.downloadAllButton);
+    configureDownloadAllButton(downloadAllButton);
+
+    AlertDialog dialog = new MaterialAlertDialogBuilder(this)
         .setView(content)
         .setPositiveButton(android.R.string.ok, null)
         .show();
+    downloadAllButton.setOnClickListener(v -> {
+      dialog.dismiss();
+      triggerDownloadAll();
+    });
+  }
+
+  private void configureDownloadAllButton(MaterialButton btn) {
+    long remaining = App.pairDownloadManager.totalEnabledBytes();
+    if (remaining <= 0) {
+      btn.setText(R.string.download_all_done);
+      btn.setEnabled(false);
+    } else {
+      btn.setText(getString(R.string.download_all_format,
+          PairDownloadManager.humanSize(remaining)));
+      btn.setEnabled(true);
+    }
+  }
+
+  /**
+   * Show a two-stage dialog: "Download this pair ({size})?" → on confirm, swap in
+   * an indeterminate→determinate progress bar and kick off the PAD fetch. On success,
+   * set the just-downloaded pair as current.
+   */
+  private void promptAndDownload(PairCatalog.Pair pair, String chosenModeTitle) {
+    long bytes = pair.sizeKb * 1024L;
+    new MaterialAlertDialogBuilder(this)
+        .setTitle(chosenModeTitle)
+        .setMessage(getString(R.string.download_pair_prompt,
+            PairDownloadManager.humanSize(bytes)))
+        .setPositiveButton(R.string.download, (d, w) ->
+            startDownload(java.util.Collections.singletonList(pair),
+                chosenModeTitle, bytes))
+        .setNegativeButton(android.R.string.cancel, null)
+        .show();
+  }
+
+  private void triggerDownloadAll() {
+    List<PairCatalog.Pair> missing = new ArrayList<>();
+    long totalBytes = 0;
+    for (PairCatalog.Pair p : PairCatalog.ENABLED) {
+      if (!App.pairDownloadManager.isInstalled(p)) {
+        missing.add(p);
+        totalBytes += p.sizeKb * 1024L;
+      }
+    }
+    if (missing.isEmpty()) {
+      Toast.makeText(this, R.string.download_all_done, Toast.LENGTH_SHORT).show();
+      return;
+    }
+    startDownload(missing, null, totalBytes);
+  }
+
+  /**
+   * Sequentially fetch each pack. We fetch one at a time (rather than passing the
+   * whole list to {@link com.google.android.play.core.assetpacks.AssetPackManager#fetch})
+   * so the progress indicator increments monotonically across the set and a mid-batch
+   * failure doesn't silently skip later packs.
+   */
+  private void startDownload(List<PairCatalog.Pair> pairs, String setAsCurrent, long totalBytes) {
+    View content = getLayoutInflater().inflate(R.layout.dialog_download_progress, null);
+    TextView label = content.findViewById(R.id.downloadLabel);
+    TextView sizeLabel = content.findViewById(R.id.downloadSize);
+    ProgressBar bar = content.findViewById(R.id.downloadProgress);
+
+    AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+        .setTitle(pairs.size() == 1
+            ? setAsCurrent
+            : getString(R.string.downloading_all, pairs.size()))
+        .setView(content)
+        .setCancelable(false)
+        .setNegativeButton(R.string.hide, null)
+        .show();
+
+    downloadNext(pairs, 0, totalBytes, 0L, setAsCurrent, label, sizeLabel, bar, dialog);
+  }
+
+  private void downloadNext(List<PairCatalog.Pair> pairs, int index, long totalBytes,
+                            long completedBytes, String setAsCurrent,
+                            TextView label, TextView sizeLabel, ProgressBar bar,
+                            AlertDialog dialog) {
+    if (index >= pairs.size()) {
+      dialog.dismiss();
+      if (setAsCurrent != null
+          && App.apertiumInstallation.titleToMode.containsKey(setAsCurrent)) {
+        currentModeTitle = setAsCurrent;
+        App.prefs.edit().putString(App.PREF_lastModeTitle, currentModeTitle).commit();
+        languagePairDropdown.setText(currentModeTitle, false);
+        updateLanguageHints();
+      }
+      Toast.makeText(this, R.string.download_complete, Toast.LENGTH_SHORT).show();
+      return;
+    }
+
+    final PairCatalog.Pair p = pairs.get(index);
+    final long packBytes = p.sizeKb * 1024L;
+    final long completedSoFar = completedBytes;
+    label.setText(LanguageTitles.getTitle(p.forwardMode));
+    bar.setIndeterminate(true);
+    sizeLabel.setText(getString(R.string.download_progress_format,
+        PairDownloadManager.humanSize(completedBytes),
+        PairDownloadManager.humanSize(totalBytes)));
+
+    App.pairDownloadManager.fetch(p, new PairDownloadManager.Listener() {
+      @Override
+      public void onProgress(int percent, long bytesSoFar, long totalPackBytes) {
+        bar.setIndeterminate(false);
+        int overallPct = totalBytes > 0
+            ? (int) (100L * (completedSoFar + bytesSoFar) / totalBytes)
+            : percent;
+        bar.setProgress(overallPct);
+        sizeLabel.setText(getString(R.string.download_progress_format,
+            PairDownloadManager.humanSize(completedSoFar + bytesSoFar),
+            PairDownloadManager.humanSize(totalBytes)));
+      }
+      @Override
+      public void onReady() {
+        downloadNext(pairs, index + 1, totalBytes, completedSoFar + packBytes,
+            setAsCurrent, label, sizeLabel, bar, dialog);
+      }
+      @Override
+      public void onFailed(int errorCode) {
+        dialog.dismiss();
+        Toast.makeText(TranslatorActivity.this,
+            getString(R.string.download_failed, errorCode), Toast.LENGTH_LONG).show();
+      }
+      @Override
+      public void onCancelled() {
+        dialog.dismiss();
+        Toast.makeText(TranslatorActivity.this,
+            R.string.download_cancelled, Toast.LENGTH_SHORT).show();
+      }
+    });
   }
 }

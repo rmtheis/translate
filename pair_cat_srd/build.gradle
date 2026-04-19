@@ -1,0 +1,8 @@
+apply plugin: 'com.android.asset-pack'
+
+assetPack {
+    packName = "pair_cat_srd"
+    dynamicDelivery {
+        deliveryType = "on-demand"
+    }
+}

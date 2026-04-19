@@ -1,0 +1,8 @@
+apply plugin: 'com.android.asset-pack'
+
+assetPack {
+    packName = "pair_swe_dan"
+    dynamicDelivery {
+        deliveryType = "on-demand"
+    }
+}

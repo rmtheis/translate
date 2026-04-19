@@ -1,0 +1,8 @@
+apply plugin: 'com.android.asset-pack'
+
+assetPack {
+    packName = "pair_spa_ast"
+    dynamicDelivery {
+        deliveryType = "on-demand"
+    }
+}

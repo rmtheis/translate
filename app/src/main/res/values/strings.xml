@@ -37,6 +37,16 @@
     <string name="swap_languages">Swap languages</string>
     <string name="one_way_only">One-way translation only</string>
     <string name="pair_not_installed">This pair hasn\'t been downloaded</string>
+    <string name="download">Download</string>
+    <string name="hide">Hide</string>
+    <string name="download_pair_prompt">This language pair isn\'t on your device yet. Download now (%1$s)?</string>
+    <string name="download_progress_format">%1$s of %2$s</string>
+    <string name="downloading_all">Downloading %1$d language pairs</string>
+    <string name="download_all_format">Download all language pairs (%1$s)</string>
+    <string name="download_all_done">All language pairs downloaded</string>
+    <string name="download_complete">Download complete</string>
+    <string name="download_failed">Download failed (error %1$d)</string>
+    <string name="download_cancelled">Download cancelled</string>
     <string name="tier_trunk">Released</string>
     <string name="tier_staging">Staging</string>
     <string name="tier_nursery">Nursery</string>

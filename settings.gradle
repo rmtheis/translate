@@ -1,1 +1,11 @@
 include ':app'
+
+// Per-pair on-demand asset-pack modules. Keep in sync with PairCatalog.java /
+// scripts/list-enabled-pairs.sh; regenerate via scripts/stage-pair-packs.sh.
+include ':pair_arg_cat', ':pair_bel_rus', ':pair_cat_glg', ':pair_cat_ita',
+        ':pair_cat_srd', ':pair_dan_nor', ':pair_eng_cat', ':pair_eng_spa',
+        ':pair_fra_cat', ':pair_hbs_eng', ':pair_hbs_mkd', ':pair_mkd_eng',
+        ':pair_nno_nob', ':pair_oci_cat', ':pair_oci_fra', ':pair_por_cat',
+        ':pair_ron_cat', ':pair_rus_ukr', ':pair_spa_arg', ':pair_spa_ast',
+        ':pair_spa_cat', ':pair_spa_glg', ':pair_spa_ita', ':pair_srd_ita',
+        ':pair_swe_dan', ':pair_swe_nor'

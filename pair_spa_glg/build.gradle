@@ -1,0 +1,8 @@
+apply plugin: 'com.android.asset-pack'
+
+assetPack {
+    packName = "pair_spa_glg"
+    dynamicDelivery {
+        deliveryType = "on-demand"
+    }
+}

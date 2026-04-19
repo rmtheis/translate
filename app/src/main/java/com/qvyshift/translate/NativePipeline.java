@@ -201,9 +201,14 @@ public class NativePipeline {
         final Process source = prev;
         final Process dest = p;
         if (source == null) {
-          // Feed the user's input to the first stage's stdin.
+          // Feed the user's input to the first stage's stdin. The trailing newline is
+          // load-bearing: without it lt-proc emits U+FFFF as an end-of-stream sentinel,
+          // which renders as a "tofu" box in the output TextInputEditText.
           try (OutputStream os = dest.getOutputStream()) {
             os.write(input.getBytes(StandardCharsets.UTF_8));
+            if (input.isEmpty() || input.charAt(input.length() - 1) != '\n') {
+              os.write('\n');
+            }
           }
         } else {
           // Pipe previous stage's stdout to this stage's stdin on a background thread.

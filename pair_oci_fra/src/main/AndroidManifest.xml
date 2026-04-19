@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:dist="http://schemas.android.com/apk/distribution"
+    split="pair_oci_fra">
+    <dist:module dist:type="asset-pack">
+        <dist:fusing dist:include="true" />
+        <dist:delivery>
+            <dist:on-demand />
+        </dist:delivery>
+    </dist:module>
+</manifest>

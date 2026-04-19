@@ -11,7 +11,8 @@
   <!-- TODO Note the use of android:largeHeap as offline machine translation is memory intensive -->
   <application
     android:largeHeap="true"
-    android:icon="@drawable/ic_launcher"
+    android:icon="@mipmap/ic_launcher"
+    android:roundIcon="@mipmap/ic_launcher_round"
     android:label="@string/app_name"
     android:theme="@style/AppTheme"
     android:name="com.qvyshift.translate.App"
@@ -36,9 +37,6 @@
         <data android:mimeType="text/plain" />
       </intent-filter>
     </activity>
-    <activity android:name="com.qvyshift.translate.InstallActivity"
-      android:label="Apertium install language pair"
-        android:exported="false" />
   </application>
 
 </manifest>

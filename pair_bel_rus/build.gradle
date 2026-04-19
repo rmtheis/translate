@@ -1,0 +1,8 @@
+apply plugin: 'com.android.asset-pack'
+
+assetPack {
+    packName = "pair_bel_rus"
+    dynamicDelivery {
+        deliveryType = "on-demand"
+    }
+}

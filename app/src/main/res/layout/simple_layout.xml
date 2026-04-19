@@ -69,7 +69,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="top|start"
-                android:inputType="text|textMultiLine"
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:importantForAutofill="no"
                 android:paddingBottom="48dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -146,9 +147,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="top|start"
-                android:inputType="text|textMultiLine"
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:importantForAutofill="no"
                 android:paddingBottom="48dp"
-                android:textColor="#FF808080" />
+                android:textColor="#FF303030" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
