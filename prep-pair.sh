@@ -11,7 +11,8 @@ set -euo pipefail
 PAIR="${1:?usage: $0 <pair> e.g. spa-cat}"
 PKG="apertium-$PAIR"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PAIRS_DIR="$SCRIPT_DIR/../apertium-android/app/src/main/assets/pairs"
+# Default output is a flat staging dir shared with CI; override with PAIRS_DIR env.
+PAIRS_DIR="${PAIRS_DIR:-$SCRIPT_DIR/../pair-jars}"
 WORK="$SCRIPT_DIR/build/pairs/$PAIR"
 
 mkdir -p "$WORK" "$PAIRS_DIR"
