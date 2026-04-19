@@ -51,7 +51,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y autoconf automake libtool pkg-config patchelf \
-            ninja-build cmake libxml2-utils
+            ninja-build cmake libxml2-utils xsltproc
 
       - if: steps.cache.outputs.cache-hit != 'true'
         name: Set up NDK ${{ env.NDK_VERSION }}
