@@ -172,6 +172,8 @@ jobs:
 
       - name: Populate jniLibs for both ABIs
         run: |
+          echo "--- natives/arm64-v8a ---" && ls -la natives/arm64-v8a || true
+          echo "--- natives/arm64-v8a/bin ---" && ls -la natives/arm64-v8a/bin | head -10 || true
           ./scripts/install-natives.sh arm64-v8a natives/arm64-v8a
           ./scripts/install-natives.sh armeabi-v7a natives/armeabi-v7a
 
