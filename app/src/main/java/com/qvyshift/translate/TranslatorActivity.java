@@ -252,6 +252,7 @@ public class TranslatorActivity extends AppCompatActivity {
       translationTask.pipeline = new NativePipeline(this);
       translationTask.modeFile = modeFile;
       translationTask.pairBaseDir = pairBaseDir;
+      translationTask.displayMarks = App.prefs.getBoolean(App.PREF_displayMark, true);
       outputTextView.setText("Preparing...");
       translationTask.execute(inputEditText.getText().toString());
     } catch (Exception e) {
@@ -274,6 +275,7 @@ public class TranslatorActivity extends AppCompatActivity {
     private NativePipeline pipeline;
     private File modeFile;
     private File pairBaseDir;
+    private boolean displayMarks;
 
     @Override
     protected String doInBackground(String... inputText) {
@@ -281,7 +283,7 @@ public class TranslatorActivity extends AppCompatActivity {
       try {
         Log.i(TAG, "translating (" + input.length() + " chars) via " + modeFile);
         long t0 = System.currentTimeMillis();
-        String output = pipeline.translate(modeFile, pairBaseDir, input);
+        String output = pipeline.translate(modeFile, pairBaseDir, input, displayMarks);
         Log.i(TAG, "translated in " + (System.currentTimeMillis() - t0) + "ms");
         return output;
       } catch (Throwable e) {

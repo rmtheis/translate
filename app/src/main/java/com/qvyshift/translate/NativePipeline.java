@@ -87,13 +87,40 @@ public class NativePipeline {
    * @param modeFile       the {@code .mode} file shipped with the pair
    * @param pairBaseDir    directory where the pair's {@code .bin} / rule files live on-device
    * @param input          source text to translate
+   * @param displayMarks   if true, unknown words get a leading * in the output; if false, the
+   *                       unknown-word markers are stripped entirely
    * @return translated text
    */
-  public String translate(File modeFile, File pairBaseDir, String input) throws IOException {
+  public String translate(File modeFile, File pairBaseDir, String input, boolean displayMarks)
+      throws IOException {
     String modeLine = readFirstNonEmptyLine(modeFile);
     if (modeLine == null) throw new IOException("empty mode file: " + modeFile);
     List<List<String>> stages = parseModeLine(modeLine, pairBaseDir);
-    return runPipeline(stages, input);
+    return applyMarkerPref(runPipeline(stages, input), displayMarks);
+  }
+
+  /**
+   * Post-process Apertium output to honor the legacy "mark unknown words" toggle.
+   *
+   * <p>Apertium's generator emits three escape-prefixed markers to flag words it couldn't
+   * fully process: {@code \@word} (no bilingual translation), {@code \#word} (bilingual
+   * lookup succeeded but the morphological generator couldn't inflect the result), and
+   * {@code \*word} (analyzer didn't know the source word). When {@code displayMarks} is
+   * true we normalize all three to the classic single-asterisk form so the user can spot
+   * untranslated tokens; when false we strip them entirely for a clean reading.
+   */
+  static String applyMarkerPref(String text, boolean displayMarks) {
+    if (text == null) return null;
+    if (displayMarks) {
+      return text
+          .replace("\\@", "*")
+          .replace("\\#", "*")
+          .replace("\\*", "*");
+    }
+    return text
+        .replace("\\@", "")
+        .replace("\\#", "")
+        .replace("\\*", "");
   }
 
   static List<List<String>> parseModeLine(String modeLine, File pairBaseDir) {

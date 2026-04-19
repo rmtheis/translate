@@ -97,6 +97,40 @@ public class NativePipelineTest {
   }
 
   @Test
+  public void applyMarkerPrefNormalizesToAsteriskWhenShowing() {
+    // @-marker (bilingual failed): \@good morning  → *good morning
+    assertEquals("*good morning",
+        NativePipeline.applyMarkerPref("\\@good morning", true));
+    // #-marker (generator failed): combined with @ in the same sentence
+    assertEquals("*The *gato *ser *happy",
+        NativePipeline.applyMarkerPref("\\@The \\#gato \\#ser \\@happy", true));
+    // *-marker (analyzer failed): already asterisk, stays
+    assertEquals("*foo",
+        NativePipeline.applyMarkerPref("\\*foo", true));
+    // No markers — no change
+    assertEquals("Hola mundo",
+        NativePipeline.applyMarkerPref("Hola mundo", true));
+  }
+
+  @Test
+  public void applyMarkerPrefStripsWhenHiding() {
+    assertEquals("good morning",
+        NativePipeline.applyMarkerPref("\\@good morning", false));
+    assertEquals("The gato ser happy",
+        NativePipeline.applyMarkerPref("\\@The \\#gato \\#ser \\@happy", false));
+    assertEquals("foo",
+        NativePipeline.applyMarkerPref("\\*foo", false));
+    assertEquals("Hola mundo",
+        NativePipeline.applyMarkerPref("Hola mundo", false));
+  }
+
+  @Test
+  public void applyMarkerPrefHandlesNull() {
+    org.junit.Assert.assertNull(NativePipeline.applyMarkerPref(null, true));
+    org.junit.Assert.assertNull(NativePipeline.applyMarkerPref(null, false));
+  }
+
+  @Test
   public void emptyStagesIgnored() {
     List<List<String>> stages = NativePipeline.parseModeLine(" | lt-proc data/x.bin | ", pairDir);
     assertEquals(1, stages.size());
