@@ -18,8 +18,6 @@
  */
 package com.qvyshift.translate;
 
-import org.apertium.Translator;
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -49,14 +47,9 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-
-import org.apertium.pipeline.Program;
-import org.apertium.utils.IOUtils;
-import org.apertium.utils.Timing;
 
 public class TranslatorActivity extends AppCompatActivity {
   private static final String TAG = "ApertiumActiviy";
@@ -244,18 +237,21 @@ public class TranslatorActivity extends AppCompatActivity {
     InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
     inputManager.hideSoftInputFromWindow(inputEditText.getApplicationWindowToken(), 0);
 
-    Translator.setCacheEnabled(App.prefs.getBoolean(App.PREF_cacheEnabled, true));
-    Translator.setDisplayMarks(App.prefs.getBoolean(App.PREF_displayMark, true));
-    Translator.setDelayedNodeLoadingEnabled(true);
-    Translator.setParallelProcessingEnabled(false);
     try {
       ApertiumInstallation ai = App.apertiumInstallation;
       String mode = ai.titleToMode.get(currentModeTitle);
       String pkg = ai.modeToPackage.get(mode);
-      Translator.setBase(ai.getBasedirForPackage(pkg), ai.getClassLoaderForPackage(pkg));
-      Translator.setMode(mode);
+      File pairBaseDir = new File(ai.getBasedirForPackage(pkg));
+      File modeFile = NativePipeline.findModeFile(pairBaseDir, mode);
+      if (modeFile == null) {
+        App.longToast("Mode file not found for " + mode);
+        return;
+      }
       translationTask = new TranslationTask();
       translationTask.activity = this;
+      translationTask.pipeline = new NativePipeline(this);
+      translationTask.modeFile = modeFile;
+      translationTask.pairBaseDir = pairBaseDir;
       outputTextView.setText("Preparing...");
       translationTask.execute(inputEditText.getText().toString());
     } catch (Exception e) {
@@ -273,43 +269,25 @@ public class TranslatorActivity extends AppCompatActivity {
 
   static TranslationTask translationTask;
 
-  static class TranslationTask extends AsyncTask<String, Object, String> implements Translator.TranslationProgressListener {
+  static class TranslationTask extends AsyncTask<String, Object, String> {
     private TranslatorActivity activity;
+    private NativePipeline pipeline;
+    private File modeFile;
+    private File pairBaseDir;
 
     @Override
     protected String doInBackground(String... inputText) {
-      Runtime rt = Runtime.getRuntime();
-      Log.d(TAG, "start mem f=" + rt.freeMemory() / 1000000 + "  t=" + rt.totalMemory() / 1000000 + " m=" + rt.maxMemory() / 1000000);
-      IOUtils.timing = new org.apertium.utils.Timing("overall");
       String input = inputText[0];
       try {
-        Log.i(TAG, "Translator Run input " + input);
-        Timing timing = new Timing("Translator.translate()");
-        StringWriter output = new StringWriter();
-        String format = "txt";
-        Translator.translate(new StringReader(input), output, new Program("apertium-des" + format), new Program("apertium-re" + format), this);
-        timing.report();
-        Log.i(TAG, "Translator Run output " + output);
-        return output.toString();
+        Log.i(TAG, "translating (" + input.length() + " chars) via " + modeFile);
+        long t0 = System.currentTimeMillis();
+        String output = pipeline.translate(modeFile, pairBaseDir, input);
+        Log.i(TAG, "translated in " + (System.currentTimeMillis() - t0) + "ms");
+        return output;
       } catch (Throwable e) {
-        e.printStackTrace();
-        Log.e(TAG, "ApertiumActivity.TranslationRun MODE =" + activity.currentModeTitle + ";InputText = " + input);
+        Log.e(TAG, "translate failed for mode=" + modeFile, e);
         return "error: " + e;
-      } finally {
-        if (IOUtils.timing != null) IOUtils.timing.report();
-        IOUtils.timing = null;
-        Log.d(TAG, "start mem f=" + rt.freeMemory() / 1000000 + "  t=" + rt.totalMemory() / 1000000 + " m=" + rt.maxMemory() / 1000000);
       }
-    }
-
-    public void onTranslationProgress(String task, int progress, int progressMax) {
-      publishProgress(task, progress, progressMax);
-    }
-
-    @Override
-    protected void onProgressUpdate(Object... v) {
-      Log.d(TAG, v[0] + " " + v[1] + "/" + v[2]);
-      activity.outputTextView.setText("Translating...\n(in stage " + v[1] + " of " + v[2] + ")");
     }
 
     @Override

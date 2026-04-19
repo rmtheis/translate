@@ -28,6 +28,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
         }
     }
+
+    // Native binaries in jniLibs need to be extracted to disk so ProcessBuilder can exec them.
+    // Otherwise AGP 8+ keeps them compressed inside the APK.
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
 }
 
 dependencies {
@@ -35,4 +43,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'com.google.android.play:asset-delivery:2.2.2'
+
+    testImplementation 'junit:junit:4.13.2'
 }
