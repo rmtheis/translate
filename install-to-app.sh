@@ -10,11 +10,19 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 : "${ABI:=arm64-v8a}"
 : "${APP_DIR:=$SCRIPT_DIR/../apertium-android}"
+: "${NDK:=/Users/theis/Library/Android/sdk/ndk/28.2.13676358}"
 SRC="$SCRIPT_DIR/out/$ABI"
 DST="$APP_DIR/app/src/main/jniLibs/$ABI"
-STRIP="${STRIP:-$SCRIPT_DIR/../../../Library/Android/sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-strip}"
-# Fall back to NDK from env if path above is wrong
-[ -x "$STRIP" ] || STRIP="/Users/theis/Library/Android/sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-strip"
+NDK_TOOLCHAIN="$NDK/toolchains/llvm/prebuilt/darwin-x86_64"
+STRIP="$NDK_TOOLCHAIN/bin/llvm-strip"
+
+case "$ABI" in
+  arm64-v8a)   NDK_ABI_DIR=aarch64-linux-android ;;
+  armeabi-v7a) NDK_ABI_DIR=arm-linux-androideabi ;;
+  x86_64)      NDK_ABI_DIR=x86_64-linux-android ;;
+  x86)         NDK_ABI_DIR=i686-linux-android ;;
+  *) echo "unknown ABI: $ABI"; exit 1 ;;
+esac
 
 rm -rf "$DST"
 mkdir -p "$DST"
@@ -33,18 +41,25 @@ for spec in "${SOVER_MAP[@]}"; do
   dst="${spec##*=}"
   cp "$SRC/lib/$src" "$DST/$dst"
   patchelf --set-soname "$dst" "$DST/$dst"
+  # ICU libs cross-reference each other via versioned sonames; rewrite those too
+  for icu in icudata icuuc icui18n icuio; do
+    patchelf --replace-needed "lib${icu}.so.76" "lib${icu}.so" "$DST/$dst" 2>/dev/null || true
+  done
   "$STRIP" -s "$DST/$dst"
 done
 
 for simple in libxml2.so libpcre2-8.so liblttoolbox.so libcg3.so; do
   cp "$SRC/lib/$simple" "$DST/$simple"
   "$STRIP" -s "$DST/$simple"
+  for icu in icudata icuuc icui18n icuio; do
+    patchelf --replace-needed "lib${icu}.so.76" "lib${icu}.so" "$DST/$simple" 2>/dev/null || true
+  done
 done
 
 # -----------------------------------------------------------------------------
 # C++ stdlib. Android's libc++_shared.so needs to ship with the app.
 # -----------------------------------------------------------------------------
-CXX_SHARED="/Users/theis/Library/Android/sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so"
+CXX_SHARED="$NDK_TOOLCHAIN/sysroot/usr/lib/$NDK_ABI_DIR/libc++_shared.so"
 cp "$CXX_SHARED" "$DST/libc++_shared.so"
 "$STRIP" -s "$DST/libc++_shared.so"
 
