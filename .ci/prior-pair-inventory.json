@@ -1,1 +1,132 @@
-[]
+[
+  {
+    "pair": "apertium-arg-cat",
+    "sha256": "f526ee35fed47b2eb0995b44207801773d63c053355324af77b0612156fdd33f",
+    "bytes": 4032403
+  },
+  {
+    "pair": "apertium-bel-rus",
+    "sha256": "fc328cc828629f34b07fcf8cdde2579c7913b4e9d759e9694739166b99f92b5a",
+    "bytes": 3386861
+  },
+  {
+    "pair": "apertium-cat-glg",
+    "sha256": "780b5d50eca121c8d8509b0e3ce72a79bbefcc0ec9c6124bc09fc0be8839312e",
+    "bytes": 3883215
+  },
+  {
+    "pair": "apertium-cat-ita",
+    "sha256": "472561ef428668d9c57f27c3e02f3ebedd6322678249a4f12537e7c381565580",
+    "bytes": 5805038
+  },
+  {
+    "pair": "apertium-cat-srd",
+    "sha256": "b4d5d1834c7f137d8693da17c0f4fe17321926e395a666045116757553401bec",
+    "bytes": 4996276
+  },
+  {
+    "pair": "apertium-dan-nor",
+    "sha256": "bb79ee25917b543eda560f4cdade7c1c943914bd3553f8a01b88a55214b9a8e1",
+    "bytes": 9576092
+  },
+  {
+    "pair": "apertium-eng-cat",
+    "sha256": "efb2721190f10c5ea22e2fc765a3dbfa77fef59cc5a41bc876e1e1c1fd33f7f5",
+    "bytes": 7336436
+  },
+  {
+    "pair": "apertium-eng-spa",
+    "sha256": "5716be2642c81dcf8b262b23d9bb8b59fc75924dba147661fe027229d1606f93",
+    "bytes": 2707316
+  },
+  {
+    "pair": "apertium-fra-cat",
+    "sha256": "f8f97e1e0cbb89b58a58c604a2471f29b5bf33cf0a0a409c240f68f7771da00b",
+    "bytes": 7520409
+  },
+  {
+    "pair": "apertium-hbs-eng",
+    "sha256": "071d2a2e2452ef774a67e1d6700724ea73de7268e339906291850d7669691b69",
+    "bytes": 3711129
+  },
+  {
+    "pair": "apertium-hbs-mkd",
+    "sha256": "bcb0ec7f87d20fec675b42d4bd6f1a92fa165dfe2f51852e397c99e814e9c3cb",
+    "bytes": 936129
+  },
+  {
+    "pair": "apertium-mkd-eng",
+    "sha256": "a29038cb21dfd427ebf8f45fa5cf0231e4a2671062e19e28b5ed91ef8e0e34ba",
+    "bytes": 1254959
+  },
+  {
+    "pair": "apertium-nno-nob",
+    "sha256": "e30da2071cd88cf112fb7682624a8c6f35a3edcfb403bd34bff5f492626f7329",
+    "bytes": 16764180
+  },
+  {
+    "pair": "apertium-oci-cat",
+    "sha256": "a125edd9ac91f06ee307a0e853916685afc5539939d4f2738d3f6f2d91f9152f",
+    "bytes": 5194760
+  },
+  {
+    "pair": "apertium-oci-fra",
+    "sha256": "bc1fa7e0270d6d286445ed8515b9c09a6323b36b0afbe44a2778e9799b61562d",
+    "bytes": 13594273
+  },
+  {
+    "pair": "apertium-por-cat",
+    "sha256": "bda144ed5c8d1e8f42af39c8f22752abae183ce4b28f33de78194c71d2280abe",
+    "bytes": 7746662
+  },
+  {
+    "pair": "apertium-ron-cat",
+    "sha256": "a6f09a0bfeeff2d032a0a7da09b1452545e7b964e915b3ee4ade8074cae72b34",
+    "bytes": 4436354
+  },
+  {
+    "pair": "apertium-rus-ukr",
+    "sha256": "0b515c8110e76976a0075746db2709df2cc857439a3569437dc89969cd0c2a4e",
+    "bytes": 2068169
+  },
+  {
+    "pair": "apertium-spa-arg",
+    "sha256": "e2ce9a585f0dd2431a6c61a07de380e77851e5876af2ea8907e80b144e6081bd",
+    "bytes": 2843776
+  },
+  {
+    "pair": "apertium-spa-ast",
+    "sha256": "76af3be4bab0c136673be19aee4c4ee421b66b5a791927b37b165663b772899a",
+    "bytes": 2080119
+  },
+  {
+    "pair": "apertium-spa-cat",
+    "sha256": "da5b6ef803184945f300c2baa5d19c81c719b19190f2be349de968239301a942",
+    "bytes": 9113087
+  },
+  {
+    "pair": "apertium-spa-glg",
+    "sha256": "ffdba810ba091c44991a5cdc9afe4729ab0100c790d5031acf0e957d246af24c",
+    "bytes": 4654703
+  },
+  {
+    "pair": "apertium-spa-ita",
+    "sha256": "7939e7675ed17927e83456aa7b313c901c5c4be861339b9ded2abe837fe334dc",
+    "bytes": 2781853
+  },
+  {
+    "pair": "apertium-srd-ita",
+    "sha256": "53deb907f3a4213a5893d06ee3c8f5fceb893acd82583b4d72927591f1efd3ed",
+    "bytes": 4421590
+  },
+  {
+    "pair": "apertium-swe-dan",
+    "sha256": "0dbac9526505bf07fa3f98c365fdd5795086103a5d0ceb950799e574d0eecd66",
+    "bytes": 4976903
+  },
+  {
+    "pair": "apertium-swe-nor",
+    "sha256": "ed1cb56c593a288bc02bf7c1c852d38ee7575d5e3fc1d941fa29563484cc9d74",
+    "bytes": 12965380
+  }
+]
