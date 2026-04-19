@@ -9,3 +9,5 @@ build/
 .externalNativeBuild
 # Native binaries + shared libs populated by ../apertium-native/install-to-app.sh
 app/src/main/jniLibs/
+# Bundled pair JARs populated by ../apertium-native/prep-pair.sh
+app/src/main/assets/pairs/

@@ -322,7 +322,8 @@ public class TranslatorActivity extends AppCompatActivity {
 
     TextView basedOn = content.findViewById(R.id.basedOnText);
     basedOn.setText(Html.fromHtml(
-        "Based on the <a href=\"https://github.com/apertium\">Apertium</a> project"));
+        "Based on the <a href=\"https://github.com/apertium\">Apertium</a> project<br/>"
+            + "Licensed under <a href=\"https://www.gnu.org/licenses/gpl-3.0.html\">GPLv3</a>"));
     basedOn.setMovementMethod(LinkMovementMethod.getInstance());
 
     SwitchMaterial displayMarkSwitch = content.findViewById(R.id.displayMarkSwitch);
