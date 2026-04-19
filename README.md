@@ -58,6 +58,57 @@ Individual targets: `utfcpp`, `pcre2`, `xml2`, `icu`, `lttoolbox`,
 
 ## Missing / future
 
-- armeabi-v7a support (add a second `ABI=armeabi-v7a ./build.sh all` pass)
-- HFST (for Sami/Finno-Ugric pairs in Nursery/Incubator)
-- GH Actions workflow that runs the whole stack on Ubuntu runners
+- armeabi-v7a is supported (`ABI=armeabi-v7a ./build.sh all`); arm64-v8a is the default.
+- GH Actions workflow that runs the whole stack on Ubuntu runners (in progress, see repo root `.github/workflows/`).
+- HFST (see below).
+
+## HFST retry plan
+
+`apertium-sme-nob` is the only Trunk pair that needs HFST, plus ~40 Nursery/Incubator
+pairs if we ever expand beyond Trunk+Staging. The cross-compile is partly done:
+
+- **OpenFST 1.7.2** (kkm000 fork) cross-compiles cleanly via `build_openfst`. One
+  patch to `configure.ac` was needed to supply a cross-compile fallback for its
+  `AC_RUN_IFELSE` float-equality check. Libs install at `out/<abi>/lib/libfst.a` +
+  `out/<abi>/include/fst/`.
+- **HFST itself** doesn't build. Blocker: HFST's `libhfst/src/implementations/`
+  calls `SymbolTable::begin()/end()` — the iterator API OpenFST replaced with
+  `SymbolTableIterator` in 1.7.x. Removing `convert.cc` from the build clears one
+  site; `ConvertTropicalWeightTransducer.cc` and `TropicalWeightTransducer.cc`
+  fail the same way and aren't optional.
+
+### When picking this up next session
+
+**First try** pinning OpenFST to a version that still has `begin()/end()`:
+
+```sh
+cd openfst
+git clone https://github.com/kkm000/openfst.git .   # or fetch tarball
+# find a tag or commit from 2017 or earlier; 1.6.9 is the documented last version
+git checkout openfst-1.6.9           # or equivalent commit hash
+# re-apply the configure.ac cross-compile patch:
+python3 - <<'PY'
+import re
+with open('configure.ac') as f: c = f.read()
+needle = 'Test float equality failed!'
+if needle in c:
+    c = c.replace('Compile with -msse -mfpmath=sse if using g++.\n              ]))])',
+                  'Compile with -msse -mfpmath=sse if using g++.\n              ]))],\n              [echo \"Cross-compiling; assuming float equality is good on target\"])')
+    open('configure.ac','w').write(c)
+PY
+autoreconf -fi
+cd ..
+./build.sh openfst
+./build.sh hfst
+```
+
+www.openfst.org was 522ing during the initial attempt; the kkm000 fork may not
+have a 1.6.x tag, in which case either vendor a tarball into `deps/openfst-1.6.9/`
+or check out the right commit (`git log --before=2018` in kkm000's main branch).
+
+**If 1.6.9 still doesn't work** (e.g. won't compile under modern clang), the
+fallback is to patch HFST to use `SymbolTableIterator`. That's upstream-PR-scope
+work — many call sites, loop bodies need restructuring (the iterator is stateful).
+
+**If neither works**, accept HFST is a v2 milestone and leave `sme-nob` excluded.
+`PairCatalog.HFST_EXCLUDED` is the single on-switch to flip once HFST is working.
