@@ -19,7 +19,11 @@ case "$ABI" in
   *) echo "unknown ABI: $ABI"; exit 1 ;;
 esac
 
-HOST_OS=darwin-x86_64
+case "$(uname -s)" in
+  Darwin) HOST_OS=darwin-x86_64 ;;
+  Linux)  HOST_OS=linux-x86_64 ;;
+  *) echo "unknown host OS: $(uname -s)"; exit 1 ;;
+esac
 TOOLCHAIN="$NDK/toolchains/llvm/prebuilt/$HOST_OS"
 SYSROOT="$TOOLCHAIN/sysroot"
 PREFIX="$SCRIPT_DIR/out/$ABI"
@@ -54,6 +58,10 @@ CMAKE_COMMON=(
 )
 
 banner() { echo; echo "========== $* =========="; }
+
+# Cross-platform CPU count, capped so low-memory CI runners don't OOM linking ICU/boost/OpenFST.
+: "${JOBS:=$( (nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2) )}"
+JOBS="${MAX_JOBS:-$JOBS}"
 
 # -----------------------------------------------------------------------------
 # Deps
@@ -105,19 +113,25 @@ build_icu() {
     mkdir -p "$src" && tar -xzf /tmp/icu4c.tgz -C "$src" --strip-components=1
   fi
 
-  # Stage 1 — host build on macOS so we have pkgdata / genrb / genbrk codegen tools.
-  # Build and install dirs MUST be separate; ICU's install breaks if prefix overlaps build.
+  # Stage 1 — host build to get pkgdata / genrb / genbrk codegen tools. The cross
+  # stage (--with-cross-build) reuses the host build dir, so this must match the
+  # runner's platform (MacOSX on darwin, Linux on linux). Build and install dirs
+  # MUST be separate; ICU's install breaks if prefix overlaps build.
+  case "$(uname -s)" in
+    Darwin) ICU_HOST_PLATFORM=MacOSX ;;
+    Linux)  ICU_HOST_PLATFORM=Linux ;;
+  esac
   local host_build="$SCRIPT_DIR/build/icu-host-build"
   local host_install="$SCRIPT_DIR/build/icu-host-install"
   if [ ! -x "$host_install/bin/icupkg" ]; then
-    banner "icu — host stage (macOS)"
+    banner "icu — host stage ($ICU_HOST_PLATFORM)"
     rm -rf "$host_build" "$host_install"
     mkdir -p "$host_build" "$host_install"
     pushd "$host_build" >/dev/null
     env -i PATH=/usr/bin:/bin HOME="$HOME" \
-      "$src/source/runConfigureICU" MacOSX --prefix="$host_install" \
+      "$src/source/runConfigureICU" "$ICU_HOST_PLATFORM" --prefix="$host_install" \
       --disable-samples --disable-tests --disable-extras
-    env -i PATH=/usr/bin:/bin HOME="$HOME" make -j"$(sysctl -n hw.ncpu)"
+    env -i PATH=/usr/bin:/bin HOME="$HOME" make -j"$JOBS"
     env -i PATH=/usr/bin:/bin HOME="$HOME" make install
     popd >/dev/null
   fi
@@ -136,7 +150,7 @@ build_icu() {
     --disable-samples --disable-tests --disable-extras --disable-layoutex \
     CC="$CC" CXX="$CXX" AR="$AR" RANLIB="$RANLIB" \
     CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS"
-  make -j"$(sysctl -n hw.ncpu)" install
+  make -j"$JOBS" install
   popd >/dev/null
 }
 
@@ -172,7 +186,7 @@ build_apertium() {
     CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp" \
     LDFLAGS="-L$PREFIX/lib $LDFLAGS" \
     PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
-  make -j"$(sysctl -n hw.ncpu)"
+  make -j"$JOBS"
   make install
   popd >/dev/null
 }
@@ -196,7 +210,7 @@ build_lex_tools() {
     CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp" \
     LDFLAGS="-L$PREFIX/lib $LDFLAGS" \
     PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
-  make -j"$(sysctl -n hw.ncpu)"
+  make -j"$JOBS"
   make install
   popd >/dev/null
 }
@@ -220,7 +234,7 @@ build_recursive() {
     CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp" \
     LDFLAGS="-L$PREFIX/lib $LDFLAGS" \
     PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
-  make -j"$(sysctl -n hw.ncpu)"
+  make -j"$JOBS"
   make install
   popd >/dev/null
 }
@@ -244,7 +258,7 @@ build_anaphora() {
     CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp" \
     LDFLAGS="-L$PREFIX/lib $LDFLAGS" \
     PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
-  make -j"$(sysctl -n hw.ncpu)"
+  make -j"$JOBS"
   make install
   popd >/dev/null
 }
@@ -268,7 +282,7 @@ build_separable() {
     CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp" \
     LDFLAGS="-L$PREFIX/lib $LDFLAGS" \
     PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
-  make -j"$(sysctl -n hw.ncpu)"
+  make -j"$JOBS"
   make install
   popd >/dev/null
 }
@@ -298,7 +312,7 @@ build_openfst() {
     CC="$CC" CXX="$CXX" AR="$AR" RANLIB="$RANLIB" \
     CPPFLAGS="-I$PREFIX/include" \
     LDFLAGS="-L$PREFIX/lib $LDFLAGS"
-  make -j"$(sysctl -n hw.ncpu)"
+  make -j"$JOBS"
   make install
   popd >/dev/null
 }
@@ -325,7 +339,7 @@ build_hfst() {
     CPPFLAGS="-I$PREFIX/include" \
     LDFLAGS="-L$PREFIX/lib $LDFLAGS" \
     PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
-  make -j"$(sysctl -n hw.ncpu)"
+  make -j"$JOBS"
   make install
   popd >/dev/null
 }
