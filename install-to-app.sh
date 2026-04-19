@@ -75,6 +75,7 @@ TOOLS=(
   apertium-transfer
   apertium-interchunk
   apertium-postchunk
+  apertium-anaphora
   lrx-proc
   lsx-proc
   rtx-proc

@@ -225,6 +225,30 @@ build_recursive() {
   popd >/dev/null
 }
 
+build_anaphora() {
+  banner "apertium-anaphora"
+  local src="$SCRIPT_DIR/apertium-anaphora"
+  [ -d "$src" ] || git clone --depth 1 https://github.com/apertium/apertium-anaphora.git "$src"
+  if [ ! -f "$src/configure" ]; then
+    pushd "$src" >/dev/null
+    autoreconf -fi
+    popd >/dev/null
+  fi
+  pushd "$src" >/dev/null
+  make distclean 2>/dev/null || true
+  ./configure \
+    --host="$TRIPLE" \
+    --prefix="$PREFIX" \
+    --disable-shared --enable-static \
+    CC="$CC" CXX="$CXX" AR="$AR" RANLIB="$RANLIB" \
+    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp" \
+    LDFLAGS="-L$PREFIX/lib $LDFLAGS" \
+    PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
+  make -j"$(sysctl -n hw.ncpu)"
+  make install
+  popd >/dev/null
+}
+
 build_separable() {
   banner "apertium-separable (lsx-proc)"
   local src="$SCRIPT_DIR/apertium-separable"
@@ -294,10 +318,11 @@ case "${1:-all}" in
   lex-tools) build_lex_tools ;;
   recursive) build_recursive ;;
   separable) build_separable ;;
+  anaphora)  build_anaphora ;;
   deps)      build_utfcpp; build_pcre2; build_libxml2; build_icu ;;
   all)       build_utfcpp; build_pcre2; build_libxml2; build_icu
              build_lttoolbox; build_apertium; build_lex_tools
-             build_recursive; build_separable; build_cg3 ;;
+             build_recursive; build_separable; build_anaphora; build_cg3 ;;
   *)         echo "usage: $0 [utfcpp|pcre2|xml2|icu|lttoolbox|apertium|cg3|deps|all]"
              exit 1 ;;
 esac

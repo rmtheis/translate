@@ -3,6 +3,7 @@ out/
 deps/
 # upstream sources (cloned at build time)
 apertium/
+apertium-anaphora/
 apertium-lex-tools/
 apertium-recursive/
 apertium-separable/
