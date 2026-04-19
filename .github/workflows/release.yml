@@ -56,7 +56,8 @@ jobs:
       - if: steps.cache.outputs.cache-hit != 'true'
         name: Set up NDK ${{ env.NDK_VERSION }}
         run: |
-          yes | sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;${{ env.NDK_VERSION }}"
+          yes | sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
+            "ndk;${{ env.NDK_VERSION }}" "cmake;3.22.1"
           echo "NDK=$ANDROID_HOME/ndk/${{ env.NDK_VERSION }}" >> $GITHUB_ENV
 
       - if: steps.cache.outputs.cache-hit != 'true'
