@@ -2,12 +2,6 @@ name: Build and stage
 
 on:
   workflow_dispatch:
-    inputs:
-      track:
-        description: Play Store track
-        default: internal
-        type: choice
-        options: [internal, alpha, beta, production]
   schedule:
     # Monthly on the 1st at 04:00 UTC
     - cron: '0 4 1 * *'
@@ -273,13 +267,13 @@ jobs:
       - name: Generate store listing "Languages" section
         run: python3 scripts/store-listing.py pair-inventory.json > listing-languages.txt
 
-      - name: Upload to Play ${{ inputs.track }}
+      - name: Upload to Play production
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: ${{ env.PACKAGE_NAME }}
           releaseFiles: app-release.aab
-          track: ${{ inputs.track }}
+          track: production
           status: completed
           whatsNewDirectory: whatsnew
 
