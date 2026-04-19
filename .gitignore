@@ -7,3 +7,5 @@
 build/
 /captures
 .externalNativeBuild
+# Native binaries + shared libs populated by ../apertium-native/install-to-app.sh
+app/src/main/jniLibs/
