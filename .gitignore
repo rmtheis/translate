@@ -4,5 +4,6 @@
 /local.properties
 /.idea
 /build
+build/
 /captures
 .externalNativeBuild
