@@ -391,7 +391,9 @@ case "${1:-all}" in
   all)       build_utfcpp; build_pcre2; build_libxml2; build_icu
              build_lttoolbox; build_apertium; build_lex_tools
              build_recursive; build_separable; build_anaphora
-             build_cg3; build_openfst; build_hfst ;;
+             build_cg3 ;;
+             # HFST (and its openfst dep) intentionally excluded — see README.
+             # Run `./build.sh hfst` explicitly to attempt it when ready.
   *)         echo "usage: $0 [utfcpp|pcre2|xml2|icu|lttoolbox|apertium|cg3|deps|all]"
              exit 1 ;;
 esac
