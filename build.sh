@@ -349,6 +349,12 @@ build_cg3() {
   local src="$SCRIPT_DIR/cg3"
   [ -d "$src" ] || git clone --depth 1 https://github.com/GrammarSoft/cg3.git "$src"
   [ -f "$PREFIX/include/rapidjson/rapidjson.h" ] || build_rapidjson
+  # cg3 doesn't vendor boost; its get-boost.sh fetches 1.65.1 into include/boost/.
+  # CI starts from a clean clone, so run it if the headers aren't already there.
+  if [ ! -f "$src/include/boost/version.hpp" ]; then
+    banner "cg3 — fetching vendored Boost 1.65.1"
+    (cd "$src" && sh ./get-boost.sh)
+  fi
   mkdir -p "$BUILD/cg3"
   "$CMAKE" -S "$src" -B "$BUILD/cg3" "${CMAKE_COMMON[@]}" \
     -DUSE_TCMALLOC=OFF -DMASTER_PROJECT=ON \
