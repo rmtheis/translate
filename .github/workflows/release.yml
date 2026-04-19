@@ -225,6 +225,10 @@ jobs:
     name: Stage to Play
     runs-on: ubuntu-latest
     needs: build
+    # Needed so the "snapshot pair inventory" step can push the .ci/ update back
+    # to master. GITHUB_TOKEN defaults to read-only on PRs/dispatches.
+    permissions:
+      contents: write
     # Only deploy when explicitly triggered; the scheduled run produces the AAB but
     # doesn't push it, so humans can review before release. Flip this off for full
     # automation once you're confident.
