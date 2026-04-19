@@ -1,1 +1,1 @@
-include ':app', ':pair_eng_spa'
+include ':app'

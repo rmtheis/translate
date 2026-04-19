@@ -5,8 +5,6 @@ android {
 
     namespace = "com.qvyshift.translate"
 
-    assetPacks = [":pair_eng_spa"]
-
     defaultConfig {
         applicationId "com.qvyshift.translate"
         minSdkVersion 21
@@ -22,10 +20,27 @@ android {
         }
     }
 
+    // CI populates app/upload.keystore from a base64 secret; local dev falls back to the
+    // debug keystore so `./gradlew assembleRelease` still works without secrets set.
+    signingConfigs {
+        upload {
+            def ks = file('upload.keystore')
+            if (ks.exists()) {
+                storeFile ks
+                storePassword System.getenv('UPLOAD_KEYSTORE_PASSWORD') ?: ''
+                keyAlias     System.getenv('UPLOAD_KEY_ALIAS') ?: ''
+                keyPassword  System.getenv('UPLOAD_KEY_PASSWORD') ?: ''
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            signingConfig (file('upload.keystore').exists()
+                ? signingConfigs.upload
+                : signingConfigs.debug)
         }
     }
 
