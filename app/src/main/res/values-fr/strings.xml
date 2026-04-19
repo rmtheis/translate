@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Traduire</string>
+    <string name="demo_tagline">Démo des modèles linguistiques Apertium</string>
+    <string name="paste">Coller</string>
+    <string name="copy">Copier</string>
+    <string name="swap_languages">Inverser les langues</string>
+    <string name="one_way_only">Traduction unidirectionnelle seulement</string>
+    <string name="pair_not_installed">Cette paire n\'est pas téléchargée</string>
+    <string name="tier_trunk">Publiée</string>
+    <string name="tier_staging">Pré-publication</string>
+    <string name="tier_nursery">En développement</string>
+    <string name="tier_incubator">Expérimentale</string>
     <string name="translateHint">Le texte traduit apparaît ici</string>
     
     

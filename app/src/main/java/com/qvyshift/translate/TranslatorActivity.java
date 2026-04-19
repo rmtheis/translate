@@ -20,24 +20,31 @@ package com.qvyshift.translate;
 
 import org.apertium.Translator;
 
-import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -46,8 +53,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-
-import static com.qvyshift.translate.App.instance;
 
 import org.apertium.pipeline.Program;
 import org.apertium.utils.IOUtils;
@@ -62,6 +67,8 @@ public class TranslatorActivity extends AppCompatActivity {
   private TextInputEditText outputTextView;
   private MaterialAutoCompleteTextView languagePairDropdown;
   private Button translateButton;
+  private ImageButton swapButton;
+  private PairListAdapter pairAdapter;
 
   private String currentModeTitle = null;
   public static final String EXTRA_MODE = "mode";
@@ -80,16 +87,25 @@ public class TranslatorActivity extends AppCompatActivity {
     outputTextView = findViewById(R.id.outputText);
     languagePairDropdown = findViewById(R.id.languagePairDropdown);
     translateButton = findViewById(R.id.translateButton);
+    swapButton = findViewById(R.id.swapButton);
 
     translateButton.setOnClickListener(v -> onTranslateClicked());
+    swapButton.setOnClickListener(v -> onSwapClicked());
+    findViewById(R.id.sourceCopyButton).setOnClickListener(v -> copyFrom(inputEditText));
+    findViewById(R.id.sourcePasteButton).setOnClickListener(v -> pasteInto(inputEditText));
+    findViewById(R.id.targetCopyButton).setOnClickListener(v -> copyFrom(outputTextView));
+    findViewById(R.id.targetPasteButton).setOnClickListener(v -> pasteInto(outputTextView));
+    pairAdapter = new PairListAdapter(this);
+    languagePairDropdown.setAdapter(pairAdapter);
     languagePairDropdown.setOnItemClickListener((parent, view, position, id) -> {
-      String selected = parent.getItemAtPosition(position).toString();
-      if (selected.equals(getString(R.string.download_languages))) {
-        startActivity(new Intent(this, InstallActivity.class));
+      PairListAdapter.Item item = pairAdapter.getItem(position);
+      if (item == null || item.kind != PairListAdapter.Kind.PAIR) return;
+      if (!item.installed) {
+        Toast.makeText(this, R.string.pair_not_installed, Toast.LENGTH_SHORT).show();
         languagePairDropdown.setText(currentModeTitle == null ? "" : currentModeTitle, false);
         return;
       }
-      currentModeTitle = selected;
+      currentModeTitle = item.modeTitle;
       App.prefs.edit().putString(App.PREF_lastModeTitle, currentModeTitle).commit();
       updateLanguageHints();
     });
@@ -109,14 +125,6 @@ public class TranslatorActivity extends AppCompatActivity {
       String text = i.getStringExtra(Intent.EXTRA_TEXT);
       if (text != null) {
         inputEditText.setText(text);
-        return;
-      }
-
-      if (App.prefs.getBoolean(App.PREF_clipBoardGet, true)) {
-        android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        CharSequence txt = clipboard.getText();
-        String inputText = txt == null ? "" : txt.toString();
-        if (inputText.length() > 0) inputEditText.setText(inputText);
       }
     }
   }
@@ -135,12 +143,7 @@ public class TranslatorActivity extends AppCompatActivity {
         currentModeTitle = titles.get(0);
       }
 
-      ArrayList<String> items = new ArrayList<>(App.apertiumInstallation.titleToMode.keySet());
-      Collections.sort(items);
-      items.add(getString(R.string.download_languages));
-      ArrayAdapter<String> adapter = new ArrayAdapter<>(TranslatorActivity.this,
-          android.R.layout.simple_list_item_1, items);
-      languagePairDropdown.setAdapter(adapter);
+      pairAdapter.setInstalledTitles(App.apertiumInstallation.titleToMode.keySet());
       if (currentModeTitle != null) {
         languagePairDropdown.setText(currentModeTitle, false);
       } else {
@@ -164,6 +167,60 @@ public class TranslatorActivity extends AppCompatActivity {
     }
     inputLayout.setHint(sourceHint);
     outputLayout.setHint(targetHint);
+    updateSwapButton();
+  }
+
+  private String getReverseTitle(String title) {
+    if (title == null) return null;
+    int arrow = title.indexOf(" \u2192 ");
+    if (arrow < 0) return null;
+    String src = title.substring(0, arrow);
+    String tgt = title.substring(arrow + 3);
+    return tgt + " \u2192 " + src;
+  }
+
+  private boolean hasReverseMode() {
+    String reverse = getReverseTitle(currentModeTitle);
+    return reverse != null && App.apertiumInstallation.titleToMode.containsKey(reverse);
+  }
+
+  private void updateSwapButton() {
+    swapButton.setAlpha(hasReverseMode() ? 1.0f : 0.4f);
+  }
+
+  private void onSwapClicked() {
+    if (!hasReverseMode()) {
+      Toast.makeText(this, R.string.one_way_only, Toast.LENGTH_SHORT).show();
+      return;
+    }
+    String reverse = getReverseTitle(currentModeTitle);
+    currentModeTitle = reverse;
+    App.prefs.edit().putString(App.PREF_lastModeTitle, currentModeTitle).commit();
+    languagePairDropdown.setText(currentModeTitle, false);
+
+    CharSequence oldInput = inputEditText.getText();
+    CharSequence oldOutput = outputTextView.getText();
+    inputEditText.setText(oldOutput);
+    outputTextView.setText(oldInput);
+
+    updateLanguageHints();
+  }
+
+  private void pasteInto(EditText field) {
+    ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+    ClipData clip = cm.getPrimaryClip();
+    if (clip == null || clip.getItemCount() == 0) return;
+    CharSequence text = clip.getItemAt(0).coerceToText(this);
+    if (text == null) return;
+    field.setText(text);
+    field.setSelection(field.length());
+  }
+
+  private void copyFrom(EditText field) {
+    CharSequence text = field.getText();
+    if (text == null || text.length() == 0) return;
+    ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+    cm.setPrimaryClip(ClipData.newPlainText("translation", text));
   }
 
   @Override
@@ -259,16 +316,6 @@ public class TranslatorActivity extends AppCompatActivity {
     protected void onPostExecute(String output) {
       activity.translationTask = null;
       activity.outputTextView.setText(output);
-      if (App.prefs.getBoolean(App.PREF_clipBoardPush, true)) {
-        android.text.ClipboardManager clipboard = (android.text.ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-        clipboard.setText(output);
-        String PREF_TOASTKEY = "clipboardPasteToast";
-        int n = App.prefs.getInt(PREF_TOASTKEY, 0);
-        if (n < 3) {
-          Toast.makeText(instance, "Text was pasted to clibboard", Toast.LENGTH_SHORT).show();
-          App.prefs.edit().putInt(PREF_TOASTKEY, n + 1).commit();
-        }
-      }
       activity.updateUi();
     }
   }
@@ -283,36 +330,29 @@ public class TranslatorActivity extends AppCompatActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
-    if (id == R.id.share) {
-      share_text();
-      return true;
-    } else if (id == R.id.manage) {
-      startActivity(new Intent(this, SettingsActivity.class));
-      return true;
-    } else if (id == R.id.clear) {
-      inputEditText.setText("");
-      outputTextView.setText("");
-      return true;
-    } else if (id == R.id.about) {
-      AlertDialog.Builder builder = new AlertDialog.Builder(this);
-      builder.setTitle(getString(R.string.about));
-      WebView wv = new WebView(this);
-      Log.d(TAG, getString(R.string.aboutText));
-      wv.loadData(getString(R.string.aboutText), "text/html", "UTF-8");
-      builder.setView(wv);
-      AlertDialog alert = builder.create();
-      alert.show();
+    if (id == R.id.manage) {
+      showSettingsDialog();
       return true;
     }
     return super.onOptionsItemSelected(item);
   }
 
-  private void share_text() {
-    Log.i(TAG, "ApertiumActivity.share_text Started");
-    Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-    sharingIntent.setType("text/plain");
-    sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Apertium Translate");
-    sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, outputTextView.getText().toString());
-    startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
+  private void showSettingsDialog() {
+    View content = getLayoutInflater().inflate(R.layout.dialog_about_settings, null);
+
+    TextView basedOn = content.findViewById(R.id.basedOnText);
+    basedOn.setText(Html.fromHtml(
+        "Based on the <a href=\"https://github.com/apertium\">Apertium</a> project"));
+    basedOn.setMovementMethod(LinkMovementMethod.getInstance());
+
+    SwitchMaterial displayMarkSwitch = content.findViewById(R.id.displayMarkSwitch);
+    displayMarkSwitch.setChecked(App.prefs.getBoolean(App.PREF_displayMark, true));
+    displayMarkSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
+        App.prefs.edit().putBoolean(App.PREF_displayMark, isChecked).apply());
+
+    new MaterialAlertDialogBuilder(this)
+        .setView(content)
+        .setPositiveButton(android.R.string.ok, null)
+        .show();
   }
 }

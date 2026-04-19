@@ -38,9 +38,6 @@
     <activity android:name="com.qvyshift.translate.InstallActivity"
       android:label="Apertium install language pair"
         android:exported="false" />
-    <activity android:name="com.qvyshift.translate.SettingsActivity"
-        android:exported="false" />
-
   </application>
 
 </manifest>
