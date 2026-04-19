@@ -67,6 +67,11 @@ public class NativePipelineTest {
     assertTrue("$2 should be stripped: " + tagger, !tagger.contains("$2"));
     // Relative paths should be rewritten to absolute under pair dir
     assertEquals(pairDir + "/data/en-es.automorf.bin", stages.get(0).get(1));
+    // $1 should be replaced with "-g" for the generator stage
+    List<String> autogen = stages.get(7);
+    assertEquals("lt-proc", autogen.get(0));
+    assertEquals("-g", autogen.get(1));
+    assertEquals(pairDir + "/data/en-es.autogen.bin", autogen.get(2));
     assertEquals(pairDir + "/data/en-es.autopgen.bin", stages.get(8).get(2));
   }
 
@@ -85,9 +90,10 @@ public class NativePipelineTest {
     assertEquals("lsx-proc", stages.get(2).get(0));
     assertEquals("rtx-proc", stages.get(3).get(0));
     assertEquals("/fake/apertium-dan-nor/dan-nob.rtx.bin", stages.get(3).get(1));
-    // $1 dropped
+    // $1 replaced with -g
     assertTrue(!stages.get(4).contains("$1"));
-    assertEquals("/fake/apertium-dan-nor/dan-nob.autogen.bin", stages.get(4).get(1));
+    assertEquals("-g", stages.get(4).get(1));
+    assertEquals("/fake/apertium-dan-nor/dan-nob.autogen.bin", stages.get(4).get(2));
   }
 
   @Test

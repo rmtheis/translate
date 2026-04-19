@@ -101,12 +101,19 @@ public class NativePipeline {
     for (String raw : modeLine.split("\\|")) {
       List<String> tokens = tokenize(raw.trim());
       if (tokens.isEmpty()) continue;
-      // $1 / $2 are placeholders apertium(1) substitutes into mode files; irrelevant here.
-      tokens.removeIf(t -> t.equals("$1") || t.equals("$2"));
+      // Mode files use $1 / $2 as placeholders apertium(1) substitutes from its CLI args.
+      // $1 is the lt-proc-mode flag (default -g for "generator"); $2 is usually empty.
       List<String> rewritten = new ArrayList<>(tokens.size());
       rewritten.add(tokens.get(0));
       for (int i = 1; i < tokens.size(); i++) {
-        rewritten.add(rewritePath(tokens.get(i), pairBaseDir));
+        String t = tokens.get(i);
+        if (t.equals("$1")) {
+          rewritten.add("-g");
+        } else if (t.equals("$2")) {
+          // skip — empty substitution
+        } else {
+          rewritten.add(rewritePath(t, pairBaseDir));
+        }
       }
       stages.add(rewritten);
     }
