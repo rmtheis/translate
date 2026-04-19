@@ -236,6 +236,12 @@ jobs:
         with:
           name: release-bundle
 
+      # upload-artifact@v4 with multiple paths preserves the common-root structure,
+      # so the AAB lands at app/build/outputs/bundle/release/. Flatten it so the
+      # Play upload action can find app-release.aab at the job's cwd.
+      - name: Flatten AAB path
+        run: mv app/build/outputs/bundle/release/app-release.aab ./app-release.aab
+
       - name: Fetch prior pair inventory from repo
         run: cp .ci/prior-pair-inventory.json prior.json 2>/dev/null || echo '[]' > prior.json
 
