@@ -1,0 +1,12 @@
+build/
+out/
+deps/
+# upstream sources (cloned at build time)
+apertium/
+apertium-lex-tools/
+apertium-recursive/
+apertium-separable/
+cg3/
+lttoolbox/
+test-hello/build/
+.DS_Store
