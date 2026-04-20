@@ -254,7 +254,38 @@ jobs:
       - name: Fetch prior pair inventory from repo
         run: cp .ci/prior-pair-inventory.json prior.json 2>/dev/null || echo '[]' > prior.json
 
+      # If no pair was added, removed, or had its sha256 change, there's nothing
+      # worth publishing — skip the Play upload, the store-listing splice, and
+      # the inventory-snapshot commit. The natives+AAB artifacts stay around for
+      # debugging but we don't push them to users. (The "changed" output is read
+      # by every subsequent step's `if:` guard.)
+      - name: Gate on pair changes
+        id: gate
+        run: |
+          python3 - <<'PY'
+          import json, os
+          prior = {e["pair"]: e for e in json.load(open("prior.json"))}
+          current = {e["pair"]: e for e in json.load(open("pair-inventory.json"))}
+          added   = sorted(set(current) - set(prior))
+          removed = sorted(set(prior) - set(current))
+          changed = sorted(p for p in current if p in prior
+                           and prior[p].get("sha256") != current[p].get("sha256"))
+          any_change = bool(added or removed or changed)
+          print(f"added={len(added)} removed={len(removed)} changed={len(changed)}")
+          if changed:
+              for p in changed:
+                  pv, cv = prior[p].get("version"), current[p].get("version")
+                  print(f"  {p}: {pv or '?'} -> {cv or '?'}")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"changed={'true' if any_change else 'false'}\n")
+          PY
+
+      - name: Skip notice
+        if: steps.gate.outputs.changed != 'true'
+        run: echo "::notice::No pair changed vs last release — not publishing."
+
       - name: Generate release notes
+        if: steps.gate.outputs.changed == 'true'
         # r0adkll/upload-google-play expects files named "whatsnew-<locale>" with
         # NO .txt extension (it reads them as bytes). Naming them *.txt triggers
         # "Unrecognized language code: en-US.txt." because the parser treats the
@@ -265,9 +296,11 @@ jobs:
           cat whatsnew/whatsnew-en-US
 
       - name: Generate store listing "Languages" section
+        if: steps.gate.outputs.changed == 'true'
         run: python3 scripts/store-listing.py pair-inventory.json > listing-languages.txt
 
       - name: Upload to Play production
+        if: steps.gate.outputs.changed == 'true'
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
@@ -280,11 +313,13 @@ jobs:
       # The Play Console full-description isn't updated by r0adkll/upload-google-play;
       # we call the Developer API directly with the generated Languages section.
       - name: Splice Languages section into full description
+        if: steps.gate.outputs.changed == 'true'
         env:
           SA_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
         run: python3 scripts/update-store-description.py listing-languages.txt
 
       - name: Commit prior-inventory snapshot
+        if: steps.gate.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

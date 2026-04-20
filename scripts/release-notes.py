@@ -36,6 +36,21 @@ def diff(prior: dict[str, dict], current: dict[str, dict]) -> dict[str, list]:
     return {"added": added, "removed": removed, "changed": changed}
 
 
+def _change_annotation(p: str, current: dict, prior: dict) -> str:
+    """Describe what changed for a pair — version bump if we have it, else size delta."""
+    c, pr = current[p], prior[p]
+    cv, pv = c.get("version"), pr.get("version")
+    if cv and pv and cv != pv:
+        return f"{pv} → {cv}"
+    if cv and not pv:
+        # Prior inventory lacked versions (pre-sidecar baseline). Annotate with the
+        # new version so users at least see what's on their device now.
+        return cv
+    delta = c["bytes"] - pr["bytes"]
+    sign = "+" if delta >= 0 else "-"
+    return f"{sign}{abs(delta) // 1024} KB"
+
+
 def format_notes(d: dict[str, list], current: dict[str, dict], prior: dict[str, dict]) -> str:
     catalog = load_catalog()
     lines = []
@@ -44,11 +59,10 @@ def format_notes(d: dict[str, list], current: dict[str, dict], prior: dict[str, 
     if d["removed"]:
         lines.append("Removed: " + ", ".join(pair_label(p, catalog) for p in d["removed"]))
     if d["changed"]:
-        entries = []
-        for p in d["changed"]:
-            delta = current[p]["bytes"] - prior[p]["bytes"]
-            sign = "+" if delta >= 0 else "-"
-            entries.append(f"{pair_label(p, catalog)} ({sign}{abs(delta) // 1024}KB)")
+        entries = [
+            f"{pair_label(p, catalog)} ({_change_annotation(p, current, prior)})"
+            for p in d["changed"]
+        ]
         lines.append("Updated: " + ", ".join(entries))
     if not lines:
         lines.append("Internal improvements.")
