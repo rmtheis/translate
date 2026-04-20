@@ -17,3 +17,5 @@ app/upload.keystore
 *.hprof
 # Flat staging dir populated by apertium-native/prep-pair.sh on dev/CI.
 pair-jars/
+# Python bytecode from scripts/*.py
+__pycache__/
