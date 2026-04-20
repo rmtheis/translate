@@ -2,6 +2,11 @@ name: Build and stage
 
 on:
   workflow_dispatch:
+    inputs:
+      force_publish:
+        description: Upload to Play even if no pair changed (app-code-only release)
+        type: boolean
+        default: false
   schedule:
     # Monthly on the 1st at 04:00 UTC
     - cron: '0 4 1 * *'
@@ -261,6 +266,8 @@ jobs:
       # by every subsequent step's `if:` guard.)
       - name: Gate on pair changes
         id: gate
+        env:
+          FORCE_PUBLISH: ${{ inputs.force_publish }}
         run: |
           python3 - <<'PY'
           import json, os
@@ -270,8 +277,9 @@ jobs:
           removed = sorted(set(prior) - set(current))
           changed = sorted(p for p in current if p in prior
                            and prior[p].get("sha256") != current[p].get("sha256"))
-          any_change = bool(added or removed or changed)
-          print(f"added={len(added)} removed={len(removed)} changed={len(changed)}")
+          forced = os.environ.get("FORCE_PUBLISH") == "true"
+          any_change = bool(added or removed or changed) or forced
+          print(f"added={len(added)} removed={len(removed)} changed={len(changed)} forced={forced}")
           if changed:
               for p in changed:
                   pv, cv = prior[p].get("version"), current[p].get("version")
