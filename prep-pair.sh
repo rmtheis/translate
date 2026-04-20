@@ -17,8 +17,12 @@ WORK="$SCRIPT_DIR/build/pairs/$PAIR"
 
 mkdir -p "$WORK" "$PAIRS_DIR"
 
-URL_SUFFIX=$(curl -sL "http://apertium.projectjj.com/apt/nightly/dists/bookworm/main/binary-amd64/Packages" \
-  | awk "/^Package: $PKG\$/,/^\$/" | grep '^Filename:' | awk '{print $2}')
+# Pull the Package block for this pair out of the Debian Packages index so we can
+# capture both the download URL and the upstream Version field in one hop.
+PKG_BLOCK=$(curl -sL "http://apertium.projectjj.com/apt/nightly/dists/bookworm/main/binary-amd64/Packages" \
+  | awk "/^Package: $PKG\$/,/^\$/")
+URL_SUFFIX=$(echo "$PKG_BLOCK" | awk '/^Filename:/ {print $2}')
+VERSION=$(echo "$PKG_BLOCK" | awk '/^Version:/ {print $2}')
 
 if [ -z "$URL_SUFFIX" ]; then
   echo "no Debian package found for $PKG" >&2
@@ -48,4 +52,11 @@ OUT="$PAIRS_DIR/$PKG.jar"
 rm -f "$OUT"
 zip -qr "$OUT" .
 
-echo "packed: $OUT  ($(stat -f %z "$OUT") bytes, $(ls | wc -l | tr -d ' ') files)"
+# Sidecar file read by scripts/pair-inventory.py to record the upstream Debian
+# version alongside the content hash, so release-notes can show e.g.
+# "Catalan ↔ Italian (2.1.0~r1234 → 2.1.0~r1245)".
+echo -n "$VERSION" > "$PAIRS_DIR/$PKG.version"
+
+# stat(1) takes different format flags on macOS vs. Linux; try each.
+size_bytes=$(stat -c %s "$OUT" 2>/dev/null || stat -f %z "$OUT")
+echo "packed: $OUT  ($size_bytes bytes, $(ls | wc -l | tr -d ' ') files, version=$VERSION)"
