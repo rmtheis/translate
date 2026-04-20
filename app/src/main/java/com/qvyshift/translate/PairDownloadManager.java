@@ -1,6 +1,9 @@
 package com.qvyshift.translate;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 
 import com.google.android.play.core.assetpacks.AssetPackLocation;
@@ -8,15 +11,15 @@ import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
 import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStateUpdateListener;
-import com.google.android.play.core.assetpacks.AssetPackStates;
 import com.google.android.play.core.assetpacks.model.AssetPackStatus;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,38 +28,42 @@ import java.util.Map;
  * installation dir so {@link ApertiumInstallation} can see them. A single Play Core
  * listener is registered once; individual download requests attach a {@link Listener}
  * that gets progress, completion, and failure callbacks on the main thread.
+ *
+ * <p><b>Update semantics:</b> every install writes a {@code <pkg>.version} sidecar
+ * recording the app versionCode at install time. On startup {@link #refreshStalePacks}
+ * silently re-fetches any pack whose marker doesn't match the current app version,
+ * so pair content tracks app updates without user intervention.
  */
 public class PairDownloadManager {
   private static final String TAG = "PairDownload";
 
   public interface Listener {
-    /** 0..100 while downloading or transferring. */
     void onProgress(int percent, long bytesSoFar, long totalBytes);
-    /** Pack has been delivered and its JAR unpacked into the installation dir. */
     void onReady();
-    /** Terminal failure (error code from {@link AssetPackState#errorCode()}). */
     void onFailed(int errorCode);
-    /** User-initiated cancel from Play Core. */
     void onCancelled();
   }
 
   private final Context ctx;
   private final AssetPackManager apm;
   private final File packagesDir;
+  private final int currentAppVersion;
   private final Map<String, Listener> listenersByPack = new HashMap<>();
 
   public PairDownloadManager(Context ctx, File packagesDir) {
     this.ctx = ctx.getApplicationContext();
     this.packagesDir = packagesDir;
+    this.currentAppVersion = readAppVersionCode(this.ctx);
     this.apm = AssetPackManagerFactory.getInstance(this.ctx);
     this.apm.registerListener(stateListener);
   }
 
   /**
-   * Walk enabled pairs and, for any pack already delivered on disk (e.g. a previous
-   * fetch completed, or user reinstalled app with packs cached by Play), unpack its
+   * Walk enabled pairs and, for any pack already delivered on disk that hasn't been
+   * extracted yet (fresh install, or reinstall with Play-cached packs), unpack its
    * JAR into {@link ApertiumInstallation}. Runs on the caller's thread; fast — no
-   * network. Returns true if any pair was freshly unpacked.
+   * network. Stale packs (extracted under an older app version) are left alone
+   * here — {@link #refreshStalePacks} handles them asynchronously.
    */
   public boolean installAlreadyDelivered() {
     boolean installedAny = false;
@@ -67,17 +74,33 @@ public class PairDownloadManager {
     return installedAny;
   }
 
-  /** True if the pair's on-demand pack has been downloaded and the JAR unpacked. */
+  /**
+   * For every pair that was installed under an older app version, kick off a silent
+   * Play fetch to pull that pack's updated content. When the fetch completes our
+   * state listener re-extracts the new JAR over the old install and rewrites the
+   * marker. UI isn't involved; if the user picks a stale pair before the refresh
+   * finishes, they'll briefly run on the old content and auto-upgrade next launch.
+   */
+  public void refreshStalePacks() {
+    for (PairCatalog.Pair p : PairCatalog.ENABLED) {
+      if (!new File(packagesDir, p.pkg).isDirectory()) continue;
+      if (readMarker(p) == currentAppVersion) continue;
+      String packName = PairCatalog.packNameFor(p);
+      synchronized (listenersByPack) {
+        if (listenersByPack.containsKey(packName)) continue;
+        listenersByPack.put(packName, silentRefreshListener);
+      }
+      Log.i(TAG, "refreshing stale pair " + p.pkg + " (marker="
+          + readMarker(p) + ", appVer=" + currentAppVersion + ")");
+      apm.fetch(Collections.singletonList(packName));
+    }
+  }
+
+  /** True if the pair's pack is extracted on disk (staleness not considered). */
   public boolean isInstalled(PairCatalog.Pair p) {
     return new File(packagesDir, p.pkg).isDirectory();
   }
 
-  /**
-   * Kick off a fetch for a single pair. The Listener gets progress callbacks until
-   * either {@link Listener#onReady()} (pack delivered AND JAR unpacked) or
-   * {@link Listener#onFailed(int)} fires. Calling fetch() for a pair that's
-   * already installed immediately returns onReady().
-   */
   public void fetch(PairCatalog.Pair p, Listener l) {
     if (isInstalled(p)) {
       App.handler.post(l::onReady);
@@ -90,7 +113,6 @@ public class PairDownloadManager {
     apm.fetch(Collections.singletonList(packName));
   }
 
-  /** Total size of every enabled pair's pack (sum of {@code sizeKb}), in bytes. */
   public long totalEnabledBytes() {
     long total = 0;
     for (PairCatalog.Pair p : PairCatalog.ENABLED) {
@@ -110,13 +132,56 @@ public class PairDownloadManager {
     }
     try {
       App.apertiumInstallation.installJar(jar, p.pkg);
-      Log.i(TAG, "installed " + p.pkg + " from pack " + packName);
+      writeMarker(p);
+      Log.i(TAG, "installed " + p.pkg + " from pack " + packName + " @ v" + currentAppVersion);
       return true;
     } catch (IOException e) {
       Log.e(TAG, "failed installing " + p.pkg, e);
       return false;
     }
   }
+
+  private File markerFile(PairCatalog.Pair p) {
+    return new File(packagesDir, p.pkg + ".version");
+  }
+
+  private int readMarker(PairCatalog.Pair p) {
+    File f = markerFile(p);
+    if (!f.isFile()) return -1;
+    try {
+      String s = new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8).trim();
+      return Integer.parseInt(s);
+    } catch (IOException | NumberFormatException e) {
+      return -1;
+    }
+  }
+
+  private void writeMarker(PairCatalog.Pair p) {
+    try (FileOutputStream fos = new FileOutputStream(markerFile(p))) {
+      fos.write(String.valueOf(currentAppVersion).getBytes(StandardCharsets.UTF_8));
+    } catch (IOException e) {
+      Log.w(TAG, "failed writing version marker for " + p.pkg, e);
+    }
+  }
+
+  private static int readAppVersionCode(Context ctx) {
+    try {
+      PackageInfo pi = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0);
+      return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+          ? (int) pi.getLongVersionCode() : pi.versionCode;
+    } catch (PackageManager.NameNotFoundException e) {
+      return 0;
+    }
+  }
+
+  private final Listener silentRefreshListener = new Listener() {
+    @Override public void onProgress(int percent, long bytesSoFar, long totalBytes) {}
+    @Override public void onReady() { Log.i(TAG, "stale pair refreshed silently"); }
+    @Override public void onFailed(int errorCode) {
+      Log.w(TAG, "stale pair refresh failed: " + errorCode);
+    }
+    @Override public void onCancelled() {}
+  };
 
   private final AssetPackStateUpdateListener stateListener = new AssetPackStateUpdateListener() {
     @Override
@@ -141,7 +206,6 @@ public class PairDownloadManager {
           synchronized (listenersByPack) {
             listenersByPack.remove(packName);
           }
-          // Unpack the JAR on a worker thread; installJar does zip extraction.
           PairCatalog.Pair p = findByPackName(packName);
           if (p == null) {
             l.onFailed(-1);
@@ -177,7 +241,6 @@ public class PairDownloadManager {
         case AssetPackStatus.NOT_INSTALLED:
         case AssetPackStatus.UNKNOWN:
         default:
-          // No-op — the UI stays in its "downloading" state.
           break;
       }
     }
@@ -190,9 +253,6 @@ public class PairDownloadManager {
     return null;
   }
 
-  /**
-   * Human-readable size string for a pair's pack (e.g. "5.4 MB").
-   */
   public static String humanSize(long bytes) {
     if (bytes < 1024) return bytes + " B";
     double kb = bytes / 1024.0;

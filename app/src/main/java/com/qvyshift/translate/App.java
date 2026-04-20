@@ -51,6 +51,10 @@ public class App extends Application {
     if (pairDownloadManager.installAlreadyDelivered()) {
       apertiumInstallation.rescanForPackages();
     }
+    // Any pair extracted under an older app versionCode gets a silent Play fetch +
+    // re-extract. No blocking — UI keeps showing the pair as installed throughout
+    // and auto-upgrades when the fetch's state listener fires COMPLETED.
+    pairDownloadManager.refreshStalePacks();
   }
 
   public static void longToast(final String txt) {

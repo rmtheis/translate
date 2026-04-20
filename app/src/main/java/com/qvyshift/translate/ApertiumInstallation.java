@@ -93,6 +93,10 @@ public class ApertiumInstallation {
 
   public void installJar(File tmpJarFile, String pkg) throws IOException {
     File dir = new File(packagesDir, pkg);
+    // Clear the dir first so a re-install (pair content updated by a newer app version)
+    // doesn't leave stragglers from the prior extraction when the new JAR drops or
+    // renames a file.
+    if (dir.exists()) FileUtils.remove(dir);
     FileUtils.unzip(tmpJarFile.getPath(), dir.getPath(), (d, filename) -> !filename.endsWith(".class"));
     dir.setLastModified(tmpJarFile.lastModified());
     // Legacy JARs include a classes.dex for the Java-port transfer classes; we run native
