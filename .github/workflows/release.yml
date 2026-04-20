@@ -186,14 +186,24 @@ jobs:
         # pairs job so the release reflects the latest apertium Debian nightly.
         run: ./scripts/stage-pair-packs.sh pair-jars
 
-      - name: Bump versionCode to yyyymmddHH
+      - name: Bump versionCode + versionName
         run: |
-          # Hour granularity so multiple builds on the same day don't collide with
-          # Play's "versionCode has already been used" rejection. 2026041923 (10 digits)
-          # is still well under Play's 2,100,000,000 cap.
+          # versionCode: yyyymmddHH (hour granularity so multiple builds on the same
+          # day don't collide with Play's "versionCode has already been used"
+          # rejection; 10 digits stays well under the 2,100,000,000 cap).
           ver=$(date -u +%Y%m%d%H)
           sed -i "s/android:versionCode=\"[0-9]*\"/android:versionCode=\"$ver\"/" app/src/main/AndroidManifest.xml
-          echo "Built versionCode=$ver"
+
+          # versionName: monotonic x.y.z. Read current, bump patch by 1. The deploy
+          # job re-derives the same new value from the checked-out manifest and
+          # commits it back on a successful publish, so the next run picks up where
+          # this one left off.
+          current=$(grep -oE 'android:versionName="[^"]+"' app/src/main/AndroidManifest.xml \
+            | head -1 | sed 's/android:versionName="//;s/"//')
+          IFS='.' read -r maj min pat <<<"$current"
+          new_name="$maj.$min.$((pat + 1))"
+          sed -i "s/android:versionName=\"[^\"]*\"/android:versionName=\"$new_name\"/" app/src/main/AndroidManifest.xml
+          echo "Built versionCode=$ver versionName=$new_name"
 
       - name: Decode upload keystore
         env:
@@ -326,15 +336,23 @@ jobs:
           SA_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
         run: python3 scripts/update-store-description.py listing-languages.txt
 
-      - name: Commit prior-inventory snapshot
+      - name: Commit versionName bump + inventory snapshot
         if: steps.gate.outputs.changed == 'true'
         run: |
+          # Re-derive the same bump the build job made — deploy checked out master
+          # fresh so the manifest still reads the pre-bump versionName.
+          current=$(grep -oE 'android:versionName="[^"]+"' app/src/main/AndroidManifest.xml \
+            | head -1 | sed 's/android:versionName="//;s/"//')
+          IFS='.' read -r maj min pat <<<"$current"
+          new_name="$maj.$min.$((pat + 1))"
+          sed -i "s/android:versionName=\"[^\"]*\"/android:versionName=\"$new_name\"/" app/src/main/AndroidManifest.xml
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           mkdir -p .ci
           cp pair-inventory.json .ci/prior-pair-inventory.json
-          git add .ci/prior-pair-inventory.json
+          git add .ci/prior-pair-inventory.json app/src/main/AndroidManifest.xml
           git diff --cached --quiet || {
-            git commit -m "ci: snapshot pair inventory for release ${{ github.run_number }} [skip ci]"
+            git commit -m "ci: release $new_name — snapshot pair inventory + bump versionName [skip ci]"
             git push
           }
