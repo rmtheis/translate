@@ -92,6 +92,17 @@ for tool in "${TOOLS[@]}"; do
   done
 done
 
+# HFST's `hfst-proc` is installed as a symlink to `hfst-apertium-proc`. Apertium
+# mode files invoke it by the short name, so ship the real binary as libhfst_proc.so.
+HFST_SRC="$SRC/bin/hfst-apertium-proc"
+HFST_DST="$DST/libhfst_proc.so"
+[ -x "$HFST_SRC" ] || { echo "missing $HFST_SRC"; exit 1; }
+cp "$HFST_SRC" "$HFST_DST"
+"$STRIP" -s "$HFST_DST"
+for icu in icudata icuuc icui18n icuio; do
+  patchelf --replace-needed "lib${icu}.so.76" "lib${icu}.so" "$HFST_DST" || true
+done
+
 echo
 echo "installed to: $DST"
 ls -la "$DST"

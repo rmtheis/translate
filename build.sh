@@ -301,7 +301,28 @@ build_rapidjson() {
 build_openfst() {
   banner "openfst (HFST backend)"
   local src="$SCRIPT_DIR/openfst"
-  [ -d "$src" ] || git clone --depth 1 https://github.com/kkm000/openfst.git "$src"
+  local version="1.8.5"
+  if [ ! -d "$src" ]; then
+    curl -sLo /tmp/openfst.tar.gz \
+      "https://www.openfst.org/twiki/pub/FST/FstDownload/openfst-${version}.tar.gz"
+    mkdir -p "$src"
+    tar -xzf /tmp/openfst.tar.gz -C "$src" --strip-components=1
+    # Patch configure.ac: the float-equality check uses AC_RUN_IFELSE which aborts
+    # under cross-compile because it can't execute target binaries. Supply a
+    # cross-compile fallback that assumes the check passes on arm64.
+    python3 - "$src/configure.ac" <<'PY'
+import sys
+p = sys.argv[1]
+with open(p) as f: c = f.read()
+if 'Compile with -msse' in c and 'Cross-compiling; assuming float equality' not in c:
+    needle = 'Compile with -msse -mfpmath=sse if using g++."\n              ]))])'
+    repl   = ('Compile with -msse -mfpmath=sse if using g++."\n              ]))],\n'
+              '              [echo "Cross-compiling; assuming float equality is good on target"])')
+    c = c.replace(needle, repl, 1)
+    open(p,'w').write(c)
+PY
+    (cd "$src" && autoreconf -fi)
+  fi
   pushd "$src" >/dev/null
   make distclean 2>/dev/null || true
   ./configure \
@@ -322,6 +343,32 @@ build_hfst() {
   local src="$SCRIPT_DIR/hfst"
   [ -d "$src" ] || git clone --depth 1 https://github.com/hfst/hfst.git "$src"
   [ -f "$PREFIX/include/fst/fst.h" ] || build_openfst
+  # HFST's HfstInputStream.h has the Tropical/Log forward-declaration guards
+  # swapped: TropicalWeightInputStream is declared only under HAVE_OPENFST_LOG,
+  # but used under HAVE_OPENFST alone — so --without-openfst-log builds fail
+  # to find the type. Swap the two class names. Idempotent.
+  python3 - "$src/libhfst/src/HfstInputStream.h" <<'PY'
+import sys
+p = sys.argv[1]
+with open(p) as f: c = f.read()
+bad = ('#if HAVE_OPENFST\n    class LogWeightInputStream;\n'
+       '#if HAVE_OPENFST_LOG || HAVE_LEAN_OPENFST_LOG\n'
+       '    class TropicalWeightInputStream;\n#endif\n#endif')
+good = ('#if HAVE_OPENFST\n    class TropicalWeightInputStream;\n'
+        '#if HAVE_OPENFST_LOG || HAVE_LEAN_OPENFST_LOG\n'
+        '    class LogWeightInputStream;\n#endif\n#endif')
+if bad in c:
+    open(p,'w').write(c.replace(bad, good, 1))
+PY
+  # HFST's .yy files use bison 3.x syntax. macOS ships bison 2.3 in /usr/bin.
+  # Prefer Homebrew's bison if present; fall back to whatever's in PATH (Linux CI).
+  local bison_path=""
+  for d in /usr/local/opt/bison/bin /opt/homebrew/opt/bison/bin; do
+    [ -x "$d/bison" ] && bison_path="$d"
+  done
+  if [ -n "$bison_path" ]; then
+    export PATH="$bison_path:$PATH"
+  fi
   if [ ! -f "$src/configure" ]; then
     pushd "$src" >/dev/null
     autoreconf -fi
@@ -329,16 +376,22 @@ build_hfst() {
   fi
   pushd "$src" >/dev/null
   make distclean 2>/dev/null || true
+  # AX_CHECK_ICU prefers `icu-config` over pkg-config, and pkg-config's output
+  # for icu-i18n doesn't include the transitive `icu-uc` dep (it's marked
+  # Requires.private). Use the icu-config we installed with ICU — it returns
+  # all three libs (`-licui18n -licuuc -licudata`).
   ./configure \
     --host="$TRIPLE" \
     --prefix="$PREFIX" \
     --disable-shared --enable-static \
     --without-sfst --with-openfst --without-openfst-log \
     --without-foma --without-xfsm --without-readline \
+    --enable-proc \
     CC="$CC" CXX="$CXX" AR="$AR" RANLIB="$RANLIB" \
-    CPPFLAGS="-I$PREFIX/include" \
+    CPPFLAGS="-I$PREFIX/include -I$SCRIPT_DIR/shims" \
     LDFLAGS="-L$PREFIX/lib $LDFLAGS" \
-    PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
+    PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig" \
+    ICU_CONFIG="$PREFIX/bin/icu-config"
   make -j"$JOBS"
   make install
   popd >/dev/null
@@ -391,9 +444,7 @@ case "${1:-all}" in
   all)       build_utfcpp; build_pcre2; build_libxml2; build_icu
              build_lttoolbox; build_apertium; build_lex_tools
              build_recursive; build_separable; build_anaphora
-             build_cg3 ;;
-             # HFST (and its openfst dep) intentionally excluded — see README.
-             # Run `./build.sh hfst` explicitly to attempt it when ready.
-  *)         echo "usage: $0 [utfcpp|pcre2|xml2|icu|lttoolbox|apertium|cg3|deps|all]"
+             build_cg3; build_openfst; build_hfst ;;
+  *)         echo "usage: $0 [utfcpp|pcre2|xml2|icu|lttoolbox|apertium|cg3|openfst|hfst|deps|all]"
              exit 1 ;;
 esac
