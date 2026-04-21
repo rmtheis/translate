@@ -60,9 +60,9 @@ android {
         ':pair_cat_srd', ':pair_dan_nor', ':pair_eng_cat', ':pair_eng_spa',
         ':pair_fra_cat', ':pair_hbs_eng', ':pair_hbs_mkd', ':pair_mkd_eng',
         ':pair_nno_nob', ':pair_oci_cat', ':pair_oci_fra', ':pair_por_cat',
-        ':pair_ron_cat', ':pair_rus_ukr', ':pair_spa_arg', ':pair_spa_ast',
-        ':pair_spa_cat', ':pair_spa_glg', ':pair_spa_ita', ':pair_srd_ita',
-        ':pair_swe_dan', ':pair_swe_nor'
+        ':pair_ron_cat', ':pair_rus_ukr', ':pair_sme_nob', ':pair_spa_arg',
+        ':pair_spa_ast', ':pair_spa_cat', ':pair_spa_glg', ':pair_spa_ita',
+        ':pair_srd_ita', ':pair_swe_dan', ':pair_swe_nor'
     ]
 }
 

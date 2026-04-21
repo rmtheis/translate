@@ -153,20 +153,12 @@ public final class PairCatalog {
       new Pair("apertium-vro-est", "vro-est",     "est-vro",          58_221L, Tier.INCUBATOR)
   );
 
-  /**
-   * Pairs the app actually ships. Trunk + Staging only for now; Nursery + Incubator are
-   * future scope. {@code apertium-sme-nob} is additionally excluded because its
-   * morphological analyzer requires HFST, which we haven't finished cross-compiling
-   * (see apertium-native/README.md "HFST retry plan").
-   */
-  private static final java.util.Set<String> HFST_EXCLUDED = java.util.Collections.singleton("apertium-sme-nob");
-
+  /** Pairs the app actually ships. Trunk + Staging only for now; Nursery + Incubator are future scope. */
   public static final List<Pair> ENABLED;
   static {
     List<Pair> filtered = new ArrayList<>();
     for (Pair p : ALL) {
       if (p.tier != Tier.TRUNK && p.tier != Tier.STAGING) continue;
-      if (HFST_EXCLUDED.contains(p.pkg)) continue;
       filtered.add(p);
     }
     ENABLED = Collections.unmodifiableList(filtered);

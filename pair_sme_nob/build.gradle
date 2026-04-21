@@ -1,0 +1,8 @@
+apply plugin: 'com.android.asset-pack'
+
+assetPack {
+    packName = "pair_sme_nob"
+    dynamicDelivery {
+        deliveryType = "on-demand"
+    }
+}

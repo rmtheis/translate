@@ -57,6 +57,7 @@ public class NativePipeline {
     TOOL_LIBS.put("rtx-proc",                 "librtx_proc.so");
     TOOL_LIBS.put("cg-proc",                  "libcg_proc.so");
     TOOL_LIBS.put("cg-comp",                  "libcg_comp.so");
+    TOOL_LIBS.put("hfst-proc",                "libhfst_proc.so");
   }
 
   /** Matches a single pipeline stage like {@code apertium-transfer -b foo.t1x foo.t1x.bin}. */
