@@ -15,7 +15,7 @@ from pathlib import Path
 from _pair_catalog import load as load_catalog, pair_label
 
 
-MAX_CHARS = 500
+MAX_BYTES = 500
 
 
 def load(path: Path) -> dict[str, dict]:
@@ -69,14 +69,25 @@ def format_notes(d: dict[str, list], current: dict[str, dict], prior: dict[str, 
     return "\n".join(lines)
 
 
-def abbreviate(text: str, limit: int) -> str:
-    if len(text) <= limit:
+def abbreviate(text: str, limit_bytes: int) -> str:
+    """Trim a UTF-8 string to fit within limit_bytes when encoded.
+
+    Play's release-notes cap is bytes, not chars — `↔`, `→`, and `…` are each 3
+    bytes in UTF-8, so a naive char-count trim (Python's len()) can undershoot
+    and let Play reject the edit with
+      "release created has notes in language en-US with length 501, which is too long (max: 500)."
+    """
+    encoded = text.encode("utf-8")
+    if len(encoded) <= limit_bytes:
         return text
-    return text[: limit - 1].rstrip() + "…"
+    # Reserve 3 bytes for the trailing ellipsis. errors='ignore' drops any
+    # partial multi-byte char at the truncation point.
+    truncated = encoded[: limit_bytes - 3].decode("utf-8", errors="ignore")
+    return truncated.rstrip() + "…"
 
 
 if __name__ == "__main__":
     prior = load(Path(sys.argv[1])) if len(sys.argv) > 1 else {}
     current = load(Path(sys.argv[2])) if len(sys.argv) > 2 else {}
     notes = format_notes(diff(prior, current), current, prior)
-    print(abbreviate(notes, MAX_CHARS))
+    print(abbreviate(notes, MAX_BYTES))

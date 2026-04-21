@@ -88,6 +88,10 @@ jobs:
           path: apertium-native
           token: ${{ secrets.APERTIUM_NATIVE_TOKEN }}
 
+      - id: native_key
+        name: Capture apertium-native HEAD sha for cache key
+        run: echo "sha=$(git -C apertium-native rev-parse HEAD)" >> $GITHUB_OUTPUT
+
       - name: Enumerate enabled pairs
         id: list
         run: |
@@ -96,14 +100,19 @@ jobs:
           echo "Pairs:" && cat /tmp/pairs.txt
 
       - name: Cache per-pair JARs by upstream .deb digest
+        # Cache key includes apertium-native's HEAD sha so any change to
+        # prep-pair.sh (e.g. deterministic-zip tweaks that affect JAR bytes)
+        # invalidates stale caches and forces a fresh prep. Without this,
+        # old non-deterministic JARs would be restored and the publish gate
+        # would flag every pair as changed.
         id: cache
         uses: actions/cache@v4
         with:
           path: pair-jars
-          key: pairs-${{ hashFiles('scripts/list-enabled-pairs.sh', 'app/src/main/java/com/qvyshift/translate/PairCatalog.java') }}-${{ github.run_id }}
+          key: pairs-native-${{ steps.native_key.outputs.sha }}-catalog-${{ hashFiles('scripts/list-enabled-pairs.sh', 'app/src/main/java/com/qvyshift/translate/PairCatalog.java') }}-${{ github.run_id }}
           restore-keys: |
-            pairs-${{ hashFiles('scripts/list-enabled-pairs.sh', 'app/src/main/java/com/qvyshift/translate/PairCatalog.java') }}-
-            pairs-
+            pairs-native-${{ steps.native_key.outputs.sha }}-catalog-${{ hashFiles('scripts/list-enabled-pairs.sh', 'app/src/main/java/com/qvyshift/translate/PairCatalog.java') }}-
+            pairs-native-${{ steps.native_key.outputs.sha }}-
 
       - name: Prep each pair (only if JAR missing)
         env:
