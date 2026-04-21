@@ -303,13 +303,14 @@ build_openfst() {
   local src="$SCRIPT_DIR/openfst"
   local version="1.8.5"
   if [ ! -d "$src" ]; then
-    # Our rmtheis/translate-native GitHub release is primary — openfst.org
+    # Our rmtheis/translate GitHub release is primary — openfst.org
     # intermittently 5xx's on GitHub Actions runners (saw `gzip: stdin: not in
     # gzip format` on 2026-04-21: curl -s masked an HTTP error page). Upstream
     # is kept as a fallback so a clean laptop build still works if the mirror
-    # tag ever goes missing.
+    # tag ever goes missing. (The mirror originally lived on translate-native;
+    # it moved here when the two repos were folded in April 2026.)
     local urls=(
-      "https://github.com/rmtheis/translate-native/releases/download/vendor-openfst-${version}/openfst-${version}.tar.gz"
+      "https://github.com/rmtheis/translate/releases/download/vendor-openfst-${version}/openfst-${version}.tar.gz"
       "https://www.openfst.org/twiki/pub/FST/FstDownload/openfst-${version}.tar.gz"
     )
     for url in "${urls[@]}"; do
