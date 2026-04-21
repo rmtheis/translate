@@ -50,7 +50,13 @@ fi
 cd jar
 OUT="$PAIRS_DIR/$PKG.jar"
 rm -f "$OUT"
-zip -qr "$OUT" .
+# Deterministic ZIP: fixed mtime + sorted file order + no extra attrs. Ensures
+# scripts/pair-inventory.py sees a stable sha256 for unchanged upstream content
+# so the CI "publish gate" only fires on real Debian nightly updates. Without
+# this, every run's JARs differ byte-for-byte (mtimes + filesystem enumeration
+# order) and the gate treats every pair as changed.
+find . -exec touch -t 198001010000 {} +
+find . -type f | LC_ALL=C sort | zip -qX "$OUT" -@
 
 # Sidecar file read by scripts/pair-inventory.py to record the upstream Debian
 # version alongside the content hash, so release-notes can show e.g.
