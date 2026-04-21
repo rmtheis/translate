@@ -108,6 +108,12 @@
     "version": "0.2.1+g550~1e8ad985-1~sid1"
   },
   {
+    "pair": "apertium-sme-nob",
+    "sha256": "c7fb6115e44ee3ef0c2240c56e36eb026c73fc0a17026c907cb47398342c4ce3",
+    "bytes": 27185768,
+    "version": "0.6.1+g4073~a90c3262-160~sid1"
+  },
+  {
     "pair": "apertium-spa-arg",
     "sha256": "a7138290bdeaa6549e690f31816232a358e7d4c3ecdc35d218a8c6a68dad6181",
     "bytes": 2842372,
