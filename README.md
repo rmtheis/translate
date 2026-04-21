@@ -60,55 +60,22 @@ Individual targets: `utfcpp`, `pcre2`, `xml2`, `icu`, `lttoolbox`,
 
 - armeabi-v7a is supported (`ABI=armeabi-v7a ./build.sh all`); arm64-v8a is the default.
 - GH Actions workflow that runs the whole stack on Ubuntu runners (in progress, see repo root `.github/workflows/`).
-- HFST (see below).
 
-## HFST retry plan
+## HFST
 
-`apertium-sme-nob` is the only Trunk pair that needs HFST, plus ~40 Nursery/Incubator
-pairs if we ever expand beyond Trunk+Staging. The cross-compile is partly done:
+`apertium-sme-nob` is the only Trunk pair that needs HFST (plus ~40 Nursery/Incubator
+pairs). HFST builds against upstream **OpenFST 1.8.5** and ships `hfst-apertium-proc`
+as `libhfst_proc.so`. `build.sh hfst` applies three in-tree patches automatically:
 
-- **OpenFST 1.7.2** (kkm000 fork) cross-compiles cleanly via `build_openfst`. One
-  patch to `configure.ac` was needed to supply a cross-compile fallback for its
-  `AC_RUN_IFELSE` float-equality check. Libs install at `out/<abi>/lib/libfst.a` +
-  `out/<abi>/include/fst/`.
-- **HFST itself** doesn't build. Blocker: HFST's `libhfst/src/implementations/`
-  calls `SymbolTable::begin()/end()` — the iterator API OpenFST replaced with
-  `SymbolTableIterator` in 1.7.x. Removing `convert.cc` from the build clears one
-  site; `ConvertTropicalWeightTransducer.cc` and `TropicalWeightTransducer.cc`
-  fail the same way and aren't optional.
+- **OpenFST `configure.ac`**: cross-compile fallback for the `AC_RUN_IFELSE`
+  float-equality check (can't execute target binaries during configure).
+- **HFST `HfstInputStream.h`**: `TropicalWeightInputStream`'s forward-declaration
+  guards were swapped with `LogWeightInputStream`'s, breaking
+  `--without-openfst-log` builds. Python-patched after clone.
+- **`shims/glob.h`**: bionic lacks `glob(3)`; HFST's `XfstCompiler` only calls
+  it from the interactive "print dir" command, which Android never exercises.
 
-### When picking this up next session
-
-**First try** pinning OpenFST to a version that still has `begin()/end()`:
-
-```sh
-cd openfst
-git clone https://github.com/kkm000/openfst.git .   # or fetch tarball
-# find a tag or commit from 2017 or earlier; 1.6.9 is the documented last version
-git checkout openfst-1.6.9           # or equivalent commit hash
-# re-apply the configure.ac cross-compile patch:
-python3 - <<'PY'
-import re
-with open('configure.ac') as f: c = f.read()
-needle = 'Test float equality failed!'
-if needle in c:
-    c = c.replace('Compile with -msse -mfpmath=sse if using g++.\n              ]))])',
-                  'Compile with -msse -mfpmath=sse if using g++.\n              ]))],\n              [echo \"Cross-compiling; assuming float equality is good on target\"])')
-    open('configure.ac','w').write(c)
-PY
-autoreconf -fi
-cd ..
-./build.sh openfst
-./build.sh hfst
-```
-
-www.openfst.org was 522ing during the initial attempt; the kkm000 fork may not
-have a 1.6.x tag, in which case either vendor a tarball into `deps/openfst-1.6.9/`
-or check out the right commit (`git log --before=2018` in kkm000's main branch).
-
-**If 1.6.9 still doesn't work** (e.g. won't compile under modern clang), the
-fallback is to patch HFST to use `SymbolTableIterator`. That's upstream-PR-scope
-work — many call sites, loop bodies need restructuring (the iterator is stateful).
-
-**If neither works**, accept HFST is a v2 milestone and leave `sme-nob` excluded.
-`PairCatalog.HFST_EXCLUDED` is the single on-switch to flip once HFST is working.
+HFST's `.yy` grammars need bison 3.x; `build_hfst` prefers Homebrew's bison
+over macOS's built-in bison 2.3. The `AX_CHECK_ICU` macro needs `ICU_CONFIG`
+pointed at our ICU's `icu-config` so the link line picks up `-licuuc -licudata`
+(pkg-config's icu-i18n.pc marks them `Requires.private`).
