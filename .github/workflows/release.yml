@@ -14,7 +14,6 @@ on:
 env:
   NDK_VERSION: 28.2.13676358
   BUNDLETOOL_VERSION: 1.18.3
-  APERTIUM_NATIVE_REPO: rmtheis/translate-native
   PACKAGE_NAME: com.qvyshift.translate
 
 jobs:
@@ -26,23 +25,22 @@ jobs:
       matrix:
         abi: [arm64-v8a, armeabi-v7a]
     steps:
-      - name: Checkout apertium-native
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ env.APERTIUM_NATIVE_REPO }}
-          path: apertium-native
-          token: ${{ secrets.APERTIUM_NATIVE_TOKEN }}
+      - uses: actions/checkout@v4
 
       - id: key
         run: |
-          sha=$(git -C apertium-native rev-parse HEAD)
+          # Tree SHA of native/ — invalidates cache on any toolchain change but
+          # not on unrelated app-code commits. (Before the translate-native fold
+          # this was the apertium-native repo's HEAD sha; post-fold the tree SHA
+          # of the nested native/ dir is the direct equivalent.)
+          sha=$(git rev-parse HEAD:native)
           echo "cache_key=natives-${{ matrix.abi }}-${sha}-ndk-${{ env.NDK_VERSION }}" >> $GITHUB_OUTPUT
 
       - name: Cache native build output
         id: cache
         uses: actions/cache@v4
         with:
-          path: apertium-native/out/${{ matrix.abi }}
+          path: native/out/${{ matrix.abi }}
           key: ${{ steps.key.outputs.cache_key }}
 
       - if: steps.cache.outputs.cache-hit != 'true'
@@ -61,7 +59,7 @@ jobs:
 
       - if: steps.cache.outputs.cache-hit != 'true'
         name: Cross-compile for ${{ matrix.abi }}
-        working-directory: apertium-native
+        working-directory: native
         # MAX_JOBS=2 keeps link-heavy steps (ICU, boost, OpenFST, cg3) within the
         # 16 GB ubuntu-latest runner's memory; with unbounded -j the runner OOMs
         # and drops its agent connection ("runner lost communication").
@@ -71,7 +69,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: natives-${{ matrix.abi }}
-          path: apertium-native/out/${{ matrix.abi }}
+          path: native/out/${{ matrix.abi }}
           retention-days: 7
 
   pairs:
@@ -82,15 +80,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/checkout@v4
-        with:
-          repository: ${{ env.APERTIUM_NATIVE_REPO }}
-          path: apertium-native
-          token: ${{ secrets.APERTIUM_NATIVE_TOKEN }}
-
       - id: native_key
-        name: Capture apertium-native HEAD sha for cache key
-        run: echo "sha=$(git -C apertium-native rev-parse HEAD)" >> $GITHUB_OUTPUT
+        name: Capture native/ tree SHA for cache key
+        # Tree SHA of native/ (equivalent to the old apertium-native HEAD sha
+        # pre-fold) — invalidates when anything in the toolchain changes.
+        run: echo "sha=$(git rev-parse HEAD:native)" >> $GITHUB_OUTPUT
 
       - name: Enumerate enabled pairs
         id: list
@@ -100,7 +94,7 @@ jobs:
           echo "Pairs:" && cat /tmp/pairs.txt
 
       - name: Cache per-pair JARs by upstream .deb digest
-        # Cache key includes apertium-native's HEAD sha so any change to
+        # Cache key includes the native/ tree hash so any change to
         # prep-pair.sh (e.g. deterministic-zip tweaks that affect JAR bytes)
         # invalidates stale caches and forces a fresh prep. Without this,
         # old non-deterministic JARs would be restored and the publish gate
@@ -125,7 +119,7 @@ jobs:
               echo "have $pair"
               continue
             fi
-            bash apertium-native/prep-pair.sh "$pair"
+            bash native/prep-pair.sh "$pair"
           done < /tmp/pairs.txt
 
       - name: Compute pair inventory

@@ -2,7 +2,7 @@
 # Extract the set of ENABLED pair package names from PairCatalog.java.
 #
 # Output: one pair per line, bare mode name (e.g. "eng-spa"), suitable for
-#   while read pair; do apertium-native/prep-pair.sh "$pair"; done
+#   while read pair; do native/prep-pair.sh "$pair"; done
 set -euo pipefail
 
 CATALOG="${1:-app/src/main/java/com/qvyshift/translate/PairCatalog.java}"

@@ -3,7 +3,7 @@
 #
 # Fetch the apertium-<pair>.deb from apertium.projectjj.com (bookworm), extract the
 # pair's data files + mode definitions, and pack them into a flat JAR under
-# apertium-android/app/src/main/assets/pairs/ so installBundledPairs() picks it up
+# app/src/main/assets/pairs/ so installBundledPairs() picks it up
 # on next launch. Mode files reference /usr/share/apertium/... absolute paths which
 # NativePipeline rewrites to the on-device pair base dir at runtime.
 set -euo pipefail

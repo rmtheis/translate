@@ -9,7 +9,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 : "${ABI:=arm64-v8a}"
-: "${APP_DIR:=$SCRIPT_DIR/../apertium-android}"
+: "${APP_DIR:=$SCRIPT_DIR/..}"
 : "${NDK:=/Users/theis/Library/Android/sdk/ndk/28.2.13676358}"
 SRC="$SCRIPT_DIR/out/$ABI"
 DST="$APP_DIR/app/src/main/jniLibs/$ABI"

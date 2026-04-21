@@ -7,7 +7,7 @@
 build/
 /captures
 .externalNativeBuild
-# Native binaries + shared libs populated by ../apertium-native/install-to-app.sh
+# Native binaries + shared libs populated by native/install-to-app.sh
 app/src/main/jniLibs/
 # Legacy flat layout, now replaced by pair_<code>/src/main/assets/ packs.
 app/src/main/assets/pairs/
@@ -15,7 +15,7 @@ app/src/main/assets/pairs/
 app/upload.keystore
 # Java heap-dump snapshots from OOM diagnostic runs.
 *.hprof
-# Flat staging dir populated by apertium-native/prep-pair.sh on dev/CI.
+# Flat staging dir populated by native/prep-pair.sh on dev/CI.
 pair-jars/
 # Python bytecode from scripts/*.py
 __pycache__/

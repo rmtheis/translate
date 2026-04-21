@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Assemble app/src/main/jniLibs/<abi>/ from pre-built apertium-native out/ trees,
-# mirroring apertium-native/install-to-app.sh but parameterized so CI can run it
+# Assemble app/src/main/jniLibs/<abi>/ from pre-built native/ out/ trees,
+# mirroring native/install-to-app.sh but parameterized so CI can run it
 # against artifacts downloaded from a prior workflow job.
 #
 # Usage:
-#   ./scripts/install-natives.sh <abi> <path-to-apertium-native-out-root>
+#   ./scripts/install-natives.sh <abi> <path-to-native-out-root>
 #
-# where <path-to-apertium-native-out-root> contains bin/ and lib/ (the install
-# prefix produced by build.sh).
+# where <path-to-native-out-root> contains bin/ and lib/ (the install prefix
+# produced by native/build.sh).
 set -euo pipefail
 
 ABI="${1:?usage: $0 <abi> <out-root>}"

@@ -6,7 +6,7 @@ Output: JSON sorted by pair name, one entry per JAR in the given directory:
       "version": "1.0.0~r12345"}, ...]
 
 The "version" field comes from a sibling "<pair>.version" sidecar written by
-apertium-native/prep-pair.sh when it repacks a Debian nightly. It's omitted
+native/prep-pair.sh when it repacks a Debian nightly. It's omitted
 for JARs produced by older runs (or hand-built locally without the sidecar),
 which lets scripts/release-notes.py distinguish real version bumps from
 "we have no idea, just a hash change".

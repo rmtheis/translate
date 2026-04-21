@@ -10,7 +10,7 @@
 #
 # The JAR source dir is typically either:
 #   - app/src/main/assets/pairs/  (historical flat layout — used for dev)
-#   - a CI artifact download dir populated by apertium-native/prep-pair.sh
+#   - a CI artifact download dir populated by native/prep-pair.sh
 #
 # Emits:
 #   /tmp/pack-modules.txt — one ':pair_<code>' gradle coord per line, used to

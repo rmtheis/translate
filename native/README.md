@@ -1,8 +1,12 @@
-# apertium-native
+# native/
 
 Cross-compile scripts for Apertium's C++ toolchain against Android NDK.
-Produces arm64-v8a binaries + shared libs that the `apertium-android` app
-invokes via `ProcessBuilder` in `NativePipeline.java`.
+Produces arm64-v8a binaries + shared libs that the parent Android app
+(`app/` at the repo root) invokes via `ProcessBuilder` in `NativePipeline.java`.
+
+This directory was originally the separate `rmtheis/translate-native` repo;
+it was folded into `rmtheis/translate` via `git subtree` so the toolchain
+and the app ship from a single history.
 
 ## Build
 
@@ -16,7 +20,7 @@ Full build:
 
 ```sh
 ./build.sh all
-./install-to-app.sh     # copies to ../apertium-android/app/src/main/jniLibs/arm64-v8a/
+./install-to-app.sh     # copies to ../app/src/main/jniLibs/arm64-v8a/
 ```
 
 Individual targets: `utfcpp`, `pcre2`, `xml2`, `icu`, `lttoolbox`,
