@@ -249,6 +249,13 @@ build_lttoolbox() {
   banner "lttoolbox"
   local src="$SCRIPT_DIR/lttoolbox"
   [ -d "$src" ] || git clone --depth 1 https://github.com/apertium/lttoolbox.git "$src"
+  # Remove -flto from the CMakeLists's CHECK_CXX_COMPILER_FLAG loop:
+  # LTO generates LLVM bitcode objects (magic 0xb17c0de) that libtool
+  # can merge but xcodebuild -create-xcframework rejects as "unknown
+  # architecture". Idempotent — no-op if already stripped.
+  /usr/bin/sed -i '' \
+    's|foreach(flag "-Wno-unused-result" "-flto")|foreach(flag "-Wno-unused-result")|' \
+    "$src/CMakeLists.txt"
   mkdir -p "$BUILD/lttoolbox"
   "$CMAKE" -S "$src" -B "$BUILD/lttoolbox" "${CMAKE_COMMON[@]}" \
     "${CMAKE_ICUDATA_FIX[@]}" \
@@ -408,12 +415,17 @@ build_cg3() {
     mv /tmp/boost_1_86_0/boost "$src/include/"
     rm -rf /tmp/boost_1_86_0 /tmp/boost.tar.bz2
   fi
-  # iOS patches:
-  #   - CMakeLists foreach std flag: pinned to c++17 via an earlier edit
-  #     (c++26 fights Boost's flat_tree::insert under clang two-phase).
-  #   - CMP0167 guarded under if(POLICY …) so CMake 3.22 doesn't bail.
+  # iOS patches to the cg3 tree (idempotent — all skip on second run):
+  #   - Top CMakeLists foreach std flag: pinned to c++17 (cg3's default
+  #     c++26 fights Boost's flat_tree::insert under clang two-phase).
+  #   - Top CMakeLists _FLAGS_COMMON foreach: drop -flto (generates LLVM
+  #     IR objects with magic 0xb17c0de, which xcodebuild
+  #     -create-xcframework rejects as "unknown architecture").
+  #   - src/CMakeLists CMP0167: guard under if(POLICY …) — CMP0167 was
+  #     added in CMake 3.30 and GHA runners / local CMake (we're on
+  #     3.22) bail otherwise.
   #   - system()/wordexp()/popen_plus: iOS SDK marks all three
-  #     __IPHONE_NA. Rewrite the call sites to throw — they sit on
+  #     __IPHONE_NA. Rewrite call sites to throw — they sit on
   #     grammar-compile paths (cg-comp, hunspell spawn) that a
   #     translation-only iOS build never exercises, and cg-proc itself
   #     doesn't touch them.
@@ -422,6 +434,34 @@ import sys, re
 from pathlib import Path
 root = Path(sys.argv[1])
 edits = []
+
+# Top CMakeLists: pin c++17 and drop -flto.
+top = root / "CMakeLists.txt"
+if top.is_file():
+    c = top.read_text()
+    orig = c
+    c = c.replace(
+        'foreach(flag "-std=c++26" "-std=c++2c" "-std=c++23" "-std=c++2b" "-std=c++20" "-std=c++2a" "-std=c++17")',
+        'foreach(flag "-std=c++17")  # iOS: pinned; newer stds fight Boost 1.65.1 flat_tree')
+    c = c.replace(
+        'foreach(flag "-Wno-unused-result" "-flto")',
+        'foreach(flag "-Wno-unused-result")  # iOS: -flto dropped — xcframework packager rejects LLVM IR')
+    if c != orig:
+        top.write_text(c); edits.append(str(top))
+
+# src/CMakeLists: guard CMP0167.
+sub = root / "src/CMakeLists.txt"
+if sub.is_file():
+    c = sub.read_text()
+    # Lines in cg3 use tabs; look for the literal line.
+    needle = "\t\tcmake_policy(SET CMP0167 OLD)"
+    if needle in c and "if(POLICY CMP0167)" not in c:
+        c = c.replace(needle,
+                      "\t\tif(POLICY CMP0167)\n\t\t\tcmake_policy(SET CMP0167 OLD)\n\t\tendif()",
+                      1)
+        sub.write_text(c); edits.append(str(sub))
+
+# popen_plus: stub system() calls.
 pp = root / "include/posix/popen_plus.cpp"
 if pp.is_file():
     c = pp.read_text()
@@ -430,8 +470,6 @@ if pp.is_file():
             '#include <errno.h>',
             '#define IOS_STUB 1\n#include <stdexcept>\n#include <errno.h>',
             1)
-        # Every system(command); on iOS becomes a no-op — these are
-        # kill/terminate paths for child processes we never spawned.
         c = re.sub(r'int result = system\(command\);',
                    'int result = 0; (void)command; /* system() NA on iOS */',
                    c)
@@ -439,6 +477,8 @@ if pp.is_file():
                    '    (void)command; /* system() NA on iOS */',
                    c, flags=re.MULTILINE)
         pp.write_text(c); edits.append(str(pp))
+
+# TextualParser: stub wordexp().
 tp = root / "src/TextualParser.cpp"
 if tp.is_file():
     c = tp.read_text()
@@ -454,6 +494,7 @@ if tp.is_file():
         c = c.replace('#include <wordexp.h>',
                       '// #include <wordexp.h> — stubbed for iOS', 1)
         tp.write_text(c); edits.append(str(tp))
+
 for p in edits: print("patched:", p)
 PY
   mkdir -p "$BUILD/cg3"
