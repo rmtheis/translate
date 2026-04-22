@@ -133,11 +133,17 @@ def find_app_id(token: str, bundle_id: str) -> str:
 
 
 def latest_version_id(token: str, app_id: str) -> str:
+    # This endpoint does not accept a `sort` query parameter (Apple
+    # returns PARAMETER_ERROR.ILLEGAL). Fetch with createdDate in the
+    # response and sort locally.
     data = _request("GET", token, f"/apps/{app_id}/appStoreVersions",
-                    params={"limit": "1", "sort": "-createdDate"})
+                    params={"limit": "200",
+                            "fields[appStoreVersions]": "versionString,createdDate,appStoreState"})
     rows = data.get("data", [])
     if not rows:
         sys.exit(f"ERROR: app {app_id} has no app store versions")
+    rows.sort(key=lambda r: r.get("attributes", {}).get("createdDate", ""),
+              reverse=True)
     return rows[0]["id"]
 
 
