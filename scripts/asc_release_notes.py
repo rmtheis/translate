@@ -90,7 +90,17 @@ def find_app_id(token: str, bundle_id: str) -> str:
     return rows[0]["id"]
 
 
-def latest_version_id(token: str, app_id: str) -> str:
+_EDITABLE_STATES = {
+    "PREPARE_FOR_SUBMISSION",
+    "DEVELOPER_REJECTED",
+    "REJECTED",
+    "METADATA_REJECTED",
+    "INVALID_BINARY",
+    "WAITING_FOR_REVIEW",
+}
+
+
+def _fetch_versions(token: str, app_id: str) -> list[dict]:
     # This endpoint does not accept a `sort` query parameter (Apple
     # returns PARAMETER_ERROR.ILLEGAL). Fetch a batch with createdDate
     # in the response and sort locally. limit=200 is the API maximum.
@@ -98,12 +108,38 @@ def latest_version_id(token: str, app_id: str) -> str:
                     params={"limit": "200",
                             "fields[appStoreVersions]": "versionString,createdDate,appStoreState"})
     rows = data.get("data", [])
-    if not rows:
-        sys.exit(f"ERROR: app {app_id} has no app store versions yet "
-                 "(is the first TestFlight build still processing?)")
     rows.sort(key=lambda r: r.get("attributes", {}).get("createdDate", ""),
               reverse=True)
-    return rows[0]["id"]
+    return rows
+
+
+def latest_editable_version_id(token: str, app_id: str) -> str:
+    """Return the most recently-created version in a state that still
+    accepts whatsNew edits. altool's upload returns well before Apple
+    creates an ASC version row for the new build, so retry with
+    exponential-ish backoff for up to ~10 minutes."""
+    delays = [0, 15, 30, 45, 60, 90, 120, 120, 120, 120]
+    last_states: list[tuple[str, str]] = []
+    for delay in delays:
+        if delay:
+            print(f"  no editable version yet, waiting {delay}s...", flush=True)
+            time.sleep(delay)
+        rows = _fetch_versions(token, app_id)
+        last_states = [(r["id"], r["attributes"].get("appStoreState", "?"))
+                       for r in rows]
+        editable = [r for r in rows
+                    if r.get("attributes", {}).get("appStoreState") in _EDITABLE_STATES]
+        if editable:
+            picked = editable[0]
+            vs = picked["attributes"].get("versionString")
+            st = picked["attributes"].get("appStoreState")
+            print(f"  targeting version {vs} ({st}, id={picked['id']})", flush=True)
+            return picked["id"]
+    sys.exit(
+        f"ERROR: no editable App Store version appeared within ~10 min.\n"
+        f"Versions seen (id, state): {last_states}\n"
+        f"Editable states we accept: {sorted(_EDITABLE_STATES)}"
+    )
 
 
 def version_localizations(token: str, version_id: str) -> list[dict]:
@@ -141,7 +177,7 @@ def main() -> None:
     token = mint_jwt(_env("ASC_KEY_ID"), _env("ASC_ISSUER_ID"), _env("ASC_P8"))
     bundle_id = _env("ASC_BUNDLE_ID", default="com.qvyshift.translate")
     app_id    = find_app_id(token, bundle_id)
-    vid       = latest_version_id(token, app_id)
+    vid       = latest_editable_version_id(token, app_id)
     locs      = version_localizations(token, vid)
     if not locs:
         sys.exit(f"ERROR: app version {vid} has no localizations yet")
