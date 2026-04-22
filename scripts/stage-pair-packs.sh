@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Materialize one on-demand asset-pack Gradle module per enabled pair, laying out
 #
-#   pair_<code>/
+#   android/pair_<code>/
 #     build.gradle
 #     src/main/AndroidManifest.xml
 #     src/main/assets/apertium-<pair>.jar   ← from $1 (source dir of prepped JARs)
@@ -9,19 +9,20 @@
 # Usage: ./scripts/stage-pair-packs.sh <jar-source-dir>
 #
 # The JAR source dir is typically either:
-#   - app/src/main/assets/pairs/  (historical flat layout — used for dev)
-#   - a CI artifact download dir populated by native/prep-pair.sh
+#   - android/app/src/main/assets/pairs/  (historical flat layout — used for dev)
+#   - a CI artifact download dir populated by android/native/prep-pair.sh
 #
 # Emits:
 #   /tmp/pack-modules.txt — one ':pair_<code>' gradle coord per line, used to
-#                           rewrite settings.gradle and app/build.gradle.
+#                           rewrite android/settings.gradle and
+#                           android/app/build.gradle.
 set -euo pipefail
 
 SRC="${1:?usage: $0 <jar-source-dir>}"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$REPO_ROOT"
+cd "$REPO_ROOT/android"
 
-./scripts/list-enabled-pairs.sh > /tmp/pairs.txt
+../scripts/list-enabled-pairs.sh > /tmp/pairs.txt
 
 : > /tmp/pack-modules.txt
 

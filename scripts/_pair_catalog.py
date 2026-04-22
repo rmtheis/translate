@@ -8,7 +8,7 @@ from pathlib import Path
 import re
 
 
-CATALOG_PATH = Path(__file__).resolve().parent.parent / "app/src/main/java/com/qvyshift/translate/PairCatalog.java"
+CATALOG_PATH = Path(__file__).resolve().parent.parent / "android/app/src/main/java/com/qvyshift/translate/PairCatalog.java"
 
 _PAIR_RE = re.compile(
     r'new Pair\('

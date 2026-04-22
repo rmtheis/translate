@@ -1,0 +1,397 @@
+name: Build and release (iOS)
+
+# Decoupled from the Android workflow — same monthly cadence, separate
+# pipeline. Assumes a future repo layout (github.com/rmtheis/translate-ios)
+# where apertium-ios-native lives at native/ inside this repo, and
+# ios/ is the Xcode project. The ODR-staging script lives at
+# scripts/stage-pair-odrs.sh (analogue of Android's stage-pair-packs.sh).
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_publish:
+        description: Upload to TestFlight/App Store even if no pair changed
+        type: boolean
+        default: false
+  schedule:
+    # Monthly on the 2nd at 04:00 UTC — one day after Android, so their
+    # prep-pair caches are already warm if we opt to reuse them.
+    - cron: '0 4 2 * *'
+
+env:
+  PACKAGE_NAME: com.qvyshift.translate
+  XCODE_VERSION: "26.4"
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Cross-compile the Apertium C++ toolchain into ApertiumCore.xcframework.
+  #    Cached by the tree SHA of native/ so this heavy step only reruns when
+  #    the toolchain actually changes.
+  # ---------------------------------------------------------------------------
+  natives:
+    name: Build ApertiumCore.xcframework
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: key
+        run: |
+          sha=$(git rev-parse HEAD:ios/native)
+          echo "cache_key=xcframework-${sha}-xcode-${{ env.XCODE_VERSION }}" >> $GITHUB_OUTPUT
+
+      - name: Cache xcframework
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ios/native/ApertiumCore.xcframework
+          key: ${{ steps.key.outputs.cache_key }}
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        name: Install toolchain
+        run: brew install autoconf automake libtool pkg-config cmake ninja bison
+
+      # Two slices are enough for App Store: ios-arm64 (device) and
+      # ios-arm64-sim (Apple Silicon sim). x86_64-sim is optional; add
+      # SLICE=ios-x86_64-sim build step if Intel Mac users complain.
+      - if: steps.cache.outputs.cache-hit != 'true'
+        name: Cross-compile device slice
+        working-directory: ios/native
+        run: MAX_JOBS=2 ./build.sh all && ./build.sh wrappers
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        name: Cross-compile simulator slice
+        working-directory: ios/native
+        run: SLICE=ios-arm64-sim MAX_JOBS=2 ./build.sh all && SLICE=ios-arm64-sim ./build.sh wrappers
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        name: Wrap into xcframework
+        working-directory: ios/native
+        run: ./build.sh xcframework
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apertium-core-xcframework
+          path: ios/native/ApertiumCore.xcframework
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # 2. Pull prebuilt pair data. Reuses android/native/prep-pair.sh unchanged —
+  #    it fetches Debian .debs and repacks platform-neutral JARs. Same
+  #    JARs Android consumes; the iOS stage script unpacks them into
+  #    per-pair folder references.
+  # ---------------------------------------------------------------------------
+  pairs:
+    name: Prep pair JARs
+    runs-on: ubuntu-latest
+    outputs:
+      inventory_sha: ${{ steps.inv.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enumerate enabled pairs from Swift catalog
+        id: list
+        run: |
+          # Extract pkg names from PairCatalog.swift's `LanguagePair(pkg: "...")` entries.
+          grep -oE 'pkg: "apertium-[a-z_]+-[a-z_]+"' \
+            ios/Translate/PairCatalog.swift \
+            | sed 's/pkg: "apertium-//; s/".*//' > /tmp/pairs.txt
+          echo "count=$(wc -l < /tmp/pairs.txt | tr -d ' ')" >> $GITHUB_OUTPUT
+          echo "--- pairs:"; cat /tmp/pairs.txt
+
+      - name: Cache per-pair JARs
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: pair-jars
+          key: ios-pairs-catalog-${{ hashFiles('ios/Translate/PairCatalog.swift', 'android/native/prep-pair.sh') }}-${{ github.run_id }}
+          restore-keys: |
+            ios-pairs-catalog-${{ hashFiles('ios/Translate/PairCatalog.swift', 'android/native/prep-pair.sh') }}-
+
+      - name: Install prep-pair.sh deps
+        run: sudo apt-get update && sudo apt-get install -y xz-utils
+
+      - name: Fetch missing JARs
+        env:
+          PAIRS_DIR: ${{ github.workspace }}/pair-jars
+        run: |
+          mkdir -p pair-jars
+          while read pair; do
+            jar="pair-jars/apertium-${pair}.jar"
+            if [ -f "$jar" ]; then echo "have $pair"; continue; fi
+            bash android/native/prep-pair.sh "$pair"
+          done < /tmp/pairs.txt
+
+      - name: Compute pair inventory
+        id: inv
+        run: |
+          python3 scripts/pair-inventory.py pair-jars > pair-inventory.json
+          echo "sha=$(sha256sum pair-inventory.json | awk '{print $1}')" >> $GITHUB_OUTPUT
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-pairs
+          path: |
+            pair-jars
+            pair-inventory.json
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # 3. Stage pair contents into the Xcode project, archive, export signed IPA.
+  # ---------------------------------------------------------------------------
+  build:
+    name: Archive Translate.ipa
+    runs-on: macos-14
+    needs: [natives, pairs]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: apertium-core-xcframework
+          path: ios/native/ApertiumCore.xcframework
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ios-pairs
+          path: .
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Install xcodegen
+        run: brew install xcodegen
+
+      - name: Unzip pair JARs into PairResources/
+        run: bash scripts/stage-pair-odrs.sh pair-jars
+
+      - name: Bump CFBundleVersion + CFBundleShortVersionString
+        # Android bumps yyyymmddHH for versionCode; iOS uses that same
+        # format for CFBundleVersion (App Store's build-number field).
+        # CFBundleShortVersionString increments the patch component —
+        # the deploy step commits the new value back to project.yml so
+        # the next run picks up where this one left off.
+        run: |
+          current=$(grep -oE 'CFBundleShortVersionString: "[^"]+"' ios/project.yml \
+            | head -1 | sed 's/.*"\([^"]*\)"/\1/')
+          IFS='.' read -r maj min pat <<<"$current"
+          new_name="$maj.$min.$((pat + 1))"
+          build=$(date -u +%Y%m%d%H)
+          sed -i '' "s|CFBundleShortVersionString: \"$current\"|CFBundleShortVersionString: \"$new_name\"|" ios/project.yml
+          sed -i '' "s|CFBundleVersion: \"[0-9]*\"|CFBundleVersion: \"$build\"|" ios/project.yml
+          echo "Built CFBundleShortVersionString=$new_name CFBundleVersion=$build"
+
+      - name: Generate Xcode project
+        working-directory: ios
+        run: xcodegen generate
+
+      # --- Signing. Secrets expected:
+      #   IOS_DISTRIBUTION_CERT_P12        — base64 of .p12 distribution cert
+      #   IOS_DISTRIBUTION_CERT_PASSWORD   — password for the p12
+      #   IOS_PROVISIONING_PROFILE         — base64 of App Store profile
+      - name: Import signing cert
+        env:
+          CERT_B64: ${{ secrets.IOS_DISTRIBUTION_CERT_P12 }}
+          CERT_PASS: ${{ secrets.IOS_DISTRIBUTION_CERT_PASSWORD }}
+        run: |
+          KEYCHAIN=build.keychain
+          security create-keychain -p tmp "$KEYCHAIN"
+          security default-keychain -s "$KEYCHAIN"
+          security unlock-keychain -p tmp "$KEYCHAIN"
+          security set-keychain-settings -t 3600 -l "$KEYCHAIN"
+          echo "$CERT_B64" | base64 --decode > /tmp/cert.p12
+          security import /tmp/cert.p12 -k "$KEYCHAIN" -P "$CERT_PASS" \
+            -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k tmp "$KEYCHAIN"
+
+      - name: Install provisioning profile
+        env:
+          PROFILE_B64: ${{ secrets.IOS_PROVISIONING_PROFILE }}
+        run: |
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo "$PROFILE_B64" | base64 --decode \
+            > ~/Library/MobileDevice/Provisioning\ Profiles/Translate.mobileprovision
+
+      - name: Archive
+        working-directory: ios
+        run: |
+          xcodebuild -project Translate.xcodeproj -scheme Translate \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath build/Translate.xcarchive \
+            CODE_SIGNING_ALLOWED=YES \
+            CODE_SIGN_STYLE=Manual \
+            clean archive
+
+      - name: Export IPA (App Store)
+        working-directory: ios
+        run: |
+          cat > /tmp/ExportOptions.plist <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>uploadBitcode</key><false/>
+            <key>compileBitcode</key><false/>
+            <!-- Package all ODR tags with the archive for the App Store
+                 CDN upload; TestFlight includes them too. -->
+            <key>onDemandResourcesAssetPacksBaseURL</key>
+            <string>https://apps.apple.com/ondemand/Translate/</string>
+          </dict>
+          </plist>
+          PLIST
+          xcodebuild -exportArchive \
+            -archivePath build/Translate.xcarchive \
+            -exportOptionsPlist /tmp/ExportOptions.plist \
+            -exportPath build/export
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: translate-ipa
+          path: ios/build/export/Translate.ipa
+          retention-days: 14
+
+  # ---------------------------------------------------------------------------
+  # 4. Upload to App Store Connect via the API (no Fastlane, per
+  #    CLAUDE.md). scripts/asc_upload.py wraps `xcrun altool` with an
+  #    ES256 JWT minted from the .p8 private key — sibling of the
+  #    Android Play Developer-API upload.
+  # ---------------------------------------------------------------------------
+  deploy:
+    name: Upload to App Store Connect
+    runs-on: macos-14
+    needs: [build, pairs]
+    # Snapshot / versionName commit-back step pushes to master, so the
+    # token needs write permission on the repo.
+    permissions:
+      contents: write
+    # Only deploy on an explicit workflow_dispatch; the scheduled run
+    # builds + uploads artifacts but stops short of publishing, matching
+    # the Android safety gate.
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: translate-ipa
+          path: ipa
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ios-pairs
+          # ios-pairs artifact carries pair-jars/ + pair-inventory.json;
+          # only the inventory is needed for the gate below.
+          path: .
+
+      - name: Install uploader deps
+        run: python3 -m pip install --user pyjwt requests cryptography
+
+      - name: Fetch prior pair inventory from repo
+        run: cp .ci/prior-pair-inventory-ios.json prior.json 2>/dev/null || echo '[]' > prior.json
+
+      - name: Gate on pair changes
+        id: gate
+        env:
+          FORCE_PUBLISH: ${{ inputs.force_publish }}
+        # Same logic as the Android release job: if nothing in
+        # pair-inventory changed vs the last published snapshot, skip
+        # the ASC upload (saves an App Review round-trip on quiet months).
+        # force_publish=true overrides for app-code-only releases.
+        run: |
+          python3 - <<'PY'
+          import json, os
+          prior = {e["pair"]: e for e in json.load(open("prior.json"))}
+          current = {e["pair"]: e for e in json.load(open("pair-inventory.json"))}
+          added   = sorted(set(current) - set(prior))
+          removed = sorted(set(prior) - set(current))
+          changed = sorted(p for p in current if p in prior
+                           and prior[p].get("sha256") != current[p].get("sha256"))
+          forced = os.environ.get("FORCE_PUBLISH") == "true"
+          any_change = bool(added or removed or changed) or forced
+          print(f"added={len(added)} removed={len(removed)} changed={len(changed)} forced={forced}")
+          if changed:
+              for p in changed:
+                  pv, cv = prior[p].get("version"), current[p].get("version")
+                  print(f"  {p}: {pv or '?'} -> {cv or '?'}")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"changed={'true' if any_change else 'false'}\n")
+          PY
+
+      - name: Skip notice
+        if: steps.gate.outputs.changed != 'true'
+        run: echo "::notice::No pair changed vs last release — not publishing."
+
+      - name: Upload IPA to App Store Connect
+        if: steps.gate.outputs.changed == 'true'
+        env:
+          ASC_KEY_ID:    ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          ASC_P8:        ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+        run: python3 scripts/asc_upload.py ipa/Translate.ipa
+
+      - name: Generate inventory-diff release notes
+        if: steps.gate.outputs.changed == 'true'
+        # release-notes.py takes (prior, current) — same convention as
+        # the Android workflow's whatsnew step.
+        run: |
+          python3 scripts/release-notes.py prior.json pair-inventory.json \
+            > /tmp/release-notes.txt
+          echo "--- release notes preview:"
+          cat /tmp/release-notes.txt
+
+      - name: Post release notes to ASC
+        if: steps.gate.outputs.changed == 'true'
+        env:
+          ASC_KEY_ID:     ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          ASC_ISSUER_ID:  ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          ASC_P8:         ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          ASC_BUNDLE_ID:  ${{ env.PACKAGE_NAME }}
+        # The whatsNew PATCH can only succeed after altool has fully
+        # processed the upload and ASC has a version row for it. The
+        # script queries the latest version and retries implicitly via
+        # its find_app_id → latest_version_id lookup.
+        run: python3 scripts/asc_release_notes.py /tmp/release-notes.txt
+
+      - name: Refresh App Store description pair list
+        if: steps.gate.outputs.changed == 'true'
+        env:
+          ASC_KEY_ID:     ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          ASC_ISSUER_ID:  ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          ASC_P8:         ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          ASC_BUNDLE_ID:  ${{ env.PACKAGE_NAME }}
+        # Splices a fresh "Language pairs:" list into the app's App
+        # Store description. Mirrors the Android store-description
+        # splice, but uses a single human-readable anchor line instead
+        # of HTML-comment START/END markers.
+        run: python3 scripts/update-appstore-description.py pair-inventory.json
+
+      - name: Commit version bump + inventory snapshot
+        if: steps.gate.outputs.changed == 'true'
+        # Re-derive the same bump the build job made so the committed
+        # project.yml agrees with what's on App Store Connect.
+        run: |
+          current=$(grep -oE 'CFBundleShortVersionString: "[^"]+"' ios/project.yml \
+            | head -1 | sed 's/.*"\([^"]*\)"/\1/')
+          IFS='.' read -r maj min pat <<<"$current"
+          new_name="$maj.$min.$((pat + 1))"
+          build=$(date -u +%Y%m%d%H)
+          sed -i '' "s|CFBundleShortVersionString: \"$current\"|CFBundleShortVersionString: \"$new_name\"|" ios/project.yml
+          sed -i '' "s|CFBundleVersion: \"[0-9]*\"|CFBundleVersion: \"$build\"|" ios/project.yml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p .ci
+          cp pair-inventory.json .ci/prior-pair-inventory-ios.json
+          git add .ci/prior-pair-inventory-ios.json ios/project.yml
+          git diff --cached --quiet || {
+            git commit -m "ci(ios): release $new_name — snapshot pair inventory + bump version [skip ci]"
+            git push
+          }

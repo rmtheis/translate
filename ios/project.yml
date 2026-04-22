@@ -1,0 +1,210 @@
+# Xcode project for the Qvyshift Translate iOS app. Regenerate with:
+#   cd TranslateIOS && xcodegen generate
+# Run on simulator with:
+#   xcodebuild -project Translate.xcodeproj -scheme Translate \
+#     -destination 'platform=iOS Simulator,name=iPhone 16' build
+
+name: Translate
+options:
+  bundleIdPrefix: com.qvyshift
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER: NO
+    FRAMEWORK_SEARCH_PATHS:
+      - "$(inherited)"
+      - "$(SRCROOT)/native"
+
+targets:
+  Translate:
+    type: application
+    platform: iOS
+    sources:
+      # Swift code + the bridging header's containing dir. The bridging
+      # header itself is excluded from Compile Sources — it's imported by
+      # the project-level SWIFT_OBJC_BRIDGING_HEADER setting instead.
+      - path: Translate
+        excludes:
+          - "Bridging-Header.h"
+
+      # -----------------------------------------------------------------
+      # Pair-content delivery.
+      #
+      # apertium-eng-spa ships inside the app (no tag → install-time).
+      # Every other trunk + staging pair is tagged "pair_<snake>" for
+      # On-Demand Resources — delivered by Apple's CDN at first use.
+      # Mirrors apertium-android's PAD on-demand delivery.
+      #
+      # `type: folder` gives Xcode a blue folder reference so the pair
+      # dir lands at the bundle resource root (e.g. <bundle>/pair_eng_spa/).
+      # -----------------------------------------------------------------
+      - path: PairResources/pair_eng_spa
+        type: folder
+        buildPhase: resources
+
+      - path: PairResources/pair_arg_cat
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_arg_cat]
+      - path: PairResources/pair_bel_rus
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_bel_rus]
+      - path: PairResources/pair_cat_glg
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_cat_glg]
+      - path: PairResources/pair_cat_ita
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_cat_ita]
+      - path: PairResources/pair_cat_srd
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_cat_srd]
+      - path: PairResources/pair_dan_nor
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_dan_nor]
+      - path: PairResources/pair_eng_cat
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_eng_cat]
+      - path: PairResources/pair_fra_cat
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_fra_cat]
+      - path: PairResources/pair_hbs_eng
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_hbs_eng]
+      - path: PairResources/pair_hbs_mkd
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_hbs_mkd]
+      - path: PairResources/pair_mkd_eng
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_mkd_eng]
+      - path: PairResources/pair_nno_nob
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_nno_nob]
+      - path: PairResources/pair_oci_cat
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_oci_cat]
+      - path: PairResources/pair_oci_fra
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_oci_fra]
+      - path: PairResources/pair_por_cat
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_por_cat]
+      - path: PairResources/pair_ron_cat
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_ron_cat]
+      - path: PairResources/pair_rus_ukr
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_rus_ukr]
+      - path: PairResources/pair_sme_nob
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_sme_nob]
+      - path: PairResources/pair_spa_arg
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_spa_arg]
+      - path: PairResources/pair_spa_ast
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_spa_ast]
+      - path: PairResources/pair_spa_cat
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_spa_cat]
+      - path: PairResources/pair_spa_glg
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_spa_glg]
+      - path: PairResources/pair_spa_ita
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_spa_ita]
+      - path: PairResources/pair_srd_ita
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_srd_ita]
+      - path: PairResources/pair_swe_dan
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_swe_dan]
+      - path: PairResources/pair_swe_nor
+        type: folder
+        buildPhase: resources
+        resourceTags: [pair_swe_nor]
+
+    resources:
+      - path: Translate/Assets.xcassets
+
+    info:
+      path: Translate/Info.plist
+      properties:
+        # "Translate" alone collides with Apple's built-in Translate app
+        # (ITMS-90129 on upload). Qualify both names — display name shows
+        # on the Home Screen under the icon; bundle name is an internal
+        # identifier that ASC also checks.
+        CFBundleDisplayName: Qvyshift Translate
+        CFBundleName: Qvyshift Translate
+        CFBundleShortVersionString: "1.0.0"
+        CFBundleVersion: "2"
+        LSRequiresIPhoneOS: true
+        # Export-compliance: app does not use non-exempt encryption.
+        # Apertium + HFST + CG3 + ICU + libxml2 all do string processing
+        # over compacted FSTs; no crypto beyond what iOS itself ships.
+        # Setting false here skips the ASC export-compliance questionnaire
+        # at every upload.
+        ITSAppUsesNonExemptEncryption: false
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        # Apple's ODR build-tool reads these keys too, but xcodegen
+        # writes them via the top-level target `onDemandResourceTags`
+        # key below — not needed here.
+
+    dependencies:
+      - framework: "native/ApertiumCore.xcframework"
+        embed: false
+
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.qvyshift.translate
+        SWIFT_OBJC_BRIDGING_HEADER: "Translate/Bridging-Header.h"
+        HEADER_SEARCH_PATHS:
+          - "$(inherited)"
+          - "$(SRCROOT)/native/wrappers"
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGN_IDENTITY: ""
+        CODE_SIGN_STYLE: Manual
+        DEVELOPMENT_TEAM: ""
+        OTHER_LDFLAGS:
+          - "$(inherited)"
+          - "-lc++"
+        # ODR prefetch order — empty in MVP; Apple installs tags only on
+        # explicit NSBundleResourceRequest. To prefetch popular pairs
+        # after install, list them under `ON_DEMAND_RESOURCES_PREFETCH_ORDER`.
+        ON_DEMAND_RESOURCES_INITIAL_INSTALL_TAGS: ""
+        ON_DEMAND_RESOURCES_PREFETCH_ORDER: ""
