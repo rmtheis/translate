@@ -308,8 +308,13 @@ jobs:
           # only the inventory is needed for the gate below.
           path: .
 
+      - name: Set up Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
       - name: Install uploader deps
-        run: python3 -m pip install --user pyjwt requests cryptography
+        run: python3 -m pip install pyjwt requests cryptography
 
       - name: Fetch prior pair inventory from repo
         run: cp .ci/prior-pair-inventory-ios.json prior.json 2>/dev/null || echo '[]' > prior.json
