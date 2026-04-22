@@ -342,11 +342,17 @@ public class TranslatorActivity extends AppCompatActivity {
   private void showSettingsDialog() {
     View content = getLayoutInflater().inflate(R.layout.dialog_about_settings, null);
 
+    TextView versionText = content.findViewById(R.id.versionText);
+    try {
+      String name = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+      versionText.setText("v" + (name != null ? name : "?"));
+    } catch (android.content.pm.PackageManager.NameNotFoundException e) {
+      versionText.setText("");
+    }
+
     TextView basedOn = content.findViewById(R.id.basedOnText);
     basedOn.setText(Html.fromHtml(
-        "Based on the <a href=\"https://github.com/apertium\">Apertium</a> project<br/>"
-            + "<a href=\"https://github.com/rmtheis/translate\">github.com/rmtheis/translate</a><br/>"
-            + "Licensed under <a href=\"https://www.gnu.org/licenses/gpl-3.0.html\">GPLv3</a>"));
+        "<a href=\"https://github.com/rmtheis/translate\">github.com/rmtheis/translate</a>"));
     basedOn.setMovementMethod(LinkMovementMethod.getInstance());
 
     SwitchMaterial displayMarkSwitch = content.findViewById(R.id.displayMarkSwitch);

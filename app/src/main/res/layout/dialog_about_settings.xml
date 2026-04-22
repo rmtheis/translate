@@ -16,12 +16,14 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/versionText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:gravity="center_horizontal"
-        android:text="v1.0.0"
-        android:textAppearance="?attr/textAppearanceBody2" />
+        tools:ignore="MissingDefaultResource"
+        android:textAppearance="?attr/textAppearanceBody2"
+        xmlns:tools="http://schemas.android.com/tools" />
 
     <TextView
         android:layout_width="match_parent"
@@ -88,9 +90,13 @@
         android:layout_marginTop="20dp"
         android:background="?android:attr/listDivider" />
 
+    <!-- OutlinedButton style resolves cleanly under Theme.MaterialComponents (M2).
+         The M3 TonalButton style we had initially used M3-only color tokens
+         (colorSecondaryContainer / colorOnSecondaryContainer) which fell back to
+         default pink-on-pink under M2, making the label invisible. -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/downloadAllButton"
-        style="@style/Widget.Material3.Button.TonalButton"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp" />
