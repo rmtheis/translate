@@ -161,6 +161,8 @@
             android:layout_marginBottom="20dp"
             android:orientation="horizontal">
 
+            <!-- Target field is read-only, so only copy is surfaced here.
+                 (Source field retains paste.) -->
             <ImageButton
                 android:id="@+id/targetCopyButton"
                 android:layout_width="36dp"
@@ -168,15 +170,6 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/copy"
                 android:src="@drawable/ic_content_copy_24" />
-
-            <ImageButton
-                android:id="@+id/targetPasteButton"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/paste"
-                android:src="@drawable/ic_content_paste_24" />
         </LinearLayout>
     </FrameLayout>
 

@@ -91,7 +91,6 @@ public class TranslatorActivity extends AppCompatActivity {
     findViewById(R.id.sourceCopyButton).setOnClickListener(v -> copyFrom(inputEditText));
     findViewById(R.id.sourcePasteButton).setOnClickListener(v -> pasteInto(inputEditText));
     findViewById(R.id.targetCopyButton).setOnClickListener(v -> copyFrom(outputTextView));
-    findViewById(R.id.targetPasteButton).setOnClickListener(v -> pasteInto(outputTextView));
     pairAdapter = new PairListAdapter(this);
     languagePairDropdown.setAdapter(pairAdapter);
     languagePairDropdown.setOnItemClickListener((parent, view, position, id) -> {
