@@ -262,7 +262,7 @@ jobs:
             -archivePath build/Translate.xcarchive \
             -exportOptionsPlist /tmp/ExportOptions.plist \
             -exportPath build/export
-          # xcodebuild names the .ipa after CFBundleName ("Qvyshift
+          # xcodebuild names the .ipa after CFBundleName ("Apertium
           # Translate.ipa"), not the scheme. Normalize to Translate.ipa
           # so downstream steps and artifact paths are simple.
           ls -la build/export

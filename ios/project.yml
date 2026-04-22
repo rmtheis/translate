@@ -1,4 +1,4 @@
-# Xcode project for the Qvyshift Translate iOS app. Regenerate with:
+# Xcode project for the Translate iOS app. Regenerate with:
 #   cd TranslateIOS && xcodegen generate
 # Run on simulator with:
 #   xcodebuild -project Translate.xcodeproj -scheme Translate \
@@ -158,12 +158,13 @@ targets:
     info:
       path: Translate/Info.plist
       properties:
-        # "Translate" alone collides with Apple's built-in Translate app
-        # (ITMS-90129 on upload). Qualify both names — display name shows
-        # on the Home Screen under the icon; bundle name is an internal
-        # identifier that ASC also checks.
-        CFBundleDisplayName: Qvyshift Translate
-        CFBundleName: Qvyshift Translate
+        # Home Screen label is plain "Translate" (CFBundleDisplayName is
+        # the user-facing name and has no uniqueness requirement).
+        # CFBundleName is the internal bundle name — ITMS-90129 rejects
+        # "Translate" there because Apple's built-in Translate app
+        # already owns it, so qualify it as "Apertium Translate".
+        CFBundleDisplayName: Translate
+        CFBundleName: Apertium Translate
         CFBundleShortVersionString: "1.0.0"
         CFBundleVersion: "2"
         LSRequiresIPhoneOS: true
