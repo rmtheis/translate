@@ -228,6 +228,9 @@ jobs:
             -archivePath build/Translate.xcarchive \
             CODE_SIGNING_ALLOWED=YES \
             CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM=X5S32CFST2 \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="Translate App Store" \
             clean archive
 
       - name: Export IPA (App Store)
@@ -238,8 +241,14 @@ jobs:
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
           <dict>
-            <key>method</key><string>app-store</string>
+            <key>method</key><string>app-store-connect</string>
+            <key>teamID</key><string>X5S32CFST2</string>
             <key>signingStyle</key><string>manual</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.qvyshift.translate</key>
+              <string>Translate App Store</string>
+            </dict>
             <key>uploadBitcode</key><false/>
             <key>compileBitcode</key><false/>
             <!-- Package all ODR tags with the archive for the App Store
