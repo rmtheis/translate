@@ -479,11 +479,14 @@ build_openfst() {
   local src="$SCRIPT_DIR/openfst"
   local version="1.8.5"
   if [ ! -d "$src" ]; then
-    # Mirror-first: the openfst.org site has been flaky from CI. rmtheis'
-    # translate-native release holds a vendored tarball; fall back to the
-    # upstream site if the mirror is unreachable.
+    # Mirror-first: openfst.org 5xx/403's from GitHub Actions runners.
+    # rmtheis/translate (this repo) hosts a vendored tarball as a release
+    # asset; fall back to the upstream site if the mirror is unreachable.
+    # The mirror originally lived on rmtheis/translate-native, which was
+    # folded into this repo in April 2026 — update in lock-step with
+    # android/native/build.sh.
     local urls=(
-      "https://github.com/rmtheis/translate-native/releases/download/vendor-openfst-${version}/openfst-${version}.tar.gz"
+      "https://github.com/rmtheis/translate/releases/download/vendor-openfst-${version}/openfst-${version}.tar.gz"
       "https://www.openfst.org/twiki/pub/FST/FstDownload/openfst-${version}.tar.gz"
     )
     for url in "${urls[@]}"; do
