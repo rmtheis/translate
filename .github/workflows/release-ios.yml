@@ -20,7 +20,9 @@ on:
 
 env:
   PACKAGE_NAME: com.qvyshift.translate
-  XCODE_VERSION: "26.4"
+  # GitHub-hosted macOS runners don't carry the very latest Xcode yet;
+  # pin to whatever stable release is on the runner image.
+  XCODE_VERSION: latest-stable
 
 jobs:
   # ---------------------------------------------------------------------------
@@ -30,7 +32,7 @@ jobs:
   # ---------------------------------------------------------------------------
   natives:
     name: Build ApertiumCore.xcframework
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
 
@@ -145,7 +147,7 @@ jobs:
   # ---------------------------------------------------------------------------
   build:
     name: Archive Translate.ipa
-    runs-on: macos-14
+    runs-on: macos-15
     needs: [natives, pairs]
     steps:
       - uses: actions/checkout@v4
@@ -266,7 +268,7 @@ jobs:
   # ---------------------------------------------------------------------------
   deploy:
     name: Upload to App Store Connect
-    runs-on: macos-14
+    runs-on: macos-15
     needs: [build, pairs]
     # Snapshot / versionName commit-back step pushes to master, so the
     # token needs write permission on the repo.
