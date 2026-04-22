@@ -90,13 +90,16 @@ def find_app_id(token: str, bundle_id: str) -> str:
     return rows[0]["id"]
 
 
+# States where whatsNew can actually be PATCHed. Apple's docs list
+# REJECTED + WAITING_FOR_REVIEW as "editable" too, but empirically the
+# API returns HTTP 409 ("Attribute 'whatsNew' cannot be edited at this
+# time") for both — stay conservative and only target states that
+# actually accept edits.
 _EDITABLE_STATES = {
     "PREPARE_FOR_SUBMISSION",
     "DEVELOPER_REJECTED",
-    "REJECTED",
     "METADATA_REJECTED",
     "INVALID_BINARY",
-    "WAITING_FOR_REVIEW",
 }
 
 
@@ -113,11 +116,13 @@ def _fetch_versions(token: str, app_id: str) -> list[dict]:
     return rows
 
 
-def latest_editable_version_id(token: str, app_id: str) -> str:
+def latest_editable_version_id(token: str, app_id: str) -> str | None:
     """Return the most recently-created version in a state that still
-    accepts whatsNew edits. altool's upload returns well before Apple
-    creates an ASC version row for the new build, so retry with
-    exponential-ish backoff for up to ~10 minutes."""
+    accepts whatsNew edits, or None if no such version appears within
+    ~10 minutes. altool's upload returns well before Apple creates the
+    ASC version row, so we retry with backoff. A None return means
+    "ASC is in a state where this script can't safely patch" — the
+    caller should warn and exit cleanly rather than fail the job."""
     delays = [0, 15, 30, 45, 60, 90, 120, 120, 120, 120]
     last_states: list[tuple[str, str]] = []
     for delay in delays:
@@ -135,11 +140,15 @@ def latest_editable_version_id(token: str, app_id: str) -> str:
             st = picked["attributes"].get("appStoreState")
             print(f"  targeting version {vs} ({st}, id={picked['id']})", flush=True)
             return picked["id"]
-    sys.exit(
-        f"ERROR: no editable App Store version appeared within ~10 min.\n"
-        f"Versions seen (id, state): {last_states}\n"
-        f"Editable states we accept: {sorted(_EDITABLE_STATES)}"
+    print(
+        f"WARNING: no editable App Store version appeared within ~10 min.\n"
+        f"  Versions seen (id, state): {last_states}\n"
+        f"  Editable states we accept: {sorted(_EDITABLE_STATES)}\n"
+        f"  Skipping whatsNew patch (not fatal — metadata stays at its "
+        f"current value).",
+        flush=True,
     )
+    return None
 
 
 def version_localizations(token: str, version_id: str) -> list[dict]:
@@ -178,6 +187,8 @@ def main() -> None:
     bundle_id = _env("ASC_BUNDLE_ID", default="com.qvyshift.translate")
     app_id    = find_app_id(token, bundle_id)
     vid       = latest_editable_version_id(token, app_id)
+    if vid is None:
+        return  # warning already printed; let the workflow continue
     locs      = version_localizations(token, vid)
     if not locs:
         sys.exit(f"ERROR: app version {vid} has no localizations yet")

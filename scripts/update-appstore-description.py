@@ -132,22 +132,22 @@ def find_app_id(token: str, bundle_id: str) -> str:
     return rows[0]["id"]
 
 
+# Same editable-state set as asc_release_notes.py — Apple's docs claim
+# REJECTED + WAITING_FOR_REVIEW are editable, but the API returns 409
+# in practice, so stay conservative.
 _EDITABLE_STATES = {
     "PREPARE_FOR_SUBMISSION",
     "DEVELOPER_REJECTED",
-    "REJECTED",
     "METADATA_REJECTED",
     "INVALID_BINARY",
-    "WAITING_FOR_REVIEW",
 }
 
 
-def latest_editable_version_id(token: str, app_id: str) -> str:
+def latest_editable_version_id(token: str, app_id: str) -> str | None:
     """Pick the newest version whose state still accepts metadata
     edits, retrying in case the build we just uploaded hasn't yet
-    materialized as an ASC version row. Mirrors the helper in
-    asc_release_notes.py — kept duplicated to avoid cross-script
-    imports in the CI runner."""
+    materialized as an ASC version row. Returns None if ASC has no
+    editable version — the caller warns and exits cleanly."""
     delays = [0, 15, 30, 45, 60, 90, 120, 120, 120, 120]
     last_states: list[tuple[str, str]] = []
     for delay in delays:
@@ -171,11 +171,15 @@ def latest_editable_version_id(token: str, app_id: str) -> str:
             st = picked["attributes"].get("appStoreState")
             print(f"  targeting version {vs} ({st}, id={picked['id']})", flush=True)
             return picked["id"]
-    sys.exit(
-        f"ERROR: no editable App Store version appeared within ~10 min.\n"
-        f"Versions seen (id, state): {last_states}\n"
-        f"Editable states we accept: {sorted(_EDITABLE_STATES)}"
+    print(
+        f"WARNING: no editable App Store version appeared within ~10 min.\n"
+        f"  Versions seen (id, state): {last_states}\n"
+        f"  Editable states we accept: {sorted(_EDITABLE_STATES)}\n"
+        f"  Skipping description splice (not fatal — description stays "
+        f"at its current value).",
+        flush=True,
     )
+    return None
 
 
 def version_localizations(token: str, version_id: str) -> list[dict]:
@@ -212,6 +216,8 @@ def main() -> None:
     bundle_id = _env("ASC_BUNDLE_ID", default="com.qvyshift.translate")
     app_id = find_app_id(token, bundle_id)
     vid    = latest_editable_version_id(token, app_id)
+    if vid is None:
+        return  # warning already printed; let the workflow continue
     locs   = version_localizations(token, vid)
     if not locs:
         sys.exit(f"ERROR: app version {vid} has no localizations")
