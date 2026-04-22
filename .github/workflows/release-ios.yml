@@ -183,7 +183,7 @@ jobs:
             | head -1 | sed 's/.*"\([^"]*\)"/\1/')
           IFS='.' read -r maj min pat <<<"$current"
           new_name="$maj.$min.$((pat + 1))"
-          build=$(date -u +%Y%m%d%H)
+          build=$(date -u +%Y%m%d%H%M)
           sed -i '' "s|CFBundleShortVersionString: \"$current\"|CFBundleShortVersionString: \"$new_name\"|" ios/project.yml
           sed -i '' "s|CFBundleVersion: \"[0-9]*\"|CFBundleVersion: \"$build\"|" ios/project.yml
           echo "Built CFBundleShortVersionString=$new_name CFBundleVersion=$build"
@@ -404,7 +404,7 @@ jobs:
             | head -1 | sed 's/.*"\([^"]*\)"/\1/')
           IFS='.' read -r maj min pat <<<"$current"
           new_name="$maj.$min.$((pat + 1))"
-          build=$(date -u +%Y%m%d%H)
+          build=$(date -u +%Y%m%d%H%M)
           sed -i '' "s|CFBundleShortVersionString: \"$current\"|CFBundleShortVersionString: \"$new_name\"|" ios/project.yml
           sed -i '' "s|CFBundleVersion: \"[0-9]*\"|CFBundleVersion: \"$build\"|" ios/project.yml
 
