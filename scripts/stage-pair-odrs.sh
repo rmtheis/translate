@@ -13,6 +13,9 @@
 set -euo pipefail
 
 SRC="${1:?usage: $0 <dir-of-jars>}"
+# Resolve $SRC to an absolute path — the per-pair loop cd's into each
+# destination dir before invoking unzip, which breaks relative jar paths.
+SRC="$(cd "$SRC" && pwd)"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT="$REPO_ROOT/ios/PairResources"
 
