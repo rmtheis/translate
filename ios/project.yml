@@ -158,15 +158,17 @@ targets:
     info:
       path: Translate/Info.plist
       properties:
-        # Home Screen label is plain "Translate" (CFBundleDisplayName is
-        # the user-facing name and has no uniqueness requirement).
-        # CFBundleName is the internal bundle name — ITMS-90129 rejects
-        # "Translate" there because Apple's built-in Translate app
-        # already owns it, so qualify it as "Apertium Translate".
-        CFBundleDisplayName: Translate
-        CFBundleName: Apertium Translate
+        # App name is "Apertium Translate Models" everywhere — icon
+        # label on the Home Screen, internal bundle name, and intended
+        # App Store listing name. It signals what the app actually is
+        # (a showcase of the Apertium machine-translation language
+        # models) and dodges ITMS-90129 collisions with Apple's
+        # built-in Translate app since neither key matches a reserved
+        # Apple product name.
+        CFBundleDisplayName: Apertium Translate Models
+        CFBundleName: Apertium Translate Models
         CFBundleShortVersionString: "1.0.0"
-        CFBundleVersion: "2"
+        CFBundleVersion: "5"
         LSRequiresIPhoneOS: true
         # Export-compliance: app does not use non-exempt encryption.
         # Apertium + HFST + CG3 + ICU + libxml2 all do string processing

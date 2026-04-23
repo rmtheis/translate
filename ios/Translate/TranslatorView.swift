@@ -58,10 +58,13 @@ struct TranslatorView: View {
     @State private var selectedPkgOverride: String? = nil
     @State private var directionOverride: String? = nil
 
+    // Tracks whether the source TextEditor has keyboard focus so we
+    // can dismiss the keyboard from the toolbar "Done" button.
+    @FocusState private var inputFocused: Bool
+
     var body: some View {
         NavigationStack {
             VStack(alignment: .center, spacing: 8) {
-                tagline
                 pairPicker
                 textField(isSource: true,
                           label: sideTitle(source: true),
@@ -75,7 +78,7 @@ struct TranslatorView: View {
             }
             .padding(.horizontal, 12)
             .padding(.top, 4)
-            .navigationTitle("Translate")
+            .navigationTitle("Apertium Translate Models")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -83,6 +86,13 @@ struct TranslatorView: View {
                         Image(systemName: "gearshape")
                     }
                     .accessibilityLabel("Settings")
+                }
+                // "Done" button above the keyboard so users can dismiss
+                // it — TextEditor's Return key inserts a newline and
+                // doesn't offer a built-in submit path.
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") { inputFocused = false }
                 }
             }
             .sheet(isPresented: $showAbout) {
@@ -108,14 +118,6 @@ struct TranslatorView: View {
     }
 
     // MARK: - subviews
-
-    private var tagline: some View {
-        Text("DEMO OF THE APERTIUM LANGUAGE MODELS")
-            .font(.caption2)
-            .tracking(1.5)
-            .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity)
-    }
 
     private var pairPicker: some View {
         Menu {
@@ -175,7 +177,7 @@ struct TranslatorView: View {
             ZStack(alignment: .bottomTrailing) {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .stroke(Color.secondary.opacity(0.4), lineWidth: 1)
-                TextEditor(text: text)
+                sourceAwareEditor(text: text, isSource: isSource)
                     .disabled(readOnly)
                     .scrollContentBackground(.hidden)
                     .padding(.horizontal, 10)
@@ -200,6 +202,18 @@ struct TranslatorView: View {
                 .padding(.bottom, 10)
             }
             .frame(maxWidth: .infinity)
+        }
+    }
+
+    /// TextEditor that attaches `$inputFocused` only for the source
+    /// (editable) field. The target field skips focus tracking so its
+    /// read-only state doesn't fight with keyboard-dismissal logic.
+    @ViewBuilder
+    private func sourceAwareEditor(text: Binding<String>, isSource: Bool) -> some View {
+        if isSource {
+            TextEditor(text: text).focused($inputFocused)
+        } else {
+            TextEditor(text: text)
         }
     }
 

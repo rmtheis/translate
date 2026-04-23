@@ -25,8 +25,9 @@ struct AboutSheet: View {
             Form {
                 Section {
                     VStack(spacing: 6) {
-                        Text("Translate")
+                        Text("Apertium Translate Models")
                             .font(.title.bold())
+                            .multilineTextAlignment(.center)
                         Text(versionLabel)
                             .font(.body)
                         Text("\u{00A9}2026 Qvyshift LLC")

@@ -174,21 +174,26 @@ xcrun simctl install "$DEVICE" "$APP_PATH"
 # ----------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
-# Scenes: (filename, pair, direction, input). Variety = pair-family mix
-# + sentence length mix + a selection that avoids too many unknown markers.
+# Scenes: (filename, pair, direction, input). Every scene showcases an
+# obscure source language — the point of the app is the Apertium
+# language models, not mainstream-pair translation, so the screenshots
+# deliberately skip eng/spa/fra source text in favor of Aragonese,
+# Occitan, Sardinian, Macedonian, Northern Sami, Belarusian, etc.
 # ---------------------------------------------------------------------------
 # Format: <filename>|<pkg>|<forward|backward>|<input>
 SCENES=(
-  "01_dan_nob|apertium-dan-nor|forward|Vejret er meget koldt her om vinteren."
-  "02_cat_ita|apertium-cat-ita|forward|La platja és plena de turistes aquest estiu."
-  "03_cat_spa|apertium-spa-cat|backward|Els arbres han perdut les fulles aquesta tardor."
-  "04_fra_cat|apertium-fra-cat|forward|La chanson traverse les rues du village."
-  "05_por_cat|apertium-por-cat|forward|A música toca no jardim durante o anoitecer."
-  "06_nno_nob|apertium-nno-nob|forward|Vi ynskjer deg ein god sommar."
-  "07_sme_nob|apertium-sme-nob|forward|Mun lean studeanta ja orun Kárášjogas."
-  "08_oci_fra|apertium-oci-fra|forward|Los aucèls cantan dins los arbres."
-  "09_spa_glg|apertium-spa-glg|forward|Mañana vamos a la playa con la familia."
-  "10_rus_ukr|apertium-rus-ukr|forward|Сегодня очень солнечный и тёплый день."
+  "01_arg_cat|apertium-arg-cat|forward|Os críos chugan en o campo dimpués d'a escuela."
+  "02_cat_srd|apertium-cat-srd|forward|Demà anirem al mercat del poble a comprar fruita fresca."
+  # apertium-oci-cat + apertium-hbs-mkd segfault in the transfer stage
+  # on iOS (upstream Apertium bug, not our wrapper). Substitute with
+  # Macedonian→English and Sardinian→Italian — equally obscure sources,
+  # verified not to crash on iOS simulator.
+  "03_mkd_eng|apertium-mkd-eng|forward|Мојот син учи математика во училиште секој ден."
+  "04_oci_fra|apertium-oci-fra|forward|Lo libre es pausat sus la taula dins la cosina."
+  "05_srd_ita|apertium-srd-ita|forward|Su cane est in sa pratza e abojat a sa genti de su biginadu."
+  "06_sme_nob|apertium-sme-nob|forward|Mun lean studeanta ja orun Kárášjogas."
+  "07_bel_rus|apertium-bel-rus|forward|У нашым горадзе шмат музеяў і старадаўніх будынкаў."
+  "08_cat_glg|apertium-cat-glg|forward|El sol es pon lentament darrere les muntanyes a l'horitzó."
 )
 
 SETTLE=2   # seconds between launch and snapshot
