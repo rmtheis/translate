@@ -38,27 +38,33 @@ struct LanguagePair: Hashable, Identifiable {
 
     enum Direction { case forward, backward }
 
-    /// Pair data directory inside the app bundle. Each pair sits at
-    /// `<bundle>/pair_<snake>/` — for the bundled `apertium-eng-spa`
-    /// that's a normal install-time resource; for the 26 ODR-tagged
-    /// pairs the path is the same, but the caller must ensure the
-    /// resource tag is currently held via PairDownloadManager.
+    /// Pair data directory. For the bundled `apertium-eng-spa` pair
+    /// that's `<App.app>/pair_eng_spa/`. For the 26 ODR-tagged pairs
+    /// it's `<App.app>/OnDemandResources/<pack>.assetpack/pair_<snake>/`,
+    /// which is why we resolve through `Bundle.main.url(forResource:…)`
+    /// rather than concatenating onto `Bundle.main.resourceURL` — the
+    /// latter only finds bundled resources, not ODR-delivered ones.
+    /// Caller must ensure the resource tag is currently held via
+    /// PairDownloadManager.ensureAvailable before this is called.
     func bundleURL() throws -> URL {
         let dirName = PairDownloadManager.bundleDir(for: self)
-        guard let resources = Bundle.main.resourceURL else {
-            throw ApertiumError.missingPair(dirName)
+        if let modeURL = Bundle.main.url(forResource: forwardMode,
+                                         withExtension: "mode",
+                                         subdirectory: dirName) {
+            return modeURL.deletingLastPathComponent()
         }
-        let url = resources.appendingPathComponent(dirName)
-        guard FileManager.default.fileExists(atPath: url.path) else {
-            throw ApertiumError.missingPair(dirName)
-        }
-        return url
+        throw ApertiumError.missingPair(dirName)
     }
 
     func modeFileURL(direction: Direction) throws -> URL {
-        let dir = try bundleURL()
+        let dirName = PairDownloadManager.bundleDir(for: self)
         let id = direction == .forward ? forwardMode : (backwardMode ?? forwardMode)
-        return dir.appendingPathComponent("\(id).mode")
+        if let url = Bundle.main.url(forResource: id,
+                                     withExtension: "mode",
+                                     subdirectory: dirName) {
+            return url
+        }
+        throw ApertiumError.missingPair(dirName)
     }
 }
 
