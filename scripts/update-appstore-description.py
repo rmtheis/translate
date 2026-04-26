@@ -67,8 +67,24 @@ def mint_jwt(key_id: str, issuer_id: str, pem: str) -> str:
     )
 
 
+class _ApiError(Exception):
+    """Raised by _request when raise_http_error=True. Carries the
+    status code and parsed response body so callers can decide whether
+    the error is recoverable (e.g. Apple's documented STATE_ERROR for
+    fields locked on first-version submissions)."""
+
+    def __init__(self, code: int, reason: str, method: str, path: str, body: str):
+        self.code = code
+        self.reason = reason
+        self.method = method
+        self.path = path
+        self.body = body
+        super().__init__(f"HTTP {code} {reason} on {method} {path}\n{body}")
+
+
 def _request(method: str, token: str, path: str,
-             params: dict | None = None, body: dict | None = None) -> dict:
+             params: dict | None = None, body: dict | None = None,
+             raise_http_error: bool = False) -> dict:
     url = ASC_BASE + path
     if params:
         url += "?" + urllib.parse.urlencode(params, doseq=True, safe=",[]")
@@ -83,7 +99,28 @@ def _request(method: str, token: str, path: str,
             return json.loads(raw) if raw else {}
     except urllib.error.HTTPError as e:
         detail = e.read().decode("utf-8", errors="replace")
+        if raise_http_error:
+            raise _ApiError(e.code, e.reason, method, path, detail) from e
         sys.exit(f"HTTP {e.code} {e.reason} on {method} {path}\n{detail}")
+
+
+def _is_attribute_locked_error(body: str, attribute: str) -> bool:
+    """Apple returns 409 STATE_ERROR with detail
+    "Attribute '<name>' cannot be edited at this time" when the
+    current version state doesn't accept edits to that field. Mirrors
+    the helper in asc_release_notes.py — same Apple error shape applies
+    to any localization attribute."""
+    try:
+        parsed = json.loads(body)
+    except json.JSONDecodeError:
+        return False
+    for err in parsed.get("errors", []):
+        if err.get("status") != "409" or err.get("code") != "STATE_ERROR":
+            continue
+        detail = (err.get("detail") or "").lower()
+        if attribute.lower() in detail and "cannot be edited" in detail:
+            return True
+    return False
 
 
 # --- pair list formatting ----------------------------------------------------
@@ -189,7 +226,13 @@ def version_localizations(token: str, version_id: str) -> list[dict]:
     return data.get("data", [])
 
 
-def patch_description(token: str, localization_id: str, text: str) -> None:
+def patch_description(token: str, localization_id: str, text: str) -> bool:
+    """Patch description. Returns True on success, False if Apple
+    rejected the edit with the documented "attribute locked"
+    STATE_ERROR. Description is normally editable on first-version
+    submissions (it's required), but the same guard is applied as for
+    whatsNew so any analogous state-driven rejection skips cleanly
+    instead of failing the workflow."""
     body = {
         "data": {
             "type": "appStoreVersionLocalizations",
@@ -197,8 +240,15 @@ def patch_description(token: str, localization_id: str, text: str) -> None:
             "attributes": {"description": text},
         }
     }
-    _request("PATCH", token,
-             f"/appStoreVersionLocalizations/{localization_id}", body=body)
+    try:
+        _request("PATCH", token,
+                 f"/appStoreVersionLocalizations/{localization_id}",
+                 body=body, raise_http_error=True)
+        return True
+    except _ApiError as e:
+        if e.code == 409 and _is_attribute_locked_error(e.body, "description"):
+            return False
+        sys.exit(str(e))
 
 
 # --- main --------------------------------------------------------------------
@@ -237,7 +287,19 @@ def main() -> None:
         if new_desc == current:
             print(f"  {locale}: pair list unchanged — skipping PATCH")
             continue
-        patch_description(token, loc["id"], new_desc)
+        if not patch_description(token, loc["id"], new_desc):
+            # Same per-version lockout pattern as whatsNew: every
+            # locale would fail with the same STATE_ERROR. Stop early
+            # so the workflow continues (project.yml commit-back still
+            # needs to run after this step).
+            print(
+                f"WARNING: ASC won't accept description edits on this "
+                f"version (STATE_ERROR for 'description').\n"
+                f"  Triggered on locale={locale}; skipping remaining locales.\n"
+                f"  Not fatal — pair list stays at its current value.",
+                flush=True,
+            )
+            return
         print(f"  updated description for {locale} ({len(new_desc)} chars)")
         updated += 1
     print(f"updated description on {updated} localization(s)")

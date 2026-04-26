@@ -62,8 +62,24 @@ def mint_jwt(key_id: str, issuer_id: str, pem: str) -> str:
     )
 
 
+class _ApiError(Exception):
+    """Raised by _request when raise_http_error=True. Carries the
+    parsed status and response body so callers can decide whether the
+    error is recoverable (e.g. Apple's documented STATE_ERROR for
+    fields locked on first-version submissions)."""
+
+    def __init__(self, code: int, reason: str, method: str, path: str, body: str):
+        self.code = code
+        self.reason = reason
+        self.method = method
+        self.path = path
+        self.body = body
+        super().__init__(f"HTTP {code} {reason} on {method} {path}\n{body}")
+
+
 def _request(method: str, token: str, path: str,
-             params: dict | None = None, body: dict | None = None) -> dict:
+             params: dict | None = None, body: dict | None = None,
+             raise_http_error: bool = False) -> dict:
     url = ASC_BASE + path
     if params:
         url += "?" + urllib.parse.urlencode(params, doseq=True, safe=",[]")
@@ -78,7 +94,28 @@ def _request(method: str, token: str, path: str,
             return json.loads(raw) if raw else {}
     except urllib.error.HTTPError as e:
         detail = e.read().decode("utf-8", errors="replace")
+        if raise_http_error:
+            raise _ApiError(e.code, e.reason, method, path, detail) from e
         sys.exit(f"HTTP {e.code} {e.reason} on {method} {path}\n{detail}")
+
+
+def _is_attribute_locked_error(body: str, attribute: str) -> bool:
+    """Apple returns 409 STATE_ERROR with detail
+    "Attribute '<name>' cannot be edited at this time" when the
+    current version state doesn't accept edits to that field. For
+    whatsNew, this fires on first-version submissions (no prior
+    released version to release-note against)."""
+    try:
+        parsed = json.loads(body)
+    except json.JSONDecodeError:
+        return False
+    for err in parsed.get("errors", []):
+        if err.get("status") != "409" or err.get("code") != "STATE_ERROR":
+            continue
+        detail = (err.get("detail") or "").lower()
+        if attribute.lower() in detail and "cannot be edited" in detail:
+            return True
+    return False
 
 
 def find_app_id(token: str, bundle_id: str) -> str:
@@ -158,7 +195,10 @@ def version_localizations(token: str, version_id: str) -> list[dict]:
     return data.get("data", [])
 
 
-def patch_whats_new(token: str, localization_id: str, notes: str) -> None:
+def patch_whats_new(token: str, localization_id: str, notes: str) -> bool:
+    """Patch whatsNew. Returns True on success, False if Apple
+    rejected the edit with the documented "first-version locked"
+    STATE_ERROR. All other errors still hard-fail via _request()."""
     body = {
         "data": {
             "type": "appStoreVersionLocalizations",
@@ -166,8 +206,15 @@ def patch_whats_new(token: str, localization_id: str, notes: str) -> None:
             "attributes": {"whatsNew": notes},
         }
     }
-    _request("PATCH", token,
-             f"/appStoreVersionLocalizations/{localization_id}", body=body)
+    try:
+        _request("PATCH", token,
+                 f"/appStoreVersionLocalizations/{localization_id}",
+                 body=body, raise_http_error=True)
+        return True
+    except _ApiError as e:
+        if e.code == 409 and _is_attribute_locked_error(e.body, "whatsNew"):
+            return False
+        sys.exit(str(e))
 
 
 def main() -> None:
@@ -199,7 +246,21 @@ def main() -> None:
     for loc in locs:
         attrs = loc.get("attributes", {})
         locale = attrs.get("locale", "?")
-        patch_whats_new(token, loc["id"], notes)
+        if not patch_whats_new(token, loc["id"], notes):
+            # Apple rejects whatsNew edits on first-version submissions
+            # for the whole version row — every locale would fail with
+            # the same STATE_ERROR. Stop early and let the workflow
+            # continue (description splice + project.yml commit-back
+            # still need to run after this step).
+            print(
+                f"WARNING: ASC won't accept whatsNew edits on this version "
+                f"(first-version submissions don't accept release notes).\n"
+                f"  Triggered on locale={locale}; skipping remaining locales.\n"
+                f"  Not fatal — set release notes manually in App Store "
+                f"Connect, or let the next version's submission carry them.",
+                flush=True,
+            )
+            return
         print(f"  updated whatsNew for {locale}")
         updated += 1
     print(f"updated release notes on {updated} localization(s)")
