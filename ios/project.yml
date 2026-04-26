@@ -167,8 +167,8 @@ targets:
         # Apple product name.
         CFBundleDisplayName: Apertium Translate Models
         CFBundleName: Apertium Translate Models
-        CFBundleShortVersionString: "1.0.0"
-        CFBundleVersion: "5"
+        CFBundleShortVersionString: "1.0.1"
+        CFBundleVersion: "202604261322"
         LSRequiresIPhoneOS: true
         # Export-compliance: app does not use non-exempt encryption.
         # Apertium + HFST + CG3 + ICU + libxml2 all do string processing
