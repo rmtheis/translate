@@ -26,6 +26,35 @@ env:
 
 jobs:
   # ---------------------------------------------------------------------------
+  # 0. Schedule gate. workflow_dispatch always proceeds; scheduled (cron)
+  #    runs are skipped until FIRST_RUN_DATE so the workflow doesn't
+  #    auto-publish on top of a pending App Review. Bump FIRST_RUN_DATE if
+  #    you need to re-pause cron-driven publishing later.
+  # ---------------------------------------------------------------------------
+  gate:
+    name: Schedule gate
+    runs-on: ubuntu-latest
+    outputs:
+      proceed: ${{ steps.check.outputs.proceed }}
+    steps:
+      - id: check
+        env:
+          # YYYYMMDD; the cron starts firing on or after this date.
+          FIRST_RUN_DATE: '20260601'
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "proceed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          today=$(date -u +%Y%m%d)
+          if [ "$today" -ge "$FIRST_RUN_DATE" ]; then
+            echo "proceed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping scheduled iOS run before $FIRST_RUN_DATE (waiting on initial App Review approval)."
+          fi
+
+  # ---------------------------------------------------------------------------
   # 1. Cross-compile the Apertium C++ toolchain into ApertiumCore.xcframework.
   #    Cached by the tree SHA of native/ so this heavy step only reruns when
   #    the toolchain actually changes.
@@ -33,6 +62,8 @@ jobs:
   natives:
     name: Build ApertiumCore.xcframework
     runs-on: macos-15
+    needs: gate
+    if: needs.gate.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v4
 
@@ -90,6 +121,8 @@ jobs:
   pairs:
     name: Prep pair JARs
     runs-on: ubuntu-latest
+    needs: gate
+    if: needs.gate.outputs.proceed == 'true'
     outputs:
       inventory_sha: ${{ steps.inv.outputs.sha }}
     steps:
@@ -289,10 +322,11 @@ jobs:
     # token needs write permission on the repo.
     permissions:
       contents: write
-    # Only deploy on an explicit workflow_dispatch; the scheduled run
-    # builds + uploads artifacts but stops short of publishing, matching
-    # the Android safety gate.
-    if: github.event_name == 'workflow_dispatch'
+    # Both scheduled and manually-dispatched runs deploy. The `gate` job
+    # blocks scheduled runs before FIRST_RUN_DATE — so May 2 cron skips
+    # without ever reaching here, and June 2 onward auto-publishes monthly.
+    # The pair-change gate inside this job (steps.gate.outputs.changed)
+    # still no-ops uploads on quiet months unless force_publish=true.
     steps:
       - uses: actions/checkout@v4
 
