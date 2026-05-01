@@ -8,9 +8,11 @@
 #
 # Usage: ./scripts/stage-pair-packs.sh <jar-source-dir>
 #
-# The JAR source dir is typically either:
-#   - android/app/src/main/assets/pairs/  (historical flat layout — used for dev)
-#   - a CI artifact download dir populated by android/native/prep-pair.sh
+# The JAR source dir is the artifact download path populated by
+# android/native/prep-pair.sh; in CI that's <repo>/pair-jars/, in local dev
+# it's wherever you ran prep-pair against. The path is resolved to an
+# absolute path up front so this script can safely cd into android/ for
+# its own work without affecting argv interpretation.
 #
 # Emits:
 #   /tmp/pack-modules.txt — one ':pair_<code>' gradle coord per line, used to
@@ -19,6 +21,17 @@
 set -euo pipefail
 
 SRC="${1:?usage: $0 <jar-source-dir>}"
+# Resolve $SRC to an absolute path BEFORE cd-ing into android/ — otherwise a
+# relative pair-jars/ argv (the CI default, with the artifact downloaded to
+# the repo root) would resolve as android/pair-jars/ after the cd and every
+# JAR lookup would miss. This regressed in the April 2026 monorepo reorg
+# when this script gained the `cd "$REPO_ROOT/android"` below; the May 1
+# scheduled run was the first failure.
+if [ ! -d "$SRC" ]; then
+  echo "stage-pair-packs.sh: source dir not found: $SRC" >&2
+  exit 1
+fi
+SRC="$(cd "$SRC" && pwd)"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT/android"
 
