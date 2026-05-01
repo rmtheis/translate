@@ -13,11 +13,13 @@ struct PairDownloadSheet: View {
     @Binding var fraction: Double
     @Binding var errorMessage: String?
     var onCancel: () -> Void
+    var onRetry: () -> Void
 
     var body: some View {
         VStack(spacing: 16) {
-            Text("Downloading")
+            Text(errorMessage == nil ? "Downloading" : "Download failed")
                 .font(.headline)
+                .foregroundStyle(errorMessage == nil ? Color.primary : Color.red)
             Text(pair.forwardTitle)
                 .font(.title2)
                 .bold()
@@ -26,25 +28,35 @@ struct PairDownloadSheet: View {
                 .font(.footnote)
                 .foregroundStyle(.secondary)
 
-            ProgressView(value: fraction, total: 1.0)
-                .progressViewStyle(.linear)
-                .frame(maxWidth: 320)
-
-            Text("\(Int(fraction * 100))%")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .monospacedDigit()
-
+            // Hide progress UI on failure — NSBundleResourceRequest's
+            // Progress reports fractionCompleted = 1.0 when the request
+            // fails before any bytes transfer (totalUnitCount stays 0),
+            // which renders as a misleading "100%" + green bar.
             if let msg = errorMessage {
                 Text(msg)
                     .font(.footnote)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
+            } else {
+                ProgressView(value: fraction, total: 1.0)
+                    .progressViewStyle(.linear)
+                    .frame(maxWidth: 320)
+
+                Text("\(Int(fraction * 100))%")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
             }
 
-            Button("Cancel", role: .cancel, action: onCancel)
-                .buttonStyle(.bordered)
+            HStack(spacing: 12) {
+                if errorMessage != nil {
+                    Button("Retry", action: onRetry)
+                        .buttonStyle(.borderedProminent)
+                }
+                Button("Cancel", role: .cancel, action: onCancel)
+                    .buttonStyle(.bordered)
+            }
         }
         .padding(24)
         .frame(maxWidth: .infinity)

@@ -106,7 +106,8 @@ struct TranslatorView: View {
                                   onCancel: {
                     downloads.cancel(pair)
                     downloadingPair = nil
-                })
+                },
+                                  onRetry: { startDownload(pair) })
             }
             .onAppear { applyScreenshotLaunchArgs() }
             .alert("Translation error",
@@ -279,9 +280,17 @@ struct TranslatorView: View {
             output = ""
             return
         }
+        downloadingPair = pair
+        startDownload(pair)
+    }
+
+    /// Begin (or restart) the ODR fetch for `pair` while the download
+    /// sheet is presented. Split out from `handlePairTapped` so the
+    /// sheet's Retry button can re-run the same flow without flipping
+    /// the sheet identity (which would dismiss it).
+    private func startDownload(_ pair: LanguagePair) {
         downloadFraction = 0
         downloadError = nil
-        downloadingPair = pair
         downloads.ensureAvailable(pair, onProgress: { fraction in
             downloadFraction = fraction
         }, completion: { result in
@@ -292,7 +301,7 @@ struct TranslatorView: View {
                 directionRaw = "forward"
                 output = ""
             case .failure(let err):
-                downloadError = "\(err.localizedDescription)"
+                downloadError = err.localizedDescription
             }
         })
     }
