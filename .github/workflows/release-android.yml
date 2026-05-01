@@ -1,4 +1,4 @@
-name: Build and stage (Android)
+name: Build and release (Android)
 
 on:
   workflow_dispatch:
@@ -247,7 +247,7 @@ jobs:
             pair-inventory.json
 
   deploy:
-    name: Stage to Play
+    name: Publish to Play production
     runs-on: ubuntu-latest
     needs: build
     # Needed so the "snapshot pair inventory" step can push the .ci/ update back
