@@ -65,7 +65,7 @@ jobs:
     needs: gate
     if: needs.gate.outputs.proceed == 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - id: key
         run: |
@@ -74,7 +74,7 @@ jobs:
 
       - name: Cache xcframework
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ios/native/ApertiumCore.xcframework
           key: ${{ steps.key.outputs.cache_key }}
@@ -106,7 +106,7 @@ jobs:
         working-directory: ios/native
         run: ./build.sh xcframework
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: apertium-core-xcframework
           path: ios/native/ApertiumCore.xcframework
@@ -126,7 +126,7 @@ jobs:
     outputs:
       inventory_sha: ${{ steps.inv.outputs.sha }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Enumerate enabled pairs from Swift catalog
         id: list
@@ -140,7 +140,7 @@ jobs:
 
       - name: Cache per-pair JARs
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: pair-jars
           key: ios-pairs-catalog-${{ hashFiles('ios/Translate/PairCatalog.swift', 'android/native/prep-pair.sh') }}-${{ github.run_id }}
@@ -167,7 +167,7 @@ jobs:
           python3 scripts/pair-inventory.py pair-jars > pair-inventory.json
           echo "sha=$(sha256sum pair-inventory.json | awk '{print $1}')" >> $GITHUB_OUTPUT
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: ios-pairs
           path: |
@@ -183,14 +183,14 @@ jobs:
     runs-on: macos-15
     needs: [natives, pairs]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: apertium-core-xcframework
           path: ios/native/ApertiumCore.xcframework
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: ios-pairs
           path: .
@@ -302,7 +302,7 @@ jobs:
           ipa=$(ls build/export/*.ipa | head -1)
           mv "$ipa" build/export/Translate.ipa
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: translate-ipa
           path: ios/build/export/Translate.ipa
@@ -328,14 +328,14 @@ jobs:
     # The pair-change gate inside this job (steps.gate.outputs.changed)
     # still no-ops uploads on quiet months unless force_publish=true.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: translate-ipa
           path: ipa
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: ios-pairs
           # ios-pairs artifact carries pair-jars/ + pair-inventory.json;
@@ -343,7 +343,7 @@ jobs:
           path: .
 
       - name: Set up Python 3
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.x'
 
