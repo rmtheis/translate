@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Ukázka jazykových modelů Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Vydáno</string>
+    <string name="tier_staging">Příprava</string>
+    <string name="tier_nursery">Ve vývoji</string>
+    <string name="tier_incubator">Experimentální</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;z&gt;</string>
+    <string name="to">&lt;do&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Přeložit</string>
+    <string name="translating">Překládání…</string>
+    <string name="copy">Kopírovat</string>
+    <string name="paste">Vložit</string>
+    <string name="swap_languages">Prohodit jazyky</string>
+    <string name="one_way_only">Pouze jednosměrný překlad</string>
+    <string name="choose_languages">Zvolte jazyky</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">OK</string>
+    <string name="cancel">Zrušit</string>
+    <string name="hide">Skrýt</string>
+    <string name="download">Stáhnout</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Tato dvojice nebyla stažena</string>
+    <string name="download_pair_prompt">Tato jazyková dvojice ještě není ve vašem zařízení. Stáhnout nyní (%1$s)?</string>
+    <string name="download_progress_format">%1$s z %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Stahování %1$d jazykových dvojic</string>
+    <string name="download_all_format">Stáhnout všechny jazykové dvojice (%1$s)</string>
+    <string name="download_all_done">Všechny jazykové dvojice staženy</string>
+    <string name="download_complete">Stahování dokončeno</string>
+    <string name="download_failed">Stahování se nezdařilo (chyba %1$d)</string>
+    <string name="download_cancelled">Stahování zrušeno</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Označit neznámá slova</string>
+    <string name="displayMarkDescription">Označit neznámá slova hvězdičkou *</string>
+</resources>

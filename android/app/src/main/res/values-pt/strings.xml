@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Demonstração dos modelos de idioma do Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Lançado</string>
+    <string name="tier_staging">Em testes</string>
+    <string name="tier_nursery">Em desenvolvimento</string>
+    <string name="tier_incubator">Em incubação</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;de&gt;</string>
+    <string name="to">&lt;para&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Traduzir</string>
+    <string name="translating">Traduzindo…</string>
+    <string name="copy">Copiar</string>
+    <string name="paste">Colar</string>
+    <string name="swap_languages">Inverter idiomas</string>
+    <string name="one_way_only">Tradução somente em um sentido</string>
+    <string name="choose_languages">Escolher idiomas</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancelar</string>
+    <string name="hide">Ocultar</string>
+    <string name="download">Baixar</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Este par de idiomas ainda não foi baixado</string>
+    <string name="download_pair_prompt">Este par de idiomas ainda não está no seu dispositivo. Baixar agora (%1$s)?</string>
+    <string name="download_progress_format">%1$s de %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Baixando %1$d pares de idiomas</string>
+    <string name="download_all_format">Baixar todos os pares de idiomas (%1$s)</string>
+    <string name="download_all_done">Todos os pares de idiomas foram baixados</string>
+    <string name="download_complete">Download concluído</string>
+    <string name="download_failed">Falha no download (erro %1$d)</string>
+    <string name="download_cancelled">Download cancelado</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marcar palavras desconhecidas</string>
+    <string name="displayMarkDescription">Marcar palavras desconhecidas com *</string>
+</resources>

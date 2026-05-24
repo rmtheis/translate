@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Demo modeli jynzykowych Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Wydane</string>
+    <string name="tier_staging">Testowe</string>
+    <string name="tier_nursery">Rozwojowe</string>
+    <string name="tier_incubator">Inkubatōr</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;skōnd&gt;</string>
+    <string name="to">&lt;dokōnd&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Przetlōmacz</string>
+    <string name="translating">Tlōmaczynie…</string>
+    <string name="copy">Kopiyrować</string>
+    <string name="paste">Wraź</string>
+    <string name="swap_languages">Przemiyń jynzyki</string>
+    <string name="one_way_only">Tlōmaczynie ino w jedna strōna</string>
+    <string name="choose_languages">Ôbier jynzyki</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">OK</string>
+    <string name="cancel">Pociep</string>
+    <string name="hide">Skryj</string>
+    <string name="download">Pobier</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Ta pŏra niy bōła pobranŏ</string>
+    <string name="download_pair_prompt">Tyj pary jynzykowyj jeszcze niy ma na twojim sprzynciu. Pobrać terŏz (%1$s)?</string>
+    <string name="download_progress_format">%1$s ze %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Pobiyranie %1$d pŏrōw jynzykowych</string>
+    <string name="download_all_format">Pobier wszyjske pary jynzykowe (%1$s)</string>
+    <string name="download_all_done">Pobrane sōm wszyjske pary jynzykowe</string>
+    <string name="download_complete">Pobiyranie skōńczōne</string>
+    <string name="download_failed">Pobiyranie niy podarziło sie (feler %1$d)</string>
+    <string name="download_cancelled">Pobiyranie pociepniynte</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Ôznacz niyznajōme słowa</string>
+    <string name="displayMarkDescription">Ôznacz niyznajōme słowa znakym *</string>
+</resources>

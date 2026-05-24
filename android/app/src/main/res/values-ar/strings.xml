@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">ترجمة</string>
+    <string name="demo_tagline">عرض توضيحي لنماذج اللغة من Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">مُصدَر</string>
+    <string name="tier_staging">قيد التجهيز</string>
+    <string name="tier_nursery">حضانة</string>
+    <string name="tier_incubator">حاضنة</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;من&gt;</string>
+    <string name="to">&lt;إلى&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">ترجم</string>
+    <string name="translating">جارٍ الترجمة…</string>
+    <string name="copy">نسخ</string>
+    <string name="paste">لصق</string>
+    <string name="swap_languages">تبديل اللغتين</string>
+    <string name="one_way_only">الترجمة باتجاه واحد فقط</string>
+    <string name="choose_languages">اختر اللغتين</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">حسناً</string>
+    <string name="cancel">إلغاء</string>
+    <string name="hide">إخفاء</string>
+    <string name="download">تنزيل</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">لم يتم تنزيل هذا الزوج بعد</string>
+    <string name="download_pair_prompt">زوج اللغات هذا غير موجود على جهازك بعد. هل تريد تنزيله الآن (%1$s)؟</string>
+    <string name="download_progress_format">%1$s من %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">جارٍ تنزيل %1$d زوج لغات</string>
+    <string name="download_all_format">تنزيل جميع أزواج اللغات (%1$s)</string>
+    <string name="download_all_done">تم تنزيل جميع أزواج اللغات</string>
+    <string name="download_complete">اكتمل التنزيل</string>
+    <string name="download_failed">فشل التنزيل (خطأ %1$d)</string>
+    <string name="download_cancelled">تم إلغاء التنزيل</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">تمييز الكلمات غير المعروفة</string>
+    <string name="displayMarkDescription">تمييز الكلمات غير المعروفة بعلامة *</string>
+</resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Traduki</string>
+    <string name="demo_tagline">Demonstro de la lingvaj modeloj de Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Eldonita</string>
+    <string name="tier_staging">Prova</string>
+    <string name="tier_nursery">Infanĝardeno</string>
+    <string name="tier_incubator">Inkubatoro</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;de&gt;</string>
+    <string name="to">&lt;al&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Traduki</string>
+    <string name="translating">Tradukante…</string>
+    <string name="copy">Kopii</string>
+    <string name="paste">Alglui</string>
+    <string name="swap_languages">Interŝanĝi lingvojn</string>
+    <string name="one_way_only">Nur unudirekta traduko</string>
+    <string name="choose_languages">Elektu lingvojn</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Bone</string>
+    <string name="cancel">Nuligi</string>
+    <string name="hide">Kaŝi</string>
+    <string name="download">Elŝuti</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Ĉi tiu paro ne estas elŝutita</string>
+    <string name="download_pair_prompt">Ĉi tiu lingva paro ankoraŭ ne estas en via aparato. Ĉu elŝuti nun (%1$s)?</string>
+    <string name="download_progress_format">%1$s el %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Elŝutas %1$d lingvajn parojn</string>
+    <string name="download_all_format">Elŝuti ĉiujn lingvajn parojn (%1$s)</string>
+    <string name="download_all_done">Ĉiuj lingvaj paroj elŝutitaj</string>
+    <string name="download_complete">Elŝuto kompleta</string>
+    <string name="download_failed">Elŝuto malsukcesis (eraro %1$d)</string>
+    <string name="download_cancelled">Elŝuto nuligita</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marki nekonatajn vortojn</string>
+    <string name="displayMarkDescription">Marki nekonatajn vortojn per *</string>
+</resources>

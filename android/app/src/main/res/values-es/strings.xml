@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Demostración de los modelos de idiomas de Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Publicado</string>
+    <string name="tier_staging">Preparación</string>
+    <string name="tier_nursery">Vivero</string>
+    <string name="tier_incubator">Incubadora</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;de&gt;</string>
+    <string name="to">&lt;a&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Traducir</string>
+    <string name="translating">Traduciendo…</string>
+    <string name="copy">Copiar</string>
+    <string name="paste">Pegar</string>
+    <string name="swap_languages">Intercambiar idiomas</string>
+    <string name="one_way_only">Traducción en un solo sentido</string>
+    <string name="choose_languages">Elegir idiomas</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Aceptar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="hide">Ocultar</string>
+    <string name="download">Descargar</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Este par no se ha descargado</string>
+    <string name="download_pair_prompt">Este par de idiomas aún no está en tu dispositivo. ¿Descargar ahora (%1$s)?</string>
+    <string name="download_progress_format">%1$s de %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Descargando %1$d pares de idiomas</string>
+    <string name="download_all_format">Descargar todos los pares de idiomas (%1$s)</string>
+    <string name="download_all_done">Todos los pares de idiomas descargados</string>
+    <string name="download_complete">Descarga completada</string>
+    <string name="download_failed">Descarga fallida (error %1$d)</string>
+    <string name="download_cancelled">Descarga cancelada</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marcar palabras desconocidas</string>
+    <string name="displayMarkDescription">Marcar palabras desconocidas con un *</string>
+</resources>

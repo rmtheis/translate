@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Tercime</string>
+    <string name="demo_tagline">Apertium til modelleriniñ demosı</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Çıqarılğan</string>
+    <string name="tier_staging">Hazırlıq</string>
+    <string name="tier_nursery">İnkişaf</string>
+    <string name="tier_incubator">Quluçqa</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;menba&gt;</string>
+    <string name="to">&lt;maqsat&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Tercime et</string>
+    <string name="translating">Tercime etile…</string>
+    <string name="copy">Kopiyala</string>
+    <string name="paste">Yapıştır</string>
+    <string name="swap_languages">Tillerni deñiştir</string>
+    <string name="one_way_only">Faqat bir taraflı tercime</string>
+    <string name="choose_languages">Tillerni sayla</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Tamam</string>
+    <string name="cancel">İptal et</string>
+    <string name="hide">Gizle</string>
+    <string name="download">Yükle</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Bu çift yüklenmegen</string>
+    <string name="download_pair_prompt">Bu til çifti daa cihazıñızda yoq. Şimdi yüklensinmi (%1$s)?</string>
+    <string name="download_progress_format">%1$s / %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">%1$d til çifti yüklene</string>
+    <string name="download_all_format">Bütün til çiftlerini yükle (%1$s)</string>
+    <string name="download_all_done">Bütün til çiftleri yüklendi</string>
+    <string name="download_complete">Yükleme tamamlandı</string>
+    <string name="download_failed">Yükleme muvafaqiyetsiz (hata %1$d)</string>
+    <string name="download_cancelled">Yükleme iptal etildi</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Bilinmegen sözlerni işaretle</string>
+    <string name="displayMarkDescription">Bilinmegen sözlerni * ile işaretle</string>
+</resources>

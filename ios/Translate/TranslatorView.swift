@@ -78,7 +78,7 @@ struct TranslatorView: View {
             }
             .padding(.horizontal, 12)
             .padding(.top, 4)
-            .navigationTitle("Apertium Translate Models")
+            .navigationTitle("Apertium Translation Models")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -256,7 +256,9 @@ struct TranslatorView: View {
     private func sideTitle(source: Bool) -> String {
         let title = pairTitle(selectedPair, direction: direction)
         let parts = title.components(separatedBy: " → ")
-        guard parts.count == 2 else { return source ? "Source" : "Target" }
+        guard parts.count == 2 else {
+            return source ? String(localized: "Source") : String(localized: "Target")
+        }
         return source ? parts[0] : parts[1]
     }
 
@@ -308,7 +310,7 @@ struct TranslatorView: View {
 
     private func swapDirection() {
         guard selectedPair.bidirectional else {
-            errorMessage = "This pair is one-way only."
+            errorMessage = String(localized: "This pair is one-way only.")
             return
         }
         directionRaw = (direction == .forward) ? "backward" : "forward"

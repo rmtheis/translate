@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Apertium hizkuntza-ereduen demoa</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Argitaratuta</string>
+    <string name="tier_staging">Prestaketan</string>
+    <string name="tier_nursery">Mintegia</string>
+    <string name="tier_incubator">Inkubagailua</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;jatorria&gt;</string>
+    <string name="to">&lt;helburua&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Itzuli</string>
+    <string name="translating">Itzultzen…</string>
+    <string name="copy">Kopiatu</string>
+    <string name="paste">Itsatsi</string>
+    <string name="swap_languages">Trukatu hizkuntzak</string>
+    <string name="one_way_only">Norabide bakarreko itzulpena</string>
+    <string name="choose_languages">Aukeratu hizkuntzak</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Ados</string>
+    <string name="cancel">Utzi</string>
+    <string name="hide">Ezkutatu</string>
+    <string name="download">Deskargatu</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Hizkuntza-pare hau ez da deskargatu</string>
+    <string name="download_pair_prompt">Hizkuntza-pare hau ez dago oraindik zure gailuan. Orain deskargatu nahi duzu (%1$s)?</string>
+    <string name="download_progress_format">%1$s / %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">%1$d hizkuntza-pare deskargatzen</string>
+    <string name="download_all_format">Deskargatu hizkuntza-pare guztiak (%1$s)</string>
+    <string name="download_all_done">Hizkuntza-pare guztiak deskargatuta</string>
+    <string name="download_complete">Deskarga amaituta</string>
+    <string name="download_failed">Deskargak huts egin du (%1$d. errorea)</string>
+    <string name="download_cancelled">Deskarga bertan behera utzita</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Markatu hitz ezezagunak</string>
+    <string name="displayMarkDescription">Markatu hitz ezezagunak * batekin</string>
+</resources>

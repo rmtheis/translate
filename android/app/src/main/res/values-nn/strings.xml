@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Omsett</string>
+    <string name="demo_tagline">Demo av Apertium-språkmodellane</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Lansert</string>
+    <string name="tier_staging">Klargjering</string>
+    <string name="tier_nursery">Utvikling</string>
+    <string name="tier_incubator">Eksperimentell</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;frå&gt;</string>
+    <string name="to">&lt;til&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Omsett</string>
+    <string name="translating">Omset…</string>
+    <string name="copy">Kopier</string>
+    <string name="paste">Lim inn</string>
+    <string name="swap_languages">Byt om språk</string>
+    <string name="one_way_only">Berre einvegs omsetjing</string>
+    <string name="choose_languages">Vel språk</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">OK</string>
+    <string name="cancel">Avbryt</string>
+    <string name="hide">Skjul</string>
+    <string name="download">Last ned</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Dette språkparet er ikkje lasta ned</string>
+    <string name="download_pair_prompt">Dette språkparet er ikkje på eininga enno. Vil du laste det ned no (%1$s)?</string>
+    <string name="download_progress_format">%1$s av %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Lastar ned %1$d språkpar</string>
+    <string name="download_all_format">Last ned alle språkpar (%1$s)</string>
+    <string name="download_all_done">Alle språkpar er lasta ned</string>
+    <string name="download_complete">Nedlasting fullført</string>
+    <string name="download_failed">Nedlasting mislukkast (feil %1$d)</string>
+    <string name="download_cancelled">Nedlasting avbroten</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marker ukjende ord</string>
+    <string name="displayMarkDescription">Marker ukjende ord med *</string>
+</resources>

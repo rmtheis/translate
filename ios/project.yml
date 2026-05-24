@@ -158,15 +158,15 @@ targets:
     info:
       path: Translate/Info.plist
       properties:
-        # App name is "Apertium Translate Models" everywhere — icon
+        # App name is "Apertium Translation Models" everywhere — icon
         # label on the Home Screen, internal bundle name, and intended
         # App Store listing name. It signals what the app actually is
         # (a showcase of the Apertium machine-translation language
         # models) and dodges ITMS-90129 collisions with Apple's
         # built-in Translate app since neither key matches a reserved
         # Apple product name.
-        CFBundleDisplayName: Apertium Translate Models
-        CFBundleName: Apertium Translate Models
+        CFBundleDisplayName: Apertium Translation Models
+        CFBundleName: Apertium Translation Models
         CFBundleShortVersionString: "1.0.1"
         CFBundleVersion: "202604271349"
         LSRequiresIPhoneOS: true

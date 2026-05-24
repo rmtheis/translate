@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Преводач</string>
+    <string name="demo_tagline">Демо на езиковите модели на Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Издадени</string>
+    <string name="tier_staging">Подготвителни</string>
+    <string name="tier_nursery">Развиващи се</string>
+    <string name="tier_incubator">Начални</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;от&gt;</string>
+    <string name="to">&lt;на&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Преведи</string>
+    <string name="translating">Превеждане…</string>
+    <string name="copy">Копиране</string>
+    <string name="paste">Поставяне</string>
+    <string name="swap_languages">Размяна на езиците</string>
+    <string name="one_way_only">Само еднопосочен превод</string>
+    <string name="choose_languages">Изберете езици</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Добре</string>
+    <string name="cancel">Отказ</string>
+    <string name="hide">Скриване</string>
+    <string name="download">Изтегляне</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Тази езикова двойка не е изтеглена</string>
+    <string name="download_pair_prompt">Тази езикова двойка все още не е на устройството ви. Да се изтегли ли сега (%1$s)?</string>
+    <string name="download_progress_format">%1$s от %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Изтегляне на %1$d езикови двойки</string>
+    <string name="download_all_format">Изтегляне на всички езикови двойки (%1$s)</string>
+    <string name="download_all_done">Всички езикови двойки са изтеглени</string>
+    <string name="download_complete">Изтеглянето е завършено</string>
+    <string name="download_failed">Изтеглянето е неуспешно (грешка %1$d)</string>
+    <string name="download_cancelled">Изтеглянето е отменено</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Маркиране на непознати думи</string>
+    <string name="displayMarkDescription">Маркиране на непознатите думи с *</string>
+</resources>

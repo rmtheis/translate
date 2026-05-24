@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Traduċi</string>
+    <string name="demo_tagline">Demo tal-mudelli lingwistiċi ta\' Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Rilaxxat</string>
+    <string name="tier_staging">Stadju ta\' ttestjar</string>
+    <string name="tier_nursery">Mixtla</string>
+    <string name="tier_incubator">Inkubatur</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;minn&gt;</string>
+    <string name="to">&lt;għal&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Traduċi</string>
+    <string name="translating">Qed jiġi tradott…</string>
+    <string name="copy">Ikkupja</string>
+    <string name="paste">Waħħal</string>
+    <string name="swap_languages">Aqleb il-lingwi</string>
+    <string name="one_way_only">Traduzzjoni f\'direzzjoni waħda biss</string>
+    <string name="choose_languages">Agħżel il-lingwi</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">OK</string>
+    <string name="cancel">Ikkanċella</string>
+    <string name="hide">Aħbi</string>
+    <string name="download">Niżżel</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Dan il-par ma tniżżilx</string>
+    <string name="download_pair_prompt">Dan il-par ta\' lingwi għadu mhux fuq it-tagħmir tiegħek. Tniżżlu issa (%1$s)?</string>
+    <string name="download_progress_format">%1$s minn %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Qed jitniżżlu %1$d pari ta\' lingwi</string>
+    <string name="download_all_format">Niżżel il-pari kollha tal-lingwi (%1$s)</string>
+    <string name="download_all_done">Il-pari kollha tal-lingwi tniżżlu</string>
+    <string name="download_complete">It-tniżżil tlesta</string>
+    <string name="download_failed">It-tniżżil falla (żball %1$d)</string>
+    <string name="download_cancelled">It-tniżżil ġie kkanċellat</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Immarka l-kliem mhux magħruf</string>
+    <string name="displayMarkDescription">Immarka l-kliem mhux magħruf b\'*</string>
+</resources>

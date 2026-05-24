@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Тәрҗемә</string>
+    <string name="demo_tagline">Apertium тел модельләре демосы</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Чыгарылган</string>
+    <string name="tier_staging">Сынауда</string>
+    <string name="tier_nursery">Әзерләнә</string>
+    <string name="tier_incubator">Башлангыч этап</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;кайдан&gt;</string>
+    <string name="to">&lt;кая&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Тәрҗемә итү</string>
+    <string name="translating">Тәрҗемә ителә…</string>
+    <string name="copy">Күчереп алу</string>
+    <string name="paste">Кую</string>
+    <string name="swap_languages">Телләрне алыштыру</string>
+    <string name="one_way_only">Бер яклы тәрҗемә генә</string>
+    <string name="choose_languages">Телләрне сайлау</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Ярый</string>
+    <string name="cancel">Баш тарту</string>
+    <string name="hide">Яшерү</string>
+    <string name="download">Йөкләп алу</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Бу пар йөкләнмәгән</string>
+    <string name="download_pair_prompt">Бу тел пары җайланмагызда әле юк. Хәзер йөкләп аласызмы (%1$s)?</string>
+    <string name="download_progress_format">%1$s / %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">%1$d тел пары йөкләнә</string>
+    <string name="download_all_format">Барлык тел парларын йөкләп алу (%1$s)</string>
+    <string name="download_all_done">Барлык тел парлары йөкләнде</string>
+    <string name="download_complete">Йөкләү тәмамланды</string>
+    <string name="download_failed">Йөкләү уңышсыз тәмамланды (хата %1$d)</string>
+    <string name="download_cancelled">Йөкләү туктатылды</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Билгесез сүзләрне билгеләү</string>
+    <string name="displayMarkDescription">Билгесез сүзләрне * билгесе белән билгеләү</string>
+</resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">תרגום</string>
+    <string name="demo_tagline">הדגמה של מודלי השפה של Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">שוחרר</string>
+    <string name="tier_staging">בהכנה</string>
+    <string name="tier_nursery">משתלה</string>
+    <string name="tier_incubator">חממה</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;מאת&gt;</string>
+    <string name="to">&lt;אל&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">תרגם</string>
+    <string name="translating">מתרגם…</string>
+    <string name="copy">העתק</string>
+    <string name="paste">הדבק</string>
+    <string name="swap_languages">החלף שפות</string>
+    <string name="one_way_only">תרגום בכיוון אחד בלבד</string>
+    <string name="choose_languages">בחר שפות</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">אישור</string>
+    <string name="cancel">ביטול</string>
+    <string name="hide">הסתר</string>
+    <string name="download">הורד</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">צמד שפות זה לא הורד</string>
+    <string name="download_pair_prompt">צמד השפות הזה עדיין לא נמצא במכשיר שלך. להוריד עכשיו (%1$s)?</string>
+    <string name="download_progress_format">%1$s מתוך %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">מוריד %1$d צמדי שפות</string>
+    <string name="download_all_format">הורד את כל צמדי השפות (%1$s)</string>
+    <string name="download_all_done">כל צמדי השפות הורדו</string>
+    <string name="download_complete">ההורדה הושלמה</string>
+    <string name="download_failed">ההורדה נכשלה (שגיאה %1$d)</string>
+    <string name="download_cancelled">ההורדה בוטלה</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">סמן מילים לא ידועות</string>
+    <string name="displayMarkDescription">סמן מילים לא ידועות בכוכבית *</string>
+</resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Apertium giellamállaid demonstrašuvdna</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Almmuhuvvon</string>
+    <string name="tier_staging">Geahččaleapmi</string>
+    <string name="tier_nursery">Mánáidgárdi</string>
+    <string name="tier_incubator">Šaddanbáiki</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;gielas&gt;</string>
+    <string name="to">&lt;giellii&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Jorgal</string>
+    <string name="translating">Jorgaleamen…</string>
+    <string name="copy">Máŋge</string>
+    <string name="paste">Liibme</string>
+    <string name="swap_languages">Lonut gielaid</string>
+    <string name="one_way_only">Dušše ovtta guvlui jorgaleapmi</string>
+    <string name="choose_languages">Vállje gielaid</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Okei</string>
+    <string name="cancel">Gaskkalduhte</string>
+    <string name="hide">Čiega</string>
+    <string name="download">Viečča</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Dát giellapára ii leat vižžojuvvon</string>
+    <string name="download_pair_prompt">Dát giellapára ii leat vel du neavvus. Viečča dál (%1$s)?</string>
+    <string name="download_progress_format">%1$s / %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Vižžamin %1$d giellapára</string>
+    <string name="download_all_format">Viečča buot giellapáraid (%1$s)</string>
+    <string name="download_all_done">Buot giellapárat vižžojuvvon</string>
+    <string name="download_complete">Viežžan gárvvis</string>
+    <string name="download_failed">Viežžan filtii (meattáhus %1$d)</string>
+    <string name="download_cancelled">Viežžan gaskkalduhtton</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Merke amas sániid</string>
+    <string name="displayMarkDescription">Merke amas sániid *-mearkkain</string>
+</resources>

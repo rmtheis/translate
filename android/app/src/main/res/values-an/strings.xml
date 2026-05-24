@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Tradutor</string>
+    <string name="demo_tagline">Demostración d\'os modelos de luengas d\'Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Publicato</string>
+    <string name="tier_staging">Preparación</string>
+    <string name="tier_nursery">Vivero</string>
+    <string name="tier_incubator">Incubadora</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;de&gt;</string>
+    <string name="to">&lt;a&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Traducir</string>
+    <string name="translating">Traducindo…</string>
+    <string name="copy">Copiar</string>
+    <string name="paste">Apegar</string>
+    <string name="swap_languages">Intercambiar luengas</string>
+    <string name="one_way_only">Tradución nomás en un sentito</string>
+    <string name="choose_languages">Triar luengas</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Acceptar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="hide">Amagar</string>
+    <string name="download">Descargar</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Este parello no s\'ha descargau</string>
+    <string name="download_pair_prompt">Este parello de luengas encara no ye en o tuyo dispositivo. Descargar agora (%1$s)?</string>
+    <string name="download_progress_format">%1$s de %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Descargando %1$d parellos de luengas</string>
+    <string name="download_all_format">Descargar totz os parellos de luengas (%1$s)</string>
+    <string name="download_all_done">Totz os parellos de luengas descargaus</string>
+    <string name="download_complete">Descarga completada</string>
+    <string name="download_failed">A descarga ha fallau (error %1$d)</string>
+    <string name="download_cancelled">Descarga cancelada</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marcar parolas desconoixidas</string>
+    <string name="displayMarkDescription">Marcar parolas desconoixidas con un *</string>
+</resources>

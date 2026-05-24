@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Demo van de Apertium-taalmodellen</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Uitgebracht</string>
+    <string name="tier_staging">Staging</string>
+    <string name="tier_nursery">Nursery</string>
+    <string name="tier_incubator">Incubator</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;van&gt;</string>
+    <string name="to">&lt;naar&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Vertalen</string>
+    <string name="translating">Bezig met vertalen…</string>
+    <string name="copy">Kopiëren</string>
+    <string name="paste">Plakken</string>
+    <string name="swap_languages">Talen omwisselen</string>
+    <string name="one_way_only">Alleen eenrichtingsvertaling</string>
+    <string name="choose_languages">Kies talen</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Oké</string>
+    <string name="cancel">Annuleren</string>
+    <string name="hide">Verbergen</string>
+    <string name="download">Downloaden</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Dit talenpaar is niet gedownload</string>
+    <string name="download_pair_prompt">Dit talenpaar staat nog niet op je apparaat. Nu downloaden (%1$s)?</string>
+    <string name="download_progress_format">%1$s van %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">%1$d talenparen worden gedownload</string>
+    <string name="download_all_format">Alle talenparen downloaden (%1$s)</string>
+    <string name="download_all_done">Alle talenparen gedownload</string>
+    <string name="download_complete">Download voltooid</string>
+    <string name="download_failed">Download mislukt (fout %1$d)</string>
+    <string name="download_cancelled">Download geannuleerd</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Onbekende woorden markeren</string>
+    <string name="displayMarkDescription">Onbekende woorden markeren met een *</string>
+</resources>

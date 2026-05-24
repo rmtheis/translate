@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Demostración de los modelos llingüísticos d\'Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Espublizáu</string>
+    <string name="tier_staging">En pruebes</string>
+    <string name="tier_nursery">En desendolcu</string>
+    <string name="tier_incubator">Incubadora</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;orixe&gt;</string>
+    <string name="to">&lt;destín&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Traducir</string>
+    <string name="translating">Traduciendo…</string>
+    <string name="copy">Copiar</string>
+    <string name="paste">Apegar</string>
+    <string name="swap_languages">Intercambiar llingües</string>
+    <string name="one_way_only">Traducción namái nun sentíu</string>
+    <string name="choose_languages">Escoyer llingües</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Aceptar</string>
+    <string name="cancel">Encaboxar</string>
+    <string name="hide">Anubrir</string>
+    <string name="download">Descargar</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Esti par nun se descargó</string>
+    <string name="download_pair_prompt">Esti par de llingües entá nun ta nel to preséu. ¿Descargar agora (%1$s)?</string>
+    <string name="download_progress_format">%1$s de %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Descargando %1$d pares de llingües</string>
+    <string name="download_all_format">Descargar tolos pares de llingües (%1$s)</string>
+    <string name="download_all_done">Descargáronse tolos pares de llingües</string>
+    <string name="download_complete">Descarga completa</string>
+    <string name="download_failed">Falló la descarga (fallu %1$d)</string>
+    <string name="download_cancelled">Descarga encaboxada</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Conseñar pallabres desconocíes</string>
+    <string name="displayMarkDescription">Conseñar les pallabres desconocíes con un *</string>
+</resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Преведи</string>
+    <string name="demo_tagline">Демонстрација Apertium језичких модела</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Објављено</string>
+    <string name="tier_staging">У припреми</string>
+    <string name="tier_nursery">У развоју</string>
+    <string name="tier_incubator">У инкубатору</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;од&gt;</string>
+    <string name="to">&lt;до&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Преведи</string>
+    <string name="translating">Превођење…</string>
+    <string name="copy">Копирај</string>
+    <string name="paste">Налепи</string>
+    <string name="swap_languages">Замени језике</string>
+    <string name="one_way_only">Само једносмерно превођење</string>
+    <string name="choose_languages">Изабери језике</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">У реду</string>
+    <string name="cancel">Откажи</string>
+    <string name="hide">Сакриј</string>
+    <string name="download">Преузми</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Овај пар није преузет</string>
+    <string name="download_pair_prompt">Овај језички пар још није на вашем уређају. Преузети сада (%1$s)?</string>
+    <string name="download_progress_format">%1$s од %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Преузимање %1$d језичких парова</string>
+    <string name="download_all_format">Преузми све језичке парове (%1$s)</string>
+    <string name="download_all_done">Сви језички парови су преузети</string>
+    <string name="download_complete">Преузимање завршено</string>
+    <string name="download_failed">Преузимање није успело (грешка %1$d)</string>
+    <string name="download_cancelled">Преузимање отказано</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Означи непознате речи</string>
+    <string name="displayMarkDescription">Означи непознате речи са *</string>
+</resources>

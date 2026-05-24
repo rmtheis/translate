@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Apertium dil modellerinin demosu</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Yayımlanmış</string>
+    <string name="tier_staging">Hazırlık</string>
+    <string name="tier_nursery">Geliştirme</string>
+    <string name="tier_incubator">Kuluçka</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;kaynak&gt;</string>
+    <string name="to">&lt;hedef&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Çevir</string>
+    <string name="translating">Çevriliyor…</string>
+    <string name="copy">Kopyala</string>
+    <string name="paste">Yapıştır</string>
+    <string name="swap_languages">Dilleri değiştir</string>
+    <string name="one_way_only">Yalnızca tek yönlü çeviri</string>
+    <string name="choose_languages">Dilleri seçin</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Tamam</string>
+    <string name="cancel">İptal</string>
+    <string name="hide">Gizle</string>
+    <string name="download">İndir</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Bu çift indirilmemiş</string>
+    <string name="download_pair_prompt">Bu dil çifti henüz cihazınızda değil. Şimdi indirilsin mi (%1$s)?</string>
+    <string name="download_progress_format">%1$s / %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">%1$d dil çifti indiriliyor</string>
+    <string name="download_all_format">Tüm dil çiftlerini indir (%1$s)</string>
+    <string name="download_all_done">Tüm dil çiftleri indirildi</string>
+    <string name="download_complete">İndirme tamamlandı</string>
+    <string name="download_failed">İndirme başarısız (hata %1$d)</string>
+    <string name="download_cancelled">İndirme iptal edildi</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Bilinmeyen sözcükleri işaretle</string>
+    <string name="displayMarkDescription">Bilinmeyen sözcükleri * ile işaretle</string>
+</resources>

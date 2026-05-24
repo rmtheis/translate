@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Tradueix</string>
+    <string name="demo_tagline">Demostració dels models lingüístics d\'Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Publicat</string>
+    <string name="tier_staging">Preproducció</string>
+    <string name="tier_nursery">Viver</string>
+    <string name="tier_incubator">Incubadora</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;des de&gt;</string>
+    <string name="to">&lt;a&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Tradueix</string>
+    <string name="translating">Traduint…</string>
+    <string name="copy">Copia</string>
+    <string name="paste">Enganxa</string>
+    <string name="swap_languages">Intercanvia els idiomes</string>
+    <string name="one_way_only">Traducció només en un sentit</string>
+    <string name="choose_languages">Trieu els idiomes</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">D\'acord</string>
+    <string name="cancel">Cancel·la</string>
+    <string name="hide">Amaga</string>
+    <string name="download">Baixa</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Aquest parell no s\'ha baixat</string>
+    <string name="download_pair_prompt">Aquest parell d\'idiomes encara no és al vostre dispositiu. Voleu baixar-lo ara (%1$s)?</string>
+    <string name="download_progress_format">%1$s de %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">S\'estan baixant %1$d parells d\'idiomes</string>
+    <string name="download_all_format">Baixa tots els parells d\'idiomes (%1$s)</string>
+    <string name="download_all_done">S\'han baixat tots els parells d\'idiomes</string>
+    <string name="download_complete">Baixada completada</string>
+    <string name="download_failed">Ha fallat la baixada (error %1$d)</string>
+    <string name="download_cancelled">S\'ha cancel·lat la baixada</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marca les paraules desconegudes</string>
+    <string name="displayMarkDescription">Marca les paraules desconegudes amb un *</string>
+</resources>

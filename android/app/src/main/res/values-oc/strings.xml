@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Tradusir</string>
+    <string name="demo_tagline">Demostracion dels modèls lingüistics d\'Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Publicat</string>
+    <string name="tier_staging">Preproduccion</string>
+    <string name="tier_nursery">Vivièr</string>
+    <string name="tier_incubator">Incubadoira</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;de&gt;</string>
+    <string name="to">&lt;cap a&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Tradusir</string>
+    <string name="translating">Tradusiment en cors…</string>
+    <string name="copy">Copiar</string>
+    <string name="paste">Empegar</string>
+    <string name="swap_languages">Permutar las lengas</string>
+    <string name="one_way_only">Traduccion sonque dins un sens</string>
+    <string name="choose_languages">Causir las lengas</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">D\'acòrdi</string>
+    <string name="cancel">Anullar</string>
+    <string name="hide">Amagar</string>
+    <string name="download">Telecargar</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Aqueste parelh es pas estat telecargat</string>
+    <string name="download_pair_prompt">Aqueste parelh de lengas es pas encara sus vòstre aparelh. Lo telecargar ara (%1$s)?</string>
+    <string name="download_progress_format">%1$s de %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Telecargament de %1$d parelhs de lengas</string>
+    <string name="download_all_format">Telecargar totes los parelhs de lengas (%1$s)</string>
+    <string name="download_all_done">Totes los parelhs de lengas son estats telecargats</string>
+    <string name="download_complete">Telecargament acabat</string>
+    <string name="download_failed">Fracàs del telecargament (error %1$d)</string>
+    <string name="download_cancelled">Telecargament anullat</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marcar los mots desconeguts</string>
+    <string name="displayMarkDescription">Marcar los mots desconeguts amb un *</string>
+</resources>

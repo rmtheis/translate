@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Predstavitev jezikovnih modelov Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Izdano</string>
+    <string name="tier_staging">Pripravljalno</string>
+    <string name="tier_nursery">Razsadišče</string>
+    <string name="tier_incubator">Inkubator</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;iz&gt;</string>
+    <string name="to">&lt;v&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Prevedi</string>
+    <string name="translating">Prevajanje…</string>
+    <string name="copy">Kopiraj</string>
+    <string name="paste">Prilepi</string>
+    <string name="swap_languages">Zamenjaj jezika</string>
+    <string name="one_way_only">Samo enosmerno prevajanje</string>
+    <string name="choose_languages">Izberite jezika</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">V redu</string>
+    <string name="cancel">Prekliči</string>
+    <string name="hide">Skrij</string>
+    <string name="download">Prenesi</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Ta jezikovni par še ni bil prenesen</string>
+    <string name="download_pair_prompt">Tega jezikovnega para še nimate v napravi. Ali ga prenesem zdaj (%1$s)?</string>
+    <string name="download_progress_format">%1$s od %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Prenašanje %1$d jezikovnih parov</string>
+    <string name="download_all_format">Prenesi vse jezikovne pare (%1$s)</string>
+    <string name="download_all_done">Vsi jezikovni pari so preneseni</string>
+    <string name="download_complete">Prenos končan</string>
+    <string name="download_failed">Prenos ni uspel (napaka %1$d)</string>
+    <string name="download_cancelled">Prenos preklican</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Označi neznane besede</string>
+    <string name="displayMarkDescription">Neznane besede označi z *</string>
+</resources>

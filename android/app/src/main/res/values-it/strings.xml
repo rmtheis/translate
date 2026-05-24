@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Traduci</string>
+    <string name="demo_tagline">Demo dei modelli linguistici Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Rilasciato</string>
+    <string name="tier_staging">Staging</string>
+    <string name="tier_nursery">Nursery</string>
+    <string name="tier_incubator">Incubator</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;da&gt;</string>
+    <string name="to">&lt;a&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Traduci</string>
+    <string name="translating">Traduzione in corso…</string>
+    <string name="copy">Copia</string>
+    <string name="paste">Incolla</string>
+    <string name="swap_languages">Inverti lingue</string>
+    <string name="one_way_only">Solo traduzione unidirezionale</string>
+    <string name="choose_languages">Scegli le lingue</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">OK</string>
+    <string name="cancel">Annulla</string>
+    <string name="hide">Nascondi</string>
+    <string name="download">Scarica</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Questa coppia non è stata scaricata</string>
+    <string name="download_pair_prompt">Questa coppia di lingue non è ancora sul tuo dispositivo. Scaricare ora (%1$s)?</string>
+    <string name="download_progress_format">%1$s di %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Download di %1$d coppie di lingue in corso</string>
+    <string name="download_all_format">Scarica tutte le coppie di lingue (%1$s)</string>
+    <string name="download_all_done">Tutte le coppie di lingue sono state scaricate</string>
+    <string name="download_complete">Download completato</string>
+    <string name="download_failed">Download non riuscito (errore %1$d)</string>
+    <string name="download_cancelled">Download annullato</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Contrassegna parole sconosciute</string>
+    <string name="displayMarkDescription">Contrassegna le parole sconosciute con un *</string>
+</resources>

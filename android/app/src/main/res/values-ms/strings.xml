@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Demo model bahasa Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Dikeluarkan</string>
+    <string name="tier_staging">Pementasan</string>
+    <string name="tier_nursery">Tapak Semaian</string>
+    <string name="tier_incubator">Inkubator</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;dari&gt;</string>
+    <string name="to">&lt;ke&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Terjemah</string>
+    <string name="translating">Menterjemah…</string>
+    <string name="copy">Salin</string>
+    <string name="paste">Tampal</string>
+    <string name="swap_languages">Tukar bahasa</string>
+    <string name="one_way_only">Terjemahan sehala sahaja</string>
+    <string name="choose_languages">Pilih bahasa</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Okey</string>
+    <string name="cancel">Batal</string>
+    <string name="hide">Sembunyikan</string>
+    <string name="download">Muat turun</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Pasangan ini belum dimuat turun</string>
+    <string name="download_pair_prompt">Pasangan bahasa ini belum ada pada peranti anda. Muat turun sekarang (%1$s)?</string>
+    <string name="download_progress_format">%1$s daripada %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Memuat turun %1$d pasangan bahasa</string>
+    <string name="download_all_format">Muat turun semua pasangan bahasa (%1$s)</string>
+    <string name="download_all_done">Semua pasangan bahasa telah dimuat turun</string>
+    <string name="download_complete">Muat turun selesai</string>
+    <string name="download_failed">Muat turun gagal (ralat %1$d)</string>
+    <string name="download_cancelled">Muat turun dibatalkan</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Tandakan perkataan yang tidak diketahui</string>
+    <string name="displayMarkDescription">Tandakan perkataan yang tidak diketahui dengan *</string>
+</resources>

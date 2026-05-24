@@ -1,0 +1,5208 @@
+{
+  "sourceLanguage": "en",
+  "version": "1.0",
+  "strings": {
+    "Active": {
+      "comment": "Tier label for released Apertium pairs (matches Android tier_trunk = \"Released\"; iOS chose \"Active\" historically).",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktief"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نشط"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Актыўныя"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Активни"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actiu"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivní"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiv"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activo"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktibo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actif"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activo"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "פעיל"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "सक्रिय"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivno"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktif"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Virkt"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attivo"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Белсенді"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Активни"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktif"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiv"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actief"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktywne"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ativo"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activ"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Активные"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivno"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Активно"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiv"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Etkin"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Активні"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فعال"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activo"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activu"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oberiant"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Çıqarılğan"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiva"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Virkin"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attiv"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doaibmi"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiv"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actiu"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ativu"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivno"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attivu"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktywne"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Актив"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ativu"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gweithredol"
+          }
+        }
+      }
+    },
+    "Apertium Translation Models": {
+      "comment": "App display title shown as the navigation bar and in the About sheet header. Apertium is a brand name and should not be translated; \"Translate Models\" describes that the app showcases machine-translation models.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium Translation Models"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium-vertaalmodelle"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نماذج الترجمة Apertium"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Мадэлі перакладу Apertium"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium модели за превод"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Models de traducció d'Apertium"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Překladové modely Apertium"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium oversættelsesmodeller"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelos de traducción de Apertium"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium Itzulpen Modeloak"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modèles de traduction Apertium"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelos de tradución de Apertium"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "מודלי תרגום של Apertium"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium अनुवाद मॉडल"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium modeli za prevođenje"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model Terjemahan Apertium"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium þýðingarlíkön"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium Modelli di Traduzione"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium аударма модельдері"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium модели за преведување"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model Terjemahan Apertium"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium oversettelsesmodeller"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium-vertaalmodellen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium - modele tłumaczeniowe"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelos de tradução Apertium"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium Modele de traducere"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium — модели перевода"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium prevajalski modeli"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium модели за превођење"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium översättningsmodeller"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium Çeviri Modelleri"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Моделі перекладу Apertium"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium ترجمہ کے ماڈلز"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelos de traducción d'Apertium"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelos de Traducción d'Apertium"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Patromoù troidigezh Apertium"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium Tercime Modelleri"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium-tradukmodeloj"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium týðingarmodellar"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mudelli ta' Traduzzjoni Apertium"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium jorgalanmállet"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium omsetjingsmodellar"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modèls de traduccion d'Apertium"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modellos de tradutzione de Apertium"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium modeli za prevođenje"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium Mudelli di Traduzzioni"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium - modele do przekłŏdaniŏ"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium тәрҗемә модельләре"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apertium nia Modelu Tradusaun"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelau Cyfieithu Apertium"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "comment": "Cancel button on the pair-download sheet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kanselleer"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إلغاء"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Скасаваць"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отказ"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel·la"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zrušit"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuller"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utzi"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ביטול"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "रद्द करें"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odustani"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batal"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hætta við"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annulla"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Бас тарту"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Откажи"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batal"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avbryt"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuleren"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anuluj"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anulează"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмена"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prekliči"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Откажи"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avbryt"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İptal"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Скасувати"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "منسوخ کریں"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encaboxar"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nullañ"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İptal et"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuligi"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Angra"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ikkanċella"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gaskkalduhte"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avbryt"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anullar"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annulla"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odustani"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annulla"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pociep"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Баш тарту"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kansela"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Canslo"
+          }
+        }
+      }
+    },
+    "Done": {
+      "comment": "Keyboard-toolbar Done button and About sheet Done button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klaar"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Гатова"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Готово"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fet"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hotovo"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Færdig"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listo"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eginda"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminé"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feito"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "סיום"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "पूर्ण"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gotovo"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selesai"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokið"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fine"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дайын"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Готово"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selesai"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ferdig"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gereed"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gotowe"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concluído"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gata"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Готово"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Končano"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Готово"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klar"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitti"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Готово"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ہو گیا"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feito"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fecho"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Graet"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tamam"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Farita"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liðugt"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lest"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gárvvis"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ferdig"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fait"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fatu"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gotovo"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fattu"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gotowe"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Әзер"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remata"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wedi gorffen"
+          }
+        }
+      }
+    },
+    "Download failed": {
+      "comment": "Header on the pair-download sheet when the ODR fetch fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download failed"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aflaai het misluk"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فشل التنزيل"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не ўдалося спампаваць"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Изтеглянето е неуспешно"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La descàrrega ha fallat"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stahování selhalo"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download mislykkedes"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error de descarga"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deskargak huts egin du"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Échec du téléchargement"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erro na descarga"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ההורדה נכשלה"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "डाउनलोड विफल"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preuzimanje nije uspjelo"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pengunduhan gagal"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niðurhal mistókst"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download non riuscito"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Жүктеу сәтсіз аяқталды"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Преземањето не успеа"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muat turun gagal"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nedlasting mislyktes"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloaden mislukt"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pobieranie nie powiodło się"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falha ao baixar"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descărcare eșuată"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ошибка загрузки"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prenos ni uspel"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Преузимање није успело"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nedladdningen misslyckades"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İndirme başarısız"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Помилка завантаження"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ڈاؤن لوڈ ناکام"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A descarga ha fallau"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falló la descarga"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "C'hwitet eo ar pellgargañ"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yükleme muvafaqiyetsiz"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elŝuto malsukcesis"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niðurtøkan miseydnaðist"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It-tniżżil falla"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Viežžan filtii"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nedlasting mislukkast"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lo telecargament a fracassat"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iscarrigamentu faddidu"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preuzimanje nije uspjelo"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scarricamentu falliutu"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ściōngniyńcie sie niy podarziło"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Йөкләү уңышсыз тәмамланды"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download la konsege"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Methodd y lawrlwythiad"
+          }
+        }
+      }
+    },
+    "Downloading": {
+      "comment": "Header on the pair-download sheet while the ODR fetch is in progress.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloading"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Besig om af te laai"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جارٍ التنزيل"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Спампоўванне"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Изтегляне"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "S'està baixant"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stahování"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloader"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descargando"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deskargatzen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Téléchargement"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descargando"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "מוריד"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "डाउनलोड हो रहा है"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preuzimanje u tijeku"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mengunduh"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hleð niður"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download in corso"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Жүктелуде"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Се презема"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Memuat turun"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laster ned"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bezig met downloaden"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pobieranie"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Baixando"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se descarcă"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Загрузка"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prenašanje"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Преузимање"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laddar ner"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İndiriliyor"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Завантаження"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ڈاؤن لوڈ ہو رہا ہے"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descargando"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descargando"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O pellgargañ"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yüklene"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elŝutado"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tekur niður"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qed jitniżżel"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Viežžamin"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lastar ned"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Telecargament en cors"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iscarrighende"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preuzimanje u toku"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scarricannu"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ściōnganie"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Йөкләнә"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hatuun hela"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wrthi'n lawrlwytho"
+          }
+        }
+      }
+    },
+    "Mark unknown words": {
+      "comment": "Toggle title in the About+Settings sheet. \"Unknown\" means words Apertium could not translate.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark unknown words"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merk onbekende woorde"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تمييز الكلمات غير المعروفة"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пазначаць невядомыя словы"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Маркирай непознатите думи"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marca les paraules desconegudes"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Označit neznámá slova"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markér ukendte ord"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar palabras desconocidas"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markatu hitz ezezagunak"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marquer les mots inconnus"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar palabras descoñecidas"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "סמן מילים לא ידועות"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "अज्ञात शब्दों को चिह्नित करें"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Označi nepoznate riječi"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tandai kata yang tidak dikenal"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merkja óþekkt orð"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidenzia parole sconosciute"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Белгісіз сөздерді белгілеу"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Означи непознати зборови"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tandakan perkataan tidak diketahui"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marker ukjente ord"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onbekende woorden markeren"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oznacz nieznane słowa"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar palavras desconhecidas"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marchează cuvintele necunoscute"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмечать неизвестные слова"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Označi neznane besede"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Означи непознате речи"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markera okända ord"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bilinmeyen sözcükleri işaretle"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Позначати невідомі слова"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نامعلوم الفاظ کو نشان زد کریں"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar parolas desconoixidas"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar les pallabres desconocíes"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merkañ ar gerioù dianav"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bilinmegen sözlerni işaretle"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marki nekonatajn vortojn"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merk ókend orð"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Immarka kliem mhux magħruf"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merke amas sániid"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merk ukjende ord"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar los mots desconeguts"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marca sas paràulas disconnotas"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Označi nepoznate riječi"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marca i palori scanusciuti"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ôznacz niyznane słowa"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Билгесез сүзләрне билгеләргә"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marka liafuan ne'ebé la hatene"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcio geiriau anhysbys"
+          }
+        }
+      }
+    },
+    "Mark unknown words with a *": {
+      "comment": "Toggle subtitle explaining the marking behavior. The * is a literal asterisk character that prefixes untranslated words.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark unknown words with a *"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merk onbekende woorde met 'n *"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تمييز الكلمات غير المعروفة بعلامة *"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пазначаць невядомыя словы сімвалам *"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Маркирай непознатите думи със *"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marca les paraules desconegudes amb un *"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Označit neznámá slova hvězdičkou *"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markér ukendte ord med en *"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar palabras desconocidas con un *"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markatu hitz ezezagunak * batekin"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marquer les mots inconnus avec un *"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar as palabras descoñecidas cun *"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "סמן מילים לא ידועות בכוכבית *"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "अज्ञात शब्दों को * से चिह्नित करें"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Označi nepoznate riječi zvjezdicom *"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tandai kata yang tidak dikenal dengan *"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merkja óþekkt orð með *"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidenzia le parole sconosciute con un *"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Белгісіз сөздерді * белгісімен белгілеу"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Означи непознати зборови со *"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tandakan perkataan tidak diketahui dengan *"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marker ukjente ord med *"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onbekende woorden markeren met een *"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oznacz nieznane słowa znakiem *"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar palavras desconhecidas com *"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marchează cuvintele necunoscute cu *"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмечать неизвестные слова символом *"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Označi neznane besede z *"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Означи непознате речи са *"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markera okända ord med en *"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bilinmeyen sözcükleri * ile işaretle"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Позначати невідомі слова символом *"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نامعلوم الفاظ کو * سے نشان زد کریں"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar parolas desconoixidas con un *"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar les pallabres desconocíes con un *"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merkañ ar gerioù dianav gant ur *"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bilinmegen sözlerni * ile işaretle"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marki nekonatajn vortojn per *"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merk ókend orð við einum *"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Immarka kliem mhux magħruf b'*"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merke amas sániid *-mearkkain"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merk ukjende ord med *"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar los mots desconeguts amb un *"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marca sas paràulas disconnotas cun unu *"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Označi nepoznate riječi zvjezdicom *"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marca i palori scanusciuti cu nu *"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ôznacz niyznane słowa znakym *"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Билгесез сүзләрне * билгесе белән билгеләргә"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marka liafuan ne'ebé la hatene ho *"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcio geiriau anhysbys gyda *"
+          }
+        }
+      }
+    },
+    "OK": {
+      "comment": "Acknowledge button on the translation-error alert.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "موافق"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ОК"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "D'acord"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aceptar"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ados"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aceptar"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "אישור"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ठीक है"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "U redu"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Í lagi"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Жарайды"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Во ред"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ОК"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "V redu"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "У реду"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tamam"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ٹھیک ہے"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acceptar"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aceptar"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mat eo"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tamam"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bone"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Í lagi"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "D'acòrdi"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Andat bene"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "U redu"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ярый"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iawn"
+          }
+        }
+      }
+    },
+    "Retry": {
+      "comment": "Retry button on the pair-download sheet shown after a failed ODR fetch.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retry"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probeer weer"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة المحاولة"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Паўтарыць"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Опитай отново"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Torna-ho a provar"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zkusit znovu"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prøv igen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reintentar"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saiatu berriro"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réessayer"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tentar de novo"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "נסה שוב"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "पुनः प्रयास करें"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokušaj ponovno"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coba lagi"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reyna aftur"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riprova"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Қайталау"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обиди се повторно"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuba semula"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prøv igjen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opnieuw proberen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ponów"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tentar novamente"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reîncearcă"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Повторить"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poskusi znova"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Покушај поново"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Försök igen"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yeniden dene"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Повторити"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دوبارہ کوشش کریں"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tornar a prebar"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reintentar"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klask en-dro"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kene deñe"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reprovi"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Royn aftur"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erġa' pprova"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geahččal ođđasit"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prøv igjen"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tornar ensajar"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Torra a proare"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokušaj ponovo"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riprova"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprōbuj zaś"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Кабатлау"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Koko fali"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ailgynnig"
+          }
+        }
+      }
+    },
+    "Settings": {
+      "comment": "Accessibility label for the gear icon in the top toolbar that opens the About+Settings sheet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instellings"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الإعدادات"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Налады"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Настройки"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configuració"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nastavení"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Indstillinger"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajustes"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ezarpenak"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paramètres"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Axustes"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "הגדרות"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "सेटिंग्स"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Postavke"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pengaturan"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stillingar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostazioni"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Параметрлер"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поставки"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tetapan"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Innstillinger"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instellingen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustawienia"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configurações"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setări"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Настройки"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nastavitve"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подешавања"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inställningar"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ayarlar"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Налаштування"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ترتیبات"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Achustes"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Axustes"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arventennoù"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ayarlar"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agordoj"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stillingar"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Issettjar"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heivehusat"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Innstillingar"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paramètres"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cunfiguratziones"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Postavke"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mpustazzioni"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sztelōnki"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Көйләүләр"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konfigurasaun"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gosodiadau"
+          }
+        }
+      }
+    },
+    "Source": {
+      "comment": "Fallback label for the source-language text field when the pair title can't be split (rare). Normally replaced by the actual language name.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brontaal"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المصدر"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зыходная"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Източник"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Origen"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zdroj"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kilde"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Origen"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iturria"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orixe"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "מקור"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "स्रोत"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Izvor"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sumber"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uppruni"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Origine"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Бастапқы"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Извор"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sumber"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kilde"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bron"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Źródło"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Origem"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sursă"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Источник"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vir"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Извор"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Källa"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kaynak"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Джерело"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ماخذ"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orichen"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orixe"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mammenn"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menba"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fonto"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kelda"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sors"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gáldu"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kjelde"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Font"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Òrigine"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Izvor"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Origini"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zdrzōdło"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Чыганак"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orijinál"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ffynhonnell"
+          }
+        }
+      }
+    },
+    "Staging": {
+      "comment": "Tier label for Apertium pairs still in staging (pre-release).",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staging"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voorvrystelling"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قيد التجهيز"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Прамежкавыя"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В подготовка"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En proves"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Příprava"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forhåndsvisning"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En preparación"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probaldia"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Préversion"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En probas"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "בהכנה"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "स्टेजिंग"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "U pripremi"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pratinjau"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Í prófun"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In sviluppo"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сынақ"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Во подготовка"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pementasan"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forhåndsversjon"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staging"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Testowe"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em preparação"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "În pregătire"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В разработке"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pripravljalno"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "У припреми"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Förhandsversion"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hazırlık"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "У підготовці"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "زیر تیاری"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En preparación"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En pruebes"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O prientiñ"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hazırlıq"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prepara"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Í royndum"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fi preparazzjoni"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geahččaleamen"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Førehandsversjon"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En preparacion"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In aprontamentu"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "U pripremi"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "N preparazzioni"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Testowe"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Әзерләнүдә"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iha preparasaun"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wrth baratoi"
+          }
+        }
+      }
+    },
+    "TRANSLATE": {
+      "comment": "Primary action button label. Uppercase is intentional to match the Android Material button style.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRANSLATE"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VERTAAL"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ترجم"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПЕРАКЛАСЦІ"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПРЕВЕДИ"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADUEIX"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PŘELOŽIT"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OVERSÆT"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADUCIR"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ITZULI"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADUIRE"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADUCIR"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "תרגם"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "अनुवाद करें"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PREVEDI"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TERJEMAHKAN"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ÞÝÐA"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADUCI"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "АУДАРУ"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПРЕВЕДИ"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TERJEMAH"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OVERSETT"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VERTALEN"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TŁUMACZ"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADUZIR"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADU"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПЕРЕВЕСТИ"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PREVEDI"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПРЕВЕДИ"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ÖVERSÄTT"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ÇEVİR"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПЕРЕКЛАСТИ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ترجمہ کریں"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADUCIR"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADUCIR"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TREIÑ"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TERCİME ET"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADUKI"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TÝÐ"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ITTRADUĊI"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "JORGAL"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OMSETT"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADUSIR"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADUE"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PREVEDI"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADUCI"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PRZEKŁŎDEJ"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ТӘРҖЕМӘ ИТҮ"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADUS"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CYFIEITHU"
+          }
+        }
+      }
+    },
+    "Target": {
+      "comment": "Fallback label for the target-language text field when the pair title can't be split (rare). Normally replaced by the actual language name.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teikentaal"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الهدف"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Мэтавая"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Цел"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Destinació"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cíl"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mål"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Destino"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Helburua"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cible"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Destino"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "יעד"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "लक्ष्य"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cilj"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sasaran"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markmál"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Destinazione"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Аударылатын"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Цел"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sasaran"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mål"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doel"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cel"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Destino"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Țintă"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Цель"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cilj"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Циљ"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mål"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hedef"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ціль"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ہدف"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Destín"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Destín"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pal"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maqsat"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Celo"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mál"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mira"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ulbmil"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mål"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cibla"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Destinu"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cilj"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distinazzioni"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cyl"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Максат"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alvu"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Targed"
+          }
+        }
+      }
+    },
+    "This pair is one-way only.": {
+      "comment": "Error shown when the user taps swap on a pair that doesn't have a backward direction (e.g. mkd→eng has no eng→mkd).",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This pair is one-way only."
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hierdie paar is slegs eenrigting."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هذا الزوج يعمل في اتجاه واحد فقط."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Гэтая пара толькі аднабаковая."
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тази двойка е само еднопосочна."
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aquest parell només funciona en un sentit."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tato dvojice je pouze jednosměrná."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dette par er kun envejs."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este par es solo unidireccional."
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bikote hau norabide bakarrekoa da."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette paire est unidirectionnelle."
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este par é unidireccional."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "צמד זה הוא חד-כיווני בלבד."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "यह जोड़ी केवल एकतरफा है।"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ovaj par podržava samo jedan smjer."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pasangan ini hanya satu arah."
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Þetta par er aðeins einátta."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questa coppia è unidirezionale."
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Бұл жұп тек бір бағытта жұмыс істейді."
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Овој пар е само еднонасочен."
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pasangan ini satu hala sahaja."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dette språkparet er kun enveis."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dit paar werkt maar één kant op."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ta para działa tylko w jedną stronę."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este par é unidirecional."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Această pereche este unidirecțională."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Эта пара работает только в одном направлении."
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ta par je samo enosmeren."
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Овај пар је само једносмеран."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detta par är endast enkelriktat."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu çift yalnızca tek yönlüdür."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ця пара працює лише в одному напрямку."
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "یہ جوڑا صرف یک طرفہ ہے۔"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iste par nomás ye d'una dirección."
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esti par ye namái nun sentíu."
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "N'a ar c'houblad-mañ nemet en un tu."
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu çift faqat bir taraflıdır."
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ĉi tiu paro estas nur unudirekta."
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hetta parið virkar bert ein veg."
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dan il-par jaħdem f'direzzjoni waħda biss."
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dát bárra doaibmá dušše ovtta guvlui."
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dette språkparet er berre einvegs."
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aqueste parelh es unidireccional unicament."
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custa coja andat petzi in una diretzione."
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ovaj par podržava samo jedan smjer."
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sta cuppia funziona sulu nta na direzzioni."
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ta pŏra idzie ino w jedna strōna."
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Бу пар бер яклы гына эшли."
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Par ida-ne'e iha direksaun ida deit."
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mae'r pâr hwn yn unffordd yn unig."
+          }
+        }
+      }
+    },
+    "Translation error": {
+      "comment": "Title of the alert shown when the Apertium engine returns an error during translation.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Translation error"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vertaalfout"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "خطأ في الترجمة"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Памылка перакладу"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Грешка при превода"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error de traducció"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chyba překladu"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oversættelsesfejl"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error de traducción"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Itzulpen errorea"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erreur de traduction"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erro de tradución"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "שגיאת תרגום"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "अनुवाद त्रुटि"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pogreška u prijevodu"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kesalahan terjemahan"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Villa við þýðingu"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Errore di traduzione"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Аударма қатесі"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Грешка при преведување"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ralat terjemahan"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oversettelsesfeil"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vertaalfout"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Błąd tłumaczenia"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erro de tradução"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eroare de traducere"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ошибка перевода"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Napaka pri prevajanju"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Грешка при превођењу"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Översättningsfel"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Çeviri hatası"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Помилка перекладу"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ترجمے میں خرابی"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error de traducción"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fallu de traducción"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fazi troidigezh"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tercime hatası"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eraro de traduko"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Týðingarfeilur"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Żball fit-traduzzjoni"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jorgalanmeattáhus"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Omsetjingsfeil"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error de traduccion"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Errore de tradutzione"
+          }
+        },
+        "sh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Greška pri prevođenju"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erruri di traduzzioni"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feler przekłŏdaniŏ"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тәрҗемә хатасы"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erru iha tradusaun"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gwall cyfieithu"
+          }
+        }
+      }
+    }
+  }
+}

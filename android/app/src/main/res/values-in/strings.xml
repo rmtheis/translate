@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Demo model bahasa Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Dirilis</string>
+    <string name="tier_staging">Staging</string>
+    <string name="tier_nursery">Nursery</string>
+    <string name="tier_incubator">Incubator</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;dari&gt;</string>
+    <string name="to">&lt;ke&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Terjemahkan</string>
+    <string name="translating">Menerjemahkan…</string>
+    <string name="copy">Salin</string>
+    <string name="paste">Tempel</string>
+    <string name="swap_languages">Tukar bahasa</string>
+    <string name="one_way_only">Terjemahan satu arah saja</string>
+    <string name="choose_languages">Pilih bahasa</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Oke</string>
+    <string name="cancel">Batal</string>
+    <string name="hide">Sembunyikan</string>
+    <string name="download">Unduh</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Pasangan ini belum diunduh</string>
+    <string name="download_pair_prompt">Pasangan bahasa ini belum ada di perangkat Anda. Unduh sekarang (%1$s)?</string>
+    <string name="download_progress_format">%1$s dari %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Mengunduh %1$d pasangan bahasa</string>
+    <string name="download_all_format">Unduh semua pasangan bahasa (%1$s)</string>
+    <string name="download_all_done">Semua pasangan bahasa telah diunduh</string>
+    <string name="download_complete">Unduhan selesai</string>
+    <string name="download_failed">Unduhan gagal (kesalahan %1$d)</string>
+    <string name="download_cancelled">Unduhan dibatalkan</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Tandai kata yang tidak dikenal</string>
+    <string name="displayMarkDescription">Tandai kata yang tidak dikenal dengan *</string>
+</resources>

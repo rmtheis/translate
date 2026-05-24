@@ -1,198 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App identity -->
     <string name="app_name">Traduire</string>
-    <string name="demo_tagline">Démo des modèles linguistiques Apertium</string>
-    <string name="paste">Coller</string>
-    <string name="copy">Copier</string>
-    <string name="swap_languages">Inverser les langues</string>
-    <string name="one_way_only">Traduction unidirectionnelle seulement</string>
-    <string name="pair_not_installed">Cette paire n\'est pas téléchargée</string>
-    <string name="tier_trunk">Publiée</string>
-    <string name="tier_staging">Pré-publication</string>
-    <string name="tier_nursery">En développement</string>
-    <string name="tier_incubator">Expérimentale</string>
-    <string name="translateHint">Le texte traduit apparaît ici</string>
-    
-    
-	<!-- Menu  -->
-    <string name="manage">Gérer</string>
-    <string name="share">Part</string>
-    <string name="inbox"> Boîte de réception</string>
-    <string name="clear">Effacer</string>
-    
-    
-     <!-- Widgets  -->
-    <string name="widgetAddButton">+</string>
-    <string name="widgetConfigButton">*</string>
-    <string name="widgetTitle">Desktop Widget</string>
-      
-    
-    <!-- Button  -->
-    <string name="arrow">→</string>
-    <string name="back">Dos</string> 
-    <string name="discard">Jeter</string>
+    <string name="demo_tagline">Démo des modèles de langue Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Publié</string>
+    <string name="tier_staging">Préversion</string>
+    <string name="tier_nursery">Pépinière</string>
+    <string name="tier_incubator">Incubateur</string>
+
+    <!-- Pair picker direction placeholders -->
     <string name="from">&lt;de&gt;</string>
-    <string name="install">Installer</string>
-    <string name="no">Aucun</string>
-    <string name="ok">Bien</string>
-    <string name="reinstall">Réinstaller</string>
-    <string name="reload">Recharger</string>
-    <string name="report">Rapport</string>
-    <string name="setting">Mise</string>
-    <string name="to">&lt;à&gt;</string>
+    <string name="to">&lt;vers&gt;</string>
+
+    <!-- Primary actions -->
     <string name="translate">Traduire</string>
-    <string name="translate_from">Traduire à partir de</string>
-    <string name="translate_to">Traduire en</string>
-    <string name="update">Réviser</string>
-    <string name="yes">Oui</string>
-    
-   
-    <!-- Dialog -->
-    <string name="crash_detect">Blocage\' détecté!</string>
-    <string name="crash_message_with_error_and_support_address">L\'application s\'est écrasé lors de la dernière exécution avec l\'erreur [%1$s].\n\n  S\'il vous plaît nous dire à ce sujet à %2$s.</string>
-   	<string name="confirm_packageRemove">Etes-vous sûr de vouloir supprimer ce paquet?</string>
-	<string name="copying">Copie de fichiers</string>
-	<string name="deleting">Suppression</string>
-	<string name="downloading">Téléchargement</string>
-	<string name="error">Erreur</string>
-	<string name="error_removing_old">Impossible de supprimer l\'ancien package</string>
-	<string name="invalid_jar">Ce n\'est pas un package JAR valide!</string>
-    <string name="installing">Installing</string>
-	<string name="lastmodified">Lastmodified</string>
-	<string name="loading">Chargement</string>
-	<string name="modes">Directions de traduction</string>
-	<string name="NA">Non disponible</string>
-    <string name="no_mode_available">Il n\'ya pas de mode de %1$s à %2$s</string>
-    <string name="no_mode_from">Sélectionnez la langue à traduire à partir &lt;de&gt;</string>
-    <string name="no_mode_to">Sélectionnez la langue à traduire &lt;à&gt;</string>
-    <string name="package_Name">Package</string>
-    <string name="package_list">Liste des packages</string>
-    <string name="removing_db">Retrait de base de données</string>
-	<string name="removing_files">Suppression de fichiers</string>
-	<string name="removing_temp">Suppression des fichiers temporaires</string>
-	<string name="removing_old">Suppression des fichiers anciens</string>
-	<string name="select_language_mode">Select languages to be translate</string>
-    <string name="send_email_in">Envoyez-nous votre email:</string>
-    <string name="share_via">Partager par</string>
-    <string name="translating">Translating</string>
-	<string name="unziping">Fichiers décompression</string>
-	<string name="updating_db">Mise à jour base de données</string>
-    <string name="working">Actif</string>
-	<string name="writing_db">Rédaction base de données</string>
-	
-	
-	<!-- Preference -->
-	<string name="applicationSetting">Cadre d\'application</string>
-	<string name="clipBoardGet">Obtenez ClipBoard</string>
-	<string name="clipBoardGetDescription">Remplissez entrée du presse-papiers</string>
-	<string name="clipBoardPush">Pousser ClipBoard</string>
-	<string name="clipBoardPushDescription">Copier le presse-papiers de sortie</string>
-	<string name="displayMark">Voir marque</string>
-	<string name="displayMarkDescription">Marquez les mots inconnus</string>
-	<string name="enableCache">Activer le cache</string>
-	<string name="enableCacheDescription">Pour permettre une traduction rapide</string>
-	<string name="installInternet">Installer à partir d\'Internet</string>
-	<string name="installInternetDescription">Télécharger et installer directement à partir d\'Internet</string>
-	<string name="installLocal">Installer à partir d\'SDcard</string>
-	<string name="installLocalDescription">Package téléchargé localement</string>
-	<string name="installPackage">Installer le paquet</string>
-	<string name="installPackageDescription">Installer/Mettre à jour nouveau paquet</string>
-	<string name="languagePackage">Forfait Langue</string>
-	<string name="listPackage">Forfait Liste</string>
-	<string name="listPackageDescription">Sélectionnez / Suppression de paquets installés</string>
-	<string name="updateDatabase">Base de données mise à jour</string>
-	<string name="updateDatabaseDescription">Mettre à jour ou réparer la base de données</string>
-	<string name="widgetSetting">Paramètres des widgets</string>
-	<string name="widgetSettingDescription">Widgets comme raccourci pour la langue spécifique</string>
+    <string name="translating">Traduction en cours…</string>
+    <string name="copy">Copier</string>
+    <string name="paste">Coller</string>
+    <string name="swap_languages">Inverser les langues</string>
+    <string name="one_way_only">Traduction unidirectionnelle uniquement</string>
+    <string name="choose_languages">Choisir les langues</string>
 
-    <string name="apply">Apply</string>
-    <string name="cancel">Cancel</string>
-    <string name="about">About</string>
-    <string name="choose_languages">Choose languages</string>
-    <string name="network_error">Network error</string>
-    <string name="download_languages">Download languages</string>
-    <!--
-    <string name="input_text">Apertium offre à la fois la traduction de textes, avec la
-        traduction de documents et de surfer et de traduire.</string>
-        -->
-    <string name="aboutText"><![CDATA[
-<html><body>
-This is an open source, off-line machine translation application which offers
-most of the language directions from Apertium.<br>
+    <!-- Generic dialog buttons -->
+    <string name="ok">OK</string>
+    <string name="cancel">Annuler</string>
+    <string name="hide">Masquer</string>
+    <string name="download">Télécharger</string>
 
-Apertium is a free, open-source, rule-based, machine translation project and platform.<br>
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Cette paire n\'a pas été téléchargée</string>
+    <string name="download_pair_prompt">Cette paire de langues n\'est pas encore sur votre appareil. Télécharger maintenant (%1$s) ?</string>
+    <string name="download_progress_format">%1$s sur %2$s</string>
 
-This program don\'t send your text through the Internet to get a translation, and it
-doesn\'t require an internet connection for translation. <br>
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Téléchargement de %1$d paires de langues</string>
+    <string name="download_all_format">Télécharger toutes les paires de langues (%1$s)</string>
+    <string name="download_all_done">Toutes les paires de langues ont été téléchargées</string>
+    <string name="download_complete">Téléchargement terminé</string>
+    <string name="download_failed">Échec du téléchargement (erreur %1$d)</string>
+    <string name="download_cancelled">Téléchargement annulé</string>
 
-<h2>Using this app</h2>
-You can mark text in e.g. the web browser, long-press and select to "Share" with Apertium
-to put it into the translator. <br>
-
-The first translation you do will be probably be slow, on older phones it can take up to a minute.
-The subsequent translations will be faster.<br>
-
-On smaller phones you are adviced to start out installing just one language pair.<br>
-
-To download language pairs we require internet access in this version.
-If you feel unconfident about that, you can switch off data connections while
-translating, or you can download the
-<a href="http://apertium.svn.sourceforge.net/viewvc/apertium/trunk/apertium-mobile/apertium-android/">source
-code</a> and build your own version.<br>
-
-<h2>Apertium in general</h2>
-Apertium can be installed on your own desktop machine, and is bundled with several Linux flavors.<br>
-
-If you want to quickly try it out on the desktop there are
-<a href="https://wiki.apertium.org/wiki/Apertium-Caffeine">zero-install Java web start applets</a>
-for most languages.
-
-
-<h3>Need help creating your own offline translation service?</h3>
-This app is an open source showcase of how to do offline translation.
-We encourage you to copy it and modify as you like.
-There is a lively volunteer-driven community, ready to help developers
-and end users. Please see
-<a href="https://wiki.apertium.org">https://wiki.apertium.org</a>
-for how to get in touch.
-
-
-<h3>Something missing? Want to make your own language pair?</h3>
-
-It takes around 3 months of full time work to create a language pair from scratch.<br/>
-We at Apertium will help you, of course, and if you are a student you could consider
-engaging in Apertium work being sponsored by the Google Summer of Code free/open-source
-program (see <a href="http://code.google.com/intl/ca/soc/">http://code.google.com/intl/ca/soc/</a>).
-Please contact us for details!
-
-<h2>Authors and contributors</h2>
-This app would not have been possible without the support of Google Summer of Code (GSoC) stipends.
-<pre>
-2012 Mikel Artetxe artetxem@gmail.com<br>
-Making Java port of lttoolbox embeddable during GSoC 2012<br>
-<br>
-2012 Arink Verma arinkverma@gmail.com<br>
-Created an Android app using lttoolbox-java during GSoC 2012<br>
-<br>
-2012 <a href="http://profiles.google.com/jacob.nordfalk">Jacob Nordfalk</a> jacob.nordfalk@gmail.com<br>
-Mentor of Mikel and Arink
-Re-architect lttoolbox-java for memory constrained devices
-Android app revision autumn 2012<br>
-<br>
-2010 <a href="http://stephentigner.com/">Stephen Tigner</a> stephen.tigner@gmail.com<br>
-Java port of the Apertium C++ library during GSoC 2010<br>
-<br>
-2009 Raphaël Laurent raphal.laurent@gmail.com<br>
-Java port of the Apertium C++ library during GSoC 2009<br>
-<br>
-2008 by Nic Cottrell<br>
-Initial draft of Java port<br>
-<br>
-2009-2012 Jacob Nordfalk jacob.nordfalk@gmail.com<br>
-Maintainer and GSOC mentor 2010 and 2012<br>
-</pre>
-
-]]>
-  </string>
-
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marquer les mots inconnus</string>
+    <string name="displayMarkDescription">Marquer les mots inconnus avec un *</string>
 </resources>

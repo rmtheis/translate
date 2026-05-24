@@ -1,205 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App identity -->
     <string name="app_name">Translate</string>
     <string name="demo_tagline">Demo of the Apertium language models</string>
-    <string name="translateHint">Translated text will appear here</string>
 
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Released</string>
+    <string name="tier_staging">Staging</string>
+    <string name="tier_nursery">Nursery</string>
+    <string name="tier_incubator">Incubator</string>
 
-	<!-- Menu  -->
-    <string name="manage">Manage</string>
-    <string name="share">Share</string>
-    <string name="clear">Clear</string>
-	<string name="inbox">Inbox</string>
-
-
-     <!-- Widgets  -->
-    <string name="widgetAddButton">+</string>
-    <string name="widgetConfigButton">*</string>
-    <string name="widgetTitle">Desktop Widget</string>
-
-
-    <!-- Button  -->
-    <string name="arrow">→</string>
-    <string name="back">Back</string>
-    <string name="discard">Discard</string>
+    <!-- Pair picker direction placeholders -->
     <string name="from">&lt;from&gt;</string>
-    <string name="install">Install</string>
-    <string name="no">No</string>
-    <string name="ok">Okay</string>
-    <string name="reinstall">Reinstall</string>
-    <string name="reload">Reload</string>
-    <string name="report">Report</string>
-    <string name="setting">Setting</string>
     <string name="to">&lt;to&gt;</string>
+
+    <!-- Primary actions -->
     <string name="translate">Translate</string>
-    <string name="paste">Paste</string>
+    <string name="translating">Translating…</string>
     <string name="copy">Copy</string>
+    <string name="paste">Paste</string>
     <string name="swap_languages">Swap languages</string>
     <string name="one_way_only">One-way translation only</string>
-    <string name="pair_not_installed">This pair hasn\'t been downloaded</string>
-    <string name="download">Download</string>
+    <string name="choose_languages">Choose languages</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Okay</string>
+    <string name="cancel">Cancel</string>
     <string name="hide">Hide</string>
+    <string name="download">Download</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">This pair hasn\'t been downloaded</string>
     <string name="download_pair_prompt">This language pair isn\'t on your device yet. Download now (%1$s)?</string>
     <string name="download_progress_format">%1$s of %2$s</string>
+
+    <!-- Bulk download flow -->
     <string name="downloading_all">Downloading %1$d language pairs</string>
     <string name="download_all_format">Download all language pairs (%1$s)</string>
     <string name="download_all_done">All language pairs downloaded</string>
     <string name="download_complete">Download complete</string>
     <string name="download_failed">Download failed (error %1$d)</string>
     <string name="download_cancelled">Download cancelled</string>
-    <string name="tier_trunk">Released</string>
-    <string name="tier_staging">Staging</string>
-    <string name="tier_nursery">Nursery</string>
-    <string name="tier_incubator">Incubator</string>
-    <string name="translate_from">Translate from</string>
-    <string name="translate_to">Translated to</string>
-    <string name="update">Update</string>
-    <string name="yes">Yes</string>
 
-
-    <!-- Dialog -->
-    <string name="crash_detect">Crash Detected!</string>
-    <string name="crash_message_with_error_and_support_address">The application has crashed during last run with error [%1$s].\n\n Please tell us about it at %2$s .</string>
-   	<string name="confirm_packageRemove">Are you sure want to remove this package?</string>
-	<string name="copying">Copying files</string>
-	<string name="deleting">Deleting</string>
-	<string name="downloading">Downloading</string>
-	<string name="error">Error</string>
-	<string name="error_removing_old">Cannot remove old package</string>
-    <string name="invalid_jar">This is not a valid JAR package!</string>
-    <string name="installing">Installing</string>
-	<string name="lastmodified">Lastmodified</string>
-	<string name="loading">Loading</string>
-	<string name="modes">Translation directions</string>
-	<string name="NA">Not Available</string>
-    <string name="no_mode_available">There is no language direction from %1$s to %2$s</string>
-    <string name="no_mode_from">Select language to be translated &lt;from&gt;</string>
-    <string name="no_mode_to">Select language to be translated &lt;to&gt;</string>
-    <string name="package_Name">Package</string>
-    <string name="package_list">Package List</string>
-    <string name="removing_db">Removing database</string>
-	<string name="removing_files">Removing files</string>
-	<string name="removing_temp">Removing temporary files</string>
-	<string name="removing_old">Removing old files</string>
-	<string name="select_language_mode">Select languages to translate</string>
-    <string name="send_email_in">Send your email in:</string>
-    <string name="share_via">Share via</string>
-    <string name="translating">Translating...</string>
-	<string name="unziping">Unzipping files</string>
-	<string name="updating_db">Updating database</string>
-    <string name="working">Working</string>
-	<string name="writing_db">Writing database</string>
-
-
-	<!-- Preference -->
-	<string name="applicationSetting">Application Setting</string>
-	<string name="clipBoardGet">ClipBoard Get</string>
-	<string name="clipBoardGetDescription">Fill input from clipboard</string>
-	<string name="clipBoardPush">ClipBoard Push</string>
-	<string name="clipBoardPushDescription">Copy output to clipboard</string>
-	<string name="displayMark">Mark unknown words</string>
-	<string name="displayMarkDescription">Mark unknown words with a *</string>
-	<string name="enableCache">Enable Cache</string>
-	<string name="enableCacheDescription">For quick translation enable</string>
-	<string name="installInternet">Install from Internet</string>
-	<string name="installInternetDescription">Download and Install directly from Internet</string>
-	<string name="installLocal">Install from SDcard</string>
-	<string name="installLocalDescription">localy downloaded package</string>
-	<string name="installPackage">Install Package</string>
-	<string name="installPackageDescription">Install/Update new package</string>
-	<string name="languagePackage">Language Package</string>
-	<string name="listPackage">List Package</string>
-	<string name="listPackageDescription">Select/Remove installed packages</string>
-	<string name="updateDatabase">Update Database</string>
-	<string name="updateDatabaseDescription">Update or repair database</string>
-	<string name="widgetSetting">Widget Settings</string>
-	<string name="widgetSettingDescription">Widgets such as shortcut for specific language</string>
-
-
-  <string name="apply">Apply</string>
-  <string name="cancel">Cancel</string>
-  <string name="about">About</string>
-	<string name="choose_languages">Choose languages</string>
-	<string name="network_error">Network error</string>
-  <string name="download_languages">Download languages</string>
-  <string name="aboutText"><![CDATA[
-<html><body>
-This is an open source, off-line machine translation application which offers
-most of the language directions from Apertium.<br>
-
-Apertium is a free, open-source, rule-based, machine translation project and platform.<br>
-
-This program don\'t send your text through the Internet to get a translation, and it
-doesn\'t require an internet connection for translation. <br>
-
-<h2>Using this app</h2>
-You can mark text in e.g. the web browser, long-press and select to "Share" with Apertium
-to put it into the translator. <br>
-
-The first translation you do will be probably be slow, on older phones it can take up to a minute.
-The subsequent translations will be faster.<br>
-
-On smaller phones you are adviced to start out installing just one language pair.<br>
-
-To download language pairs we require internet access in this version.
-If you feel unconfident about that, you can switch off data connections while
-translating, or you can download the
-<a href="http://apertium.svn.sourceforge.net/viewvc/apertium/trunk/apertium-mobile/apertium-android/">source
-code</a> and build your own version.<br>
-
-<h2>Apertium in general</h2>
-Apertium can be installed on your own desktop machine, and is bundled with several Linux flavors.<br>
-
-If you want to quickly try it out on the desktop there are
-<a href="https://wiki.apertium.org/wiki/Apertium-Caffeine">zero-install Java web start applets</a>
-for most languages.
-
-
-<h3>Need help creating your own offline translation service?</h3>
-This app is an open source showcase of how to do offline translation.
-We encourage you to copy it and modify as you like.
-There is a lively volunteer-driven community, ready to help developers
-and end users. Please see
-<a href="https://wiki.apertium.org">https://wiki.apertium.org</a>
-for how to get in touch.
-
-
-<h3>Something missing? Want to make your own language pair?</h3>
-
-It takes around 3 months of full time work to create a language pair from scratch.<br/>
-We at Apertium will help you, of course, and if you are a student you could consider
-engaging in Apertium work being sponsored by the Google Summer of Code free/open-source
-program (see <a href="http://code.google.com/intl/ca/soc/">http://code.google.com/intl/ca/soc/</a>).
-Please contact us for details!
-
-<h2>Authors and contributors</h2>
-This app would not have been possible without the support of Google Summer of Code (GSoC) stipends.
-<pre>
-2012 Mikel Artetxe artetxem@gmail.com<br>
-Making Java port of lttoolbox embeddable during GSoC 2012<br>
-<br>
-2012 Arink Verma arinkverma@gmail.com<br>
-Created an Android app using lttoolbox-java during GSoC 2012<br>
-<br>
-2012 <a href="http://profiles.google.com/jacob.nordfalk">Jacob Nordfalk</a> jacob.nordfalk@gmail.com<br>
-Mentor of Mikel and Arink
-Re-architect lttoolbox-java for memory constrained devices
-Android app revision autumn 2012<br>
-<br>
-2010 <a href="http://stephentigner.com/">Stephen Tigner</a> stephen.tigner@gmail.com<br>
-Java port of the Apertium C++ library during GSoC 2010<br>
-<br>
-2009 Raphaël Laurent raphal.laurent@gmail.com<br>
-Java port of the Apertium C++ library during GSoC 2009<br>
-<br>
-2008 by Nic Cottrell<br>
-Initial draft of Java port<br>
-<br>
-2009-2012 Jacob Nordfalk jacob.nordfalk@gmail.com<br>
-Maintainer and GSOC mentor 2010 and 2012<br>
-</pre>
-
-]]>
-  </string>
-
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Mark unknown words</string>
+    <string name="displayMarkDescription">Mark unknown words with a *</string>
 </resources>

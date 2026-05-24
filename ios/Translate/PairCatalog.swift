@@ -15,8 +15,8 @@ enum PairTier: String, CaseIterable, Hashable {
 
     var displayName: String {
         switch self {
-        case .trunk:   return "Active"
-        case .staging: return "Staging"
+        case .trunk:   return String(localized: "Active")
+        case .staging: return String(localized: "Staging")
         }
     }
 }

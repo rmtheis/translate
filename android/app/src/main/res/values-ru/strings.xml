@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Перевести</string>
+    <string name="demo_tagline">Демонстрация языковых моделей Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Выпущено</string>
+    <string name="tier_staging">Тестирование</string>
+    <string name="tier_nursery">Разработка</string>
+    <string name="tier_incubator">Инкубатор</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;откуда&gt;</string>
+    <string name="to">&lt;куда&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Перевести</string>
+    <string name="translating">Перевод…</string>
+    <string name="copy">Копировать</string>
+    <string name="paste">Вставить</string>
+    <string name="swap_languages">Поменять языки местами</string>
+    <string name="one_way_only">Только односторонний перевод</string>
+    <string name="choose_languages">Выберите языки</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">ОК</string>
+    <string name="cancel">Отмена</string>
+    <string name="hide">Скрыть</string>
+    <string name="download">Загрузить</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Эта пара не загружена</string>
+    <string name="download_pair_prompt">Эта языковая пара ещё не загружена на ваше устройство. Загрузить сейчас (%1$s)?</string>
+    <string name="download_progress_format">%1$s из %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Загрузка %1$d языковых пар</string>
+    <string name="download_all_format">Загрузить все языковые пары (%1$s)</string>
+    <string name="download_all_done">Все языковые пары загружены</string>
+    <string name="download_complete">Загрузка завершена</string>
+    <string name="download_failed">Ошибка загрузки (код %1$d)</string>
+    <string name="download_cancelled">Загрузка отменена</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Отмечать неизвестные слова</string>
+    <string name="displayMarkDescription">Отмечать неизвестные слова символом *</string>
+</resources>

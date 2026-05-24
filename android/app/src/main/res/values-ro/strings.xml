@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Demonstrație a modelelor lingvistice Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Lansate</string>
+    <string name="tier_staging">În pregătire</string>
+    <string name="tier_nursery">În dezvoltare</string>
+    <string name="tier_incubator">În incubare</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;din&gt;</string>
+    <string name="to">&lt;în&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Tradu</string>
+    <string name="translating">Se traduce…</string>
+    <string name="copy">Copiază</string>
+    <string name="paste">Lipește</string>
+    <string name="swap_languages">Inversează limbile</string>
+    <string name="one_way_only">Traducere doar într-un singur sens</string>
+    <string name="choose_languages">Alege limbile</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">OK</string>
+    <string name="cancel">Anulează</string>
+    <string name="hide">Ascunde</string>
+    <string name="download">Descarcă</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Această pereche nu a fost descărcată</string>
+    <string name="download_pair_prompt">Această pereche de limbi nu este încă pe dispozitivul dvs. Descărcați acum (%1$s)?</string>
+    <string name="download_progress_format">%1$s din %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Se descarcă %1$d perechi de limbi</string>
+    <string name="download_all_format">Descarcă toate perechile de limbi (%1$s)</string>
+    <string name="download_all_done">Toate perechile de limbi au fost descărcate</string>
+    <string name="download_complete">Descărcare finalizată</string>
+    <string name="download_failed">Descărcare eșuată (eroare %1$d)</string>
+    <string name="download_cancelled">Descărcare anulată</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marchează cuvintele necunoscute</string>
+    <string name="displayMarkDescription">Marchează cuvintele necunoscute cu un *</string>
+</resources>

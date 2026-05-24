@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Oversett</string>
+    <string name="demo_tagline">Demo av Apertium-språkmodellene</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Lansert</string>
+    <string name="tier_staging">Klargjøring</string>
+    <string name="tier_nursery">Utvikling</string>
+    <string name="tier_incubator">Eksperimentell</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;fra&gt;</string>
+    <string name="to">&lt;til&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Oversett</string>
+    <string name="translating">Oversetter…</string>
+    <string name="copy">Kopier</string>
+    <string name="paste">Lim inn</string>
+    <string name="swap_languages">Bytt om språk</string>
+    <string name="one_way_only">Bare enveis oversettelse</string>
+    <string name="choose_languages">Velg språk</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">OK</string>
+    <string name="cancel">Avbryt</string>
+    <string name="hide">Skjul</string>
+    <string name="download">Last ned</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Dette språkparet er ikke lastet ned</string>
+    <string name="download_pair_prompt">Dette språkparet er ikke på enheten ennå. Vil du laste det ned nå (%1$s)?</string>
+    <string name="download_progress_format">%1$s av %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Laster ned %1$d språkpar</string>
+    <string name="download_all_format">Last ned alle språkpar (%1$s)</string>
+    <string name="download_all_done">Alle språkpar er lastet ned</string>
+    <string name="download_complete">Nedlasting fullført</string>
+    <string name="download_failed">Nedlasting mislyktes (feil %1$d)</string>
+    <string name="download_cancelled">Nedlasting avbrutt</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marker ukjente ord</string>
+    <string name="displayMarkDescription">Marker ukjente ord med *</string>
+</resources>

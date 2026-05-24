@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Vertaal</string>
+    <string name="demo_tagline">Demo van die Apertium-taalmodelle</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Vrygestel</string>
+    <string name="tier_staging">Voorbereiding</string>
+    <string name="tier_nursery">Vroeë ontwikkeling</string>
+    <string name="tier_incubator">Eksperimenteel</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;van&gt;</string>
+    <string name="to">&lt;na&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Vertaal</string>
+    <string name="translating">Vertaal tans…</string>
+    <string name="copy">Kopieer</string>
+    <string name="paste">Plak</string>
+    <string name="swap_languages">Ruil tale om</string>
+    <string name="one_way_only">Slegs eenrigtingvertaling</string>
+    <string name="choose_languages">Kies tale</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Goed</string>
+    <string name="cancel">Kanselleer</string>
+    <string name="hide">Versteek</string>
+    <string name="download">Laai af</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Hierdie taalpaar is nog nie afgelaai nie</string>
+    <string name="download_pair_prompt">Hierdie taalpaar is nog nie op jou toestel nie. Laai dit nou af (%1$s)?</string>
+    <string name="download_progress_format">%1$s van %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Laai %1$d taalpare af</string>
+    <string name="download_all_format">Laai alle taalpare af (%1$s)</string>
+    <string name="download_all_done">Alle taalpare afgelaai</string>
+    <string name="download_complete">Aflaai voltooi</string>
+    <string name="download_failed">Aflaai het misluk (fout %1$d)</string>
+    <string name="download_cancelled">Aflaai gekanselleer</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Merk onbekende woorde</string>
+    <string name="displayMarkDescription">Merk onbekende woorde met \'n *</string>
+</resources>

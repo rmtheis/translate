@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Cyfieithu</string>
+    <string name="demo_tagline">Demo o fodelau iaith Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Rhyddhawyd</string>
+    <string name="tier_staging">Llwyfannu</string>
+    <string name="tier_nursery">Meithrinfa</string>
+    <string name="tier_incubator">Deorfa</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;o&gt;</string>
+    <string name="to">&lt;i&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Cyfieithu</string>
+    <string name="translating">Yn cyfieithu…</string>
+    <string name="copy">Copïo</string>
+    <string name="paste">Gludo</string>
+    <string name="swap_languages">Cyfnewid ieithoedd</string>
+    <string name="one_way_only">Cyfieithu un ffordd yn unig</string>
+    <string name="choose_languages">Dewis ieithoedd</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Iawn</string>
+    <string name="cancel">Canslo</string>
+    <string name="hide">Cuddio</string>
+    <string name="download">Lawrlwytho</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Nid yw\'r pâr hwn wedi cael ei lawrlwytho</string>
+    <string name="download_pair_prompt">Nid yw\'r pâr ieithoedd hwn ar eich dyfais eto. Lawrlwytho nawr (%1$s)?</string>
+    <string name="download_progress_format">%1$s o %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Yn lawrlwytho %1$d pâr o ieithoedd</string>
+    <string name="download_all_format">Lawrlwytho pob pâr ieithoedd (%1$s)</string>
+    <string name="download_all_done">Mae pob pâr ieithoedd wedi\'i lawrlwytho</string>
+    <string name="download_complete">Lawrlwythiad wedi\'i gwblhau</string>
+    <string name="download_failed">Methodd y lawrlwythiad (gwall %1$d)</string>
+    <string name="download_cancelled">Canslwyd y lawrlwythiad</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marcio geiriau anhysbys</string>
+    <string name="displayMarkDescription">Marcio geiriau anhysbys gyda *</string>
+</resources>

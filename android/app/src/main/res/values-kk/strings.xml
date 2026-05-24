@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Аудару</string>
+    <string name="demo_tagline">Apertium тілдік үлгілерінің демонстрациясы</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Шығарылған</string>
+    <string name="tier_staging">Сынақтағы</string>
+    <string name="tier_nursery">Әзірленуде</string>
+    <string name="tier_incubator">Бастапқы кезең</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;қайдан&gt;</string>
+    <string name="to">&lt;қайда&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Аудару</string>
+    <string name="translating">Аударылуда…</string>
+    <string name="copy">Көшіру</string>
+    <string name="paste">Қою</string>
+    <string name="swap_languages">Тілдерді ауыстыру</string>
+    <string name="one_way_only">Тек бір бағытта аудару</string>
+    <string name="choose_languages">Тілдерді таңдау</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Жарайды</string>
+    <string name="cancel">Бас тарту</string>
+    <string name="hide">Жасыру</string>
+    <string name="download">Жүктеп алу</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Бұл жұп жүктелмеген</string>
+    <string name="download_pair_prompt">Бұл тілдік жұп құрылғыңызда әлі жоқ. Қазір жүктеп алу керек пе (%1$s)?</string>
+    <string name="download_progress_format">%2$s ішінен %1$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">%1$d тілдік жұп жүктелуде</string>
+    <string name="download_all_format">Барлық тілдік жұптарды жүктеп алу (%1$s)</string>
+    <string name="download_all_done">Барлық тілдік жұптар жүктелді</string>
+    <string name="download_complete">Жүктеу аяқталды</string>
+    <string name="download_failed">Жүктеу сәтсіз аяқталды (қате %1$d)</string>
+    <string name="download_cancelled">Жүктеу болдырылмады</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Белгісіз сөздерді белгілеу</string>
+    <string name="displayMarkDescription">Белгісіз сөздерді * белгісімен белгілеу</string>
+</resources>

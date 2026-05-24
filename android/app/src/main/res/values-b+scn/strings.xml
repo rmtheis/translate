@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Dimustrazzioni di li mudeddi linguistici di Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Pubblicatu</string>
+    <string name="tier_staging">In prova</string>
+    <string name="tier_nursery">In sviluppu</string>
+    <string name="tier_incubator">Incubaturi</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;di&gt;</string>
+    <string name="to">&lt;a&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Traduci</string>
+    <string name="translating">Traducennu…</string>
+    <string name="copy">Cupia</string>
+    <string name="paste">Ncodda</string>
+    <string name="swap_languages">Scancia li lingui</string>
+    <string name="one_way_only">Traduzzioni sulu nta na direzzioni</string>
+    <string name="choose_languages">Scigli li lingui</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Va beni</string>
+    <string name="cancel">Annulla</string>
+    <string name="hide">Ammuccia</string>
+    <string name="download">Scarrica</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Sta cuppia nun fu scarricata</string>
+    <string name="download_pair_prompt">Sta cuppia di lingui ancora nun si trova nta lu to dispusitivu. Scarricari ora (%1$s)?</string>
+    <string name="download_progress_format">%1$s di %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Scarricannu %1$d cuppi di lingui</string>
+    <string name="download_all_format">Scarrica tutti li cuppi di lingui (%1$s)</string>
+    <string name="download_all_done">Tutti li cuppi di lingui foru scarricati</string>
+    <string name="download_complete">Scarricamentu cumplitatu</string>
+    <string name="download_failed">Scarricamentu falliu (erruri %1$d)</string>
+    <string name="download_cancelled">Scarricamentu annullatu</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Signa li palori scanusciuti</string>
+    <string name="displayMarkDescription">Signa li palori scanusciuti cu nu *</string>
+</resources>

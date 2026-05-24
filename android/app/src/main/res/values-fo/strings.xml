@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Týðing</string>
+    <string name="demo_tagline">Demo av Apertium-málmodellunum</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Útgivið</string>
+    <string name="tier_staging">Í royndum</string>
+    <string name="tier_nursery">Á byrjanarstigi</string>
+    <string name="tier_incubator">Á tilraunarstigi</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;úr&gt;</string>
+    <string name="to">&lt;til&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Týð</string>
+    <string name="translating">Týðir…</string>
+    <string name="copy">Avrita</string>
+    <string name="paste">Líma inn</string>
+    <string name="swap_languages">Skift mál</string>
+    <string name="one_way_only">Bert týðing eina vegin</string>
+    <string name="choose_languages">Vel mál</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Í lagi</string>
+    <string name="cancel">Angra</string>
+    <string name="hide">Fjal</string>
+    <string name="download">Tak niður</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Hetta málparið er ikki tikið niður</string>
+    <string name="download_pair_prompt">Hetta málparið er ikki á tóleindini hjá tær enn. Tak niður nú (%1$s)?</string>
+    <string name="download_progress_format">%1$s av %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Taki %1$d málpør niður</string>
+    <string name="download_all_format">Tak niður øll málpør (%1$s)</string>
+    <string name="download_all_done">Øll málpør tikin niður</string>
+    <string name="download_complete">Niðurtøka liðug</string>
+    <string name="download_failed">Niðurtøka miseydnaðist (feilur %1$d)</string>
+    <string name="download_cancelled">Angrað niðurtøku</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Merk ókend orð</string>
+    <string name="displayMarkDescription">Merk ókend orð við *</string>
+</resources>

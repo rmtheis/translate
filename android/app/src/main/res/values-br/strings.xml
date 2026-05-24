@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Treiñ</string>
+    <string name="demo_tagline">Diskouezadenn eus patromoù yezh Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Embannet</string>
+    <string name="tier_staging">Prouennañ</string>
+    <string name="tier_nursery">Magerez</string>
+    <string name="tier_incubator">Deorerez</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;eus&gt;</string>
+    <string name="to">&lt;da&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Treiñ</string>
+    <string name="translating">O treiñ…</string>
+    <string name="copy">Eilañ</string>
+    <string name="paste">Pegañ</string>
+    <string name="swap_languages">Eskemm ar yezhoù</string>
+    <string name="one_way_only">Treiñ un tu hepken</string>
+    <string name="choose_languages">Dibab ar yezhoù</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Mat eo</string>
+    <string name="cancel">Nullañ</string>
+    <string name="hide">Kuzhat</string>
+    <string name="download">Pellgargañ</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">N\'eo ket bet pellgarget ar c\'houblad-mañ</string>
+    <string name="download_pair_prompt">N\'emañ ket ar c\'houblad yezhoù-mañ war ho trevnad c\'hoazh. Pellgargañ bremañ (%1$s)?</string>
+    <string name="download_progress_format">%1$s eus %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">O pellgargañ %1$d c\'houblad yezhoù</string>
+    <string name="download_all_format">Pellgargañ an holl goubladoù yezhoù (%1$s)</string>
+    <string name="download_all_done">Pellgarget eo an holl goubladoù yezhoù</string>
+    <string name="download_complete">Pellgargadenn echu</string>
+    <string name="download_failed">C\'hwitet eo ar pellgargañ (fazi %1$d)</string>
+    <string name="download_cancelled">Nullet eo bet ar pellgargañ</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Merkañ ar gerioù dianav</string>
+    <string name="displayMarkDescription">Merkañ ar gerioù dianav gant ur *</string>
+</resources>

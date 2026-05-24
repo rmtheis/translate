@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Демонстрація мовних моделей Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Випущено</string>
+    <string name="tier_staging">Підготовка</string>
+    <string name="tier_nursery">Розробка</string>
+    <string name="tier_incubator">Початкова стадія</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;з&gt;</string>
+    <string name="to">&lt;на&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Перекласти</string>
+    <string name="translating">Переклад…</string>
+    <string name="copy">Копіювати</string>
+    <string name="paste">Вставити</string>
+    <string name="swap_languages">Поміняти мови місцями</string>
+    <string name="one_way_only">Лише односторонній переклад</string>
+    <string name="choose_languages">Виберіть мови</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Гаразд</string>
+    <string name="cancel">Скасувати</string>
+    <string name="hide">Сховати</string>
+    <string name="download">Завантажити</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Цю мовну пару не завантажено</string>
+    <string name="download_pair_prompt">Цієї мовної пари ще немає на вашому пристрої. Завантажити зараз (%1$s)?</string>
+    <string name="download_progress_format">%1$s з %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Завантаження %1$d мовних пар</string>
+    <string name="download_all_format">Завантажити всі мовні пари (%1$s)</string>
+    <string name="download_all_done">Усі мовні пари завантажено</string>
+    <string name="download_complete">Завантаження завершено</string>
+    <string name="download_failed">Помилка завантаження (код %1$d)</string>
+    <string name="download_cancelled">Завантаження скасовано</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Позначати невідомі слова</string>
+    <string name="displayMarkDescription">Позначати невідомі слова символом *</string>
+</resources>

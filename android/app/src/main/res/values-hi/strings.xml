@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Apertium भाषा मॉडल का डेमो</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">जारी किया गया</string>
+    <string name="tier_staging">स्टेजिंग</string>
+    <string name="tier_nursery">नर्सरी</string>
+    <string name="tier_incubator">इन्क्यूबेटर</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;से&gt;</string>
+    <string name="to">&lt;तक&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">अनुवाद करें</string>
+    <string name="translating">अनुवाद हो रहा है…</string>
+    <string name="copy">कॉपी करें</string>
+    <string name="paste">पेस्ट करें</string>
+    <string name="swap_languages">भाषाएँ बदलें</string>
+    <string name="one_way_only">केवल एकतरफ़ा अनुवाद</string>
+    <string name="choose_languages">भाषाएँ चुनें</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">ठीक है</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="hide">छिपाएँ</string>
+    <string name="download">डाउनलोड करें</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">यह जोड़ी डाउनलोड नहीं की गई है</string>
+    <string name="download_pair_prompt">यह भाषा जोड़ी अभी आपके डिवाइस पर नहीं है। अभी डाउनलोड करें (%1$s)?</string>
+    <string name="download_progress_format">%2$s में से %1$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">%1$d भाषा जोड़ियाँ डाउनलोड हो रही हैं</string>
+    <string name="download_all_format">सभी भाषा जोड़ियाँ डाउनलोड करें (%1$s)</string>
+    <string name="download_all_done">सभी भाषा जोड़ियाँ डाउनलोड हो गईं</string>
+    <string name="download_complete">डाउनलोड पूरा हुआ</string>
+    <string name="download_failed">डाउनलोड विफल हुआ (त्रुटि %1$d)</string>
+    <string name="download_cancelled">डाउनलोड रद्द किया गया</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">अज्ञात शब्दों को चिह्नित करें</string>
+    <string name="displayMarkDescription">अज्ञात शब्दों को * से चिह्नित करें</string>
+</resources>

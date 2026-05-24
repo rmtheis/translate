@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Tradue</string>
+    <string name="demo_tagline">Demo de sos modellos linguìsticos de Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Publicadu</string>
+    <string name="tier_staging">Pre-produtzione</string>
+    <string name="tier_nursery">Biargiu</string>
+    <string name="tier_incubator">Incubadora</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;dae&gt;</string>
+    <string name="to">&lt;a&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Tradue</string>
+    <string name="translating">Traduende…</string>
+    <string name="copy">Còpia</string>
+    <string name="paste">Incolla</string>
+    <string name="swap_languages">Iscàmbia sas limbas</string>
+    <string name="one_way_only">Tradutzione petzi in unu sensu</string>
+    <string name="choose_languages">Sèbera sas limbas</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Andat bene</string>
+    <string name="cancel">Annulla</string>
+    <string name="hide">Cua</string>
+    <string name="download">Iscàrriga</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Custa coja no est istada iscarrigada</string>
+    <string name="download_pair_prompt">Custa coja de limbas no est ancora in su dispositivu tuo. La boles iscarrigare immoe (%1$s)?</string>
+    <string name="download_progress_format">%1$s de %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Iscarrighende %1$d cojas de limbas</string>
+    <string name="download_all_format">Iscàrriga totu sas cojas de limbas (%1$s)</string>
+    <string name="download_all_done">Totu sas cojas de limbas sunt istadas iscarrigadas</string>
+    <string name="download_complete">Iscarrigamentu cumpletadu</string>
+    <string name="download_failed">Iscarrigamentu faddidu (errore %1$d)</string>
+    <string name="download_cancelled">Iscarrigamentu annulladu</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marca sas paràulas disconnotas</string>
+    <string name="displayMarkDescription">Marca sas paràulas disconnotas cun unu *</string>
+</resources>

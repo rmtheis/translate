@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Þýða</string>
+    <string name="demo_tagline">Sýnishorn af Apertium-tungumálalíkönunum</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Útgefið</string>
+    <string name="tier_staging">Í prófun</string>
+    <string name="tier_nursery">Á byrjunarstigi</string>
+    <string name="tier_incubator">Á tilraunastigi</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;úr&gt;</string>
+    <string name="to">&lt;á&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Þýða</string>
+    <string name="translating">Þýði…</string>
+    <string name="copy">Afrita</string>
+    <string name="paste">Líma</string>
+    <string name="swap_languages">Skipta um tungumál</string>
+    <string name="one_way_only">Aðeins þýðing í eina átt</string>
+    <string name="choose_languages">Velja tungumál</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Í lagi</string>
+    <string name="cancel">Hætta við</string>
+    <string name="hide">Fela</string>
+    <string name="download">Sækja</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Þetta tungumálapar hefur ekki verið sótt</string>
+    <string name="download_pair_prompt">Þetta tungumálapar er ekki enn á tækinu þínu. Sækja núna (%1$s)?</string>
+    <string name="download_progress_format">%1$s af %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Sæki %1$d tungumálapör</string>
+    <string name="download_all_format">Sækja öll tungumálapör (%1$s)</string>
+    <string name="download_all_done">Öll tungumálapör sótt</string>
+    <string name="download_complete">Niðurhali lokið</string>
+    <string name="download_failed">Niðurhal mistókst (villa %1$d)</string>
+    <string name="download_cancelled">Hætt við niðurhal</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Merkja óþekkt orð</string>
+    <string name="displayMarkDescription">Merkja óþekkt orð með *</string>
+</resources>

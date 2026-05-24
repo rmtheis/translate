@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Преведи</string>
+    <string name="demo_tagline">Демо на јазичните модели на Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Објавени</string>
+    <string name="tier_staging">Подготовка</string>
+    <string name="tier_nursery">Развој</string>
+    <string name="tier_incubator">Инкубатор</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;од&gt;</string>
+    <string name="to">&lt;до&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Преведи</string>
+    <string name="translating">Преведување…</string>
+    <string name="copy">Копирај</string>
+    <string name="paste">Залепи</string>
+    <string name="swap_languages">Замени јазици</string>
+    <string name="one_way_only">Само еднонасочен превод</string>
+    <string name="choose_languages">Избери јазици</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Во ред</string>
+    <string name="cancel">Откажи</string>
+    <string name="hide">Сокриј</string>
+    <string name="download">Преземи</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Овој пар не е преземен</string>
+    <string name="download_pair_prompt">Овој јазичен пар сè уште не е на вашиот уред. Да го преземете сега (%1$s)?</string>
+    <string name="download_progress_format">%1$s од %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Се преземаат %1$d јазични парови</string>
+    <string name="download_all_format">Преземи ги сите јазични парови (%1$s)</string>
+    <string name="download_all_done">Сите јазични парови се преземени</string>
+    <string name="download_complete">Преземањето е завршено</string>
+    <string name="download_failed">Преземањето не успеа (грешка %1$d)</string>
+    <string name="download_cancelled">Преземањето е откажано</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Означи непознати зборови</string>
+    <string name="displayMarkDescription">Означи ги непознатите зборови со *</string>
+</resources>

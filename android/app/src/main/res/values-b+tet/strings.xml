@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Demonstrasaun ba modelu lian Apertium nian</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Fó sai ona</string>
+    <string name="tier_staging">Iha teste</string>
+    <string name="tier_nursery">Iha dezenvolvimentu</string>
+    <string name="tier_incubator">Inkubadór</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;husi&gt;</string>
+    <string name="to">&lt;ba&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Tradús</string>
+    <string name="translating">Tradús hela…</string>
+    <string name="copy">Kopia</string>
+    <string name="paste">Tau</string>
+    <string name="swap_languages">Troka lian sira</string>
+    <string name="one_way_only">Tradusaun ba dalan ida deit</string>
+    <string name="choose_languages">Hili lian sira</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">Di\'ak</string>
+    <string name="cancel">Kansela</string>
+    <string name="hide">Subar</string>
+    <string name="download">Deskarga</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Par ida ne\'e seidauk deskarga</string>
+    <string name="download_pair_prompt">Par lian ne\'e seidauk iha ita-nia aparellu. Deskarga agora (%1$s)?</string>
+    <string name="download_progress_format">%1$s husi %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Deskarga hela par lian %1$d</string>
+    <string name="download_all_format">Deskarga par lian hotu-hotu (%1$s)</string>
+    <string name="download_all_done">Par lian hotu-hotu deskarga ona</string>
+    <string name="download_complete">Deskarga remata ona</string>
+    <string name="download_failed">Deskarga la konsege (sala %1$d)</string>
+    <string name="download_cancelled">Deskarga kansela ona</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marka liafuan ne\'ebé la hatene</string>
+    <string name="displayMarkDescription">Marka liafuan ne\'ebé la hatene ho *</string>
+</resources>

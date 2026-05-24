@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Prevedi</string>
+    <string name="demo_tagline">Demo Apertium jezičnih modela</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Objavljeno</string>
+    <string name="tier_staging">Pripremno</string>
+    <string name="tier_nursery">Razvojno</string>
+    <string name="tier_incubator">Inkubator</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;iz&gt;</string>
+    <string name="to">&lt;u&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Prevedi</string>
+    <string name="translating">Prevođenje…</string>
+    <string name="copy">Kopiraj</string>
+    <string name="paste">Zalijepi</string>
+    <string name="swap_languages">Zamijeni jezike</string>
+    <string name="one_way_only">Prevođenje samo u jednom smjeru</string>
+    <string name="choose_languages">Odaberi jezike</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">U redu</string>
+    <string name="cancel">Odustani</string>
+    <string name="hide">Sakrij</string>
+    <string name="download">Preuzmi</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Ovaj jezični par nije preuzet</string>
+    <string name="download_pair_prompt">Ovaj jezični par još nije na vašem uređaju. Preuzeti sada (%1$s)?</string>
+    <string name="download_progress_format">%1$s od %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Preuzimanje %1$d jezičnih parova</string>
+    <string name="download_all_format">Preuzmi sve jezične parove (%1$s)</string>
+    <string name="download_all_done">Svi jezični parovi su preuzeti</string>
+    <string name="download_complete">Preuzimanje završeno</string>
+    <string name="download_failed">Preuzimanje neuspješno (greška %1$d)</string>
+    <string name="download_cancelled">Preuzimanje otkazano</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Označi nepoznate riječi</string>
+    <string name="displayMarkDescription">Označi nepoznate riječi sa *</string>
+</resources>
