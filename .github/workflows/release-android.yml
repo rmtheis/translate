@@ -254,10 +254,10 @@ jobs:
     # to master. GITHUB_TOKEN defaults to read-only on PRs/dispatches.
     permissions:
       contents: write
-    # Only deploy when explicitly triggered; the scheduled run produces the AAB but
-    # doesn't push it, so humans can review before release. Flip this off for full
-    # automation once you're confident.
-    if: github.event_name == 'workflow_dispatch'
+    # Publishes on every run that reaches it — the monthly cron AND manual
+    # workflow_dispatch both deploy to the production track. The pair-change
+    # gate below is the only thing that can still skip the actual Play upload
+    # (when no pair changed since the last release).
     steps:
       - uses: actions/checkout@v5
 
