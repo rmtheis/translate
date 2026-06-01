@@ -201,7 +201,7 @@ build_apertium() {
     --disable-docs \
     --disable-shared --enable-static \
     CC="$CC" CXX="$CXX" AR="$AR" RANLIB="$RANLIB" \
-    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp" \
+    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp -I$SCRIPT_DIR/deps/boost" \
     LDFLAGS="-L$PREFIX/lib $LDFLAGS" \
     PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
   make -j"$JOBS"
@@ -225,7 +225,7 @@ build_lex_tools() {
     --prefix="$PREFIX" \
     --disable-shared --enable-static \
     CC="$CC" CXX="$CXX" AR="$AR" RANLIB="$RANLIB" \
-    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp" \
+    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp -I$SCRIPT_DIR/deps/boost" \
     LDFLAGS="-L$PREFIX/lib $LDFLAGS" \
     PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
   make -j"$JOBS"
@@ -249,7 +249,7 @@ build_recursive() {
     --prefix="$PREFIX" \
     --disable-shared --enable-static \
     CC="$CC" CXX="$CXX" AR="$AR" RANLIB="$RANLIB" \
-    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp" \
+    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp -I$SCRIPT_DIR/deps/boost" \
     LDFLAGS="-L$PREFIX/lib $LDFLAGS" \
     PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
   make -j"$JOBS"
@@ -273,7 +273,7 @@ build_anaphora() {
     --prefix="$PREFIX" \
     --disable-shared --enable-static \
     CC="$CC" CXX="$CXX" AR="$AR" RANLIB="$RANLIB" \
-    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp" \
+    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp -I$SCRIPT_DIR/deps/boost" \
     LDFLAGS="-L$PREFIX/lib $LDFLAGS" \
     PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
   make -j"$JOBS"
@@ -297,7 +297,7 @@ build_separable() {
     --prefix="$PREFIX" \
     --disable-shared --enable-static \
     CC="$CC" CXX="$CXX" AR="$AR" RANLIB="$RANLIB" \
-    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp" \
+    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp -I$SCRIPT_DIR/deps/boost" \
     LDFLAGS="-L$PREFIX/lib $LDFLAGS" \
     PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
   make -j"$JOBS"

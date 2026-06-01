@@ -303,7 +303,7 @@ build_apertium() {
     CC="$CC" CXX="$CXX" AR="$AR" RANLIB="$RANLIB" \
     CFLAGS="$CFLAGS" \
     CXXFLAGS="$CXXFLAGS" \
-    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp" \
+    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp -I$SCRIPT_DIR/deps/boost" \
     LDFLAGS="$LDFLAGS" \
     PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
   make -j"$JOBS"
@@ -335,7 +335,7 @@ _apertium_autotools_build() {
     CC="$CC" CXX="$CXX" AR="$AR" RANLIB="$RANLIB" \
     CFLAGS="$CFLAGS" \
     CXXFLAGS="$CXXFLAGS" \
-    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp" \
+    CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp -I$SCRIPT_DIR/deps/boost" \
     LDFLAGS="$LDFLAGS" \
     PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
   make -j"$JOBS"
