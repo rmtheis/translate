@@ -158,9 +158,27 @@ build_lttoolbox() {
   banner "lttoolbox"
   local src="$SCRIPT_DIR/lttoolbox"
   [ -d "$src" ] || git clone --depth 1 https://github.com/apertium/lttoolbox.git "$src"
+  # lttoolbox >= v3.8.3 (apertium/lttoolbox@3e5dbff, 2026-05-07) hard-requires
+  # Boost headers: find_package(Boost 1.58 REQUIRED) for <boost/endian/conversion.hpp>.
+  # It's header-only, so vendor just the boost/ tree and hand cmake an explicit
+  # Boost_INCLUDE_DIR. The NDK toolchain file pins find_package to
+  # CMAKE_FIND_ROOT_PATH=$PREFIX, so a system libboost-dev would never be found —
+  # same reason build_cg3 passes its own Boost_INCLUDE_DIR.
+  local boost_inc="$SCRIPT_DIR/deps/boost"
+  if [ ! -f "$boost_inc/boost/version.hpp" ]; then
+    banner "boost 1.86.0 (headers only, for lttoolbox)"
+    curl -fsSL --retry 3 --retry-all-errors --max-redirs 10 -o /tmp/boost.tar.bz2 \
+      "https://archives.boost.io/release/1.86.0/source/boost_1_86_0.tar.bz2"
+    mkdir -p "$boost_inc"
+    tar -jxf /tmp/boost.tar.bz2 -C /tmp boost_1_86_0/boost
+    mv /tmp/boost_1_86_0/boost "$boost_inc/"
+    rm -rf /tmp/boost_1_86_0 /tmp/boost.tar.bz2
+  fi
   mkdir -p "$BUILD/lttoolbox"
   "$CMAKE" -S "$src" -B "$BUILD/lttoolbox" "${CMAKE_COMMON[@]}" \
-    -DBUILD_TESTING=OFF
+    -DBUILD_TESTING=OFF \
+    -DBoost_NO_SYSTEM_PATHS=ON \
+    -DBoost_INCLUDE_DIR="$boost_inc"
   "$NINJA" -C "$BUILD/lttoolbox" install
 }
 

@@ -256,10 +256,26 @@ build_lttoolbox() {
   /usr/bin/sed -i '' \
     's|foreach(flag "-Wno-unused-result" "-flto")|foreach(flag "-Wno-unused-result")|' \
     "$src/CMakeLists.txt"
+  # lttoolbox >= v3.8.3 (apertium/lttoolbox@3e5dbff, 2026-05-07) hard-requires
+  # Boost headers: find_package(Boost 1.58 REQUIRED) for <boost/endian/conversion.hpp>.
+  # Header-only — vendor just the boost/ tree (shared across slices) and pass an
+  # explicit Boost_INCLUDE_DIR, same approach build_cg3 uses (1.86.0 there too).
+  local boost_inc="$SCRIPT_DIR/deps/boost"
+  if [ ! -f "$boost_inc/boost/version.hpp" ]; then
+    banner "boost 1.86.0 (headers only, for lttoolbox)"
+    curl -fsSL --retry 3 --retry-all-errors --max-redirs 10 -o /tmp/boost.tar.bz2 \
+      "https://archives.boost.io/release/1.86.0/source/boost_1_86_0.tar.bz2"
+    mkdir -p "$boost_inc"
+    tar -jxf /tmp/boost.tar.bz2 -C /tmp boost_1_86_0/boost
+    mv /tmp/boost_1_86_0/boost "$boost_inc/"
+    rm -rf /tmp/boost_1_86_0 /tmp/boost.tar.bz2
+  fi
   mkdir -p "$BUILD/lttoolbox"
   "$CMAKE" -S "$src" -B "$BUILD/lttoolbox" "${CMAKE_COMMON[@]}" \
     "${CMAKE_ICUDATA_FIX[@]}" \
-    -DBUILD_TESTING=OFF
+    -DBUILD_TESTING=OFF \
+    -DBoost_NO_SYSTEM_PATHS=ON \
+    -DBoost_INCLUDE_DIR="$boost_inc"
   "${BUILDER[@]}" -C "$BUILD/lttoolbox" install
 }
 build_apertium() {

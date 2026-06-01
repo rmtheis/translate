@@ -45,9 +45,14 @@ Individual targets: `utfcpp`, `pcre2`, `xml2`, `icu`, `lttoolbox`,
 - **bionic missing `wordexp`** until API 28. cg3's `TextualParser.cpp`
   `#include <wordexp.h>` — covered by `shims/wordexp.h` which returns
   `WRDE_BADCHAR` so the (dead) shell-expansion path fails loudly.
-- **cg3 needs Boost**. Its `get-boost.sh` fetches 1.65.1 into
-  `cg3/include/boost/` at configure time; we pass `BOOST_ROOT=cg3/include`
-  to cmake so it finds the local copy rather than hunting system paths.
+- **lttoolbox + cg3 need Boost headers**. Upstream lttoolbox >= v3.8.3
+  (2026-05-07) added `find_package(Boost 1.58 REQUIRED)` for
+  `<boost/endian/conversion.hpp>`; cg3 uses Boost more broadly. Both are
+  header-only here, and the NDK toolchain pins `find_package` to
+  `CMAKE_FIND_ROOT_PATH`, so a system libboost is never seen. `build_lttoolbox`
+  vendors the Boost 1.86 headers into `deps/boost/` and passes
+  `Boost_INCLUDE_DIR`; cg3's `get-boost.sh` fetches 1.65.1 into
+  `cg3/include/boost/` and we pass `BOOST_ROOT=cg3/include`.
 - **cg3 needs RapidJSON**. We build `deps/rapidjson` (header-only) first
   and point `RapidJSON_DIR` at the installed cmake config.
 - **ICU versioning**: ICU ships `.so.76.1` libraries. Android's APK
