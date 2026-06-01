@@ -270,7 +270,7 @@
             "value": "Ativu"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "Aktivno"
@@ -576,7 +576,7 @@
             "value": "Modellos de tradutzione de Apertium"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "Apertium modeli za prevođenje"
@@ -882,7 +882,7 @@
             "value": "Annulla"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "Odustani"
@@ -1188,7 +1188,7 @@
             "value": "Fatu"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "Gotovo"
@@ -1494,7 +1494,7 @@
             "value": "Iscarrigamentu faddidu"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "Preuzimanje nije uspjelo"
@@ -1800,7 +1800,7 @@
             "value": "Iscarrighende"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "Preuzimanje u toku"
@@ -2106,7 +2106,7 @@
             "value": "Marca sas paràulas disconnotas"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "Označi nepoznate riječi"
@@ -2412,7 +2412,7 @@
             "value": "Marca sas paràulas disconnotas cun unu *"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "Označi nepoznate riječi zvjezdicom *"
@@ -2718,7 +2718,7 @@
             "value": "Andat bene"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "U redu"
@@ -3024,7 +3024,7 @@
             "value": "Torra a proare"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "Pokušaj ponovo"
@@ -3330,7 +3330,7 @@
             "value": "Cunfiguratziones"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "Postavke"
@@ -3636,7 +3636,7 @@
             "value": "Òrigine"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "Izvor"
@@ -3942,7 +3942,7 @@
             "value": "In aprontamentu"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "U pripremi"
@@ -4248,7 +4248,7 @@
             "value": "TRADUE"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "PREVEDI"
@@ -4554,7 +4554,7 @@
             "value": "Destinu"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "Cilj"
@@ -4860,7 +4860,7 @@
             "value": "Custa coja andat petzi in una diretzione."
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "Ovaj par podržava samo jedan smjer."
@@ -5166,7 +5166,7 @@
             "value": "Errore de tradutzione"
           }
         },
-        "sh": {
+        "sr-Latn": {
           "stringUnit": {
             "state": "translated",
             "value": "Greška pri prevođenju"
