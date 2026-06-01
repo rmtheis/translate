@@ -449,5 +449,14 @@ jobs:
           git add .ci/prior-pair-inventory-ios.json ios/project.yml
           git diff --cached --quiet || {
             git commit -m "ci(ios): release $new_name — snapshot pair inventory + bump version [skip ci]"
-            git push
+            # Another push (a human, a concurrent run, or the parallel Android release)
+            # may have advanced master while this job built. Rebase onto it and retry so
+            # a race can't red-fail an already-successful App Store Connect upload.
+            pushed=false
+            for attempt in 1 2 3 4 5; do
+              if git push; then pushed=true; break; fi
+              echo "push rejected (attempt $attempt) — rebasing onto origin/master"
+              git pull --rebase origin master || { echo "::error::rebase hit a conflict; reconcile manually"; exit 1; }
+            done
+            [ "$pushed" = true ] || { echo "::error::could not push bookkeeping commit after 5 attempts"; exit 1; }
           }
