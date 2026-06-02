@@ -362,6 +362,12 @@ Ordered. Each step should be verifiable before moving on.
 14. Inventory-diff release notes (reuse Python scripts verbatim);
     store listing; privacy policy HTML on `qvyshift.website` (clone of
     the Android page with iOS-specific swaps).
+15. Submit to the App Store for end users (not just TestFlight): the
+    deploy job creates the App Store version (`asc_create_version.py` —
+    Apple does NOT auto-create it on build upload), sets notes +
+    description, then `asc_resubmit.py` attaches the build and submits
+    for review with `releaseType=AFTER_APPROVAL` (auto-release on
+    approval). Apple review is still mandatory.
 
 Pause before pushing anything to GitHub. Wait for user to say when to
 create `github.com/rmtheis/translate-ios` and push.
