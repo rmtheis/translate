@@ -429,6 +429,23 @@ jobs:
         # of HTML-comment START/END markers.
         run: python3 scripts/update-appstore-description.py pair-inventory.json
 
+      - name: Submit version for App Store review (auto-release)
+        if: steps.gate.outputs.changed == 'true'
+        env:
+          ASC_KEY_ID:       ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          ASC_ISSUER_ID:    ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          ASC_P8:           ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          ASC_BUNDLE_ID:    ${{ env.PACKAGE_NAME }}
+          # AFTER_APPROVAL = the version goes live automatically the moment Apple
+          # approves it. Set MANUAL here to hold a version for manual release.
+          ASC_RELEASE_TYPE: AFTER_APPROVAL
+        # This is the step that actually gets a release to end users: asc_resubmit.py
+        # waits for the uploaded build to finish processing, attaches it to the App
+        # Store version, sets release-after-approval, and submits it to Apple's
+        # review queue. (Apple review is mandatory — there is no instant-live
+        # equivalent of Play's production push; AFTER_APPROVAL is as close as it gets.)
+        run: python3 scripts/asc_resubmit.py
+
       - name: Commit version bump + inventory snapshot
         if: steps.gate.outputs.changed == 'true'
         # Re-derive the same bump the build job made so the committed

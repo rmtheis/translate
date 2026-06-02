@@ -8,7 +8,9 @@ Run this AFTER asc_upload.py has uploaded a new build. The script:
   2. Finds the App Store version row matching the build's
      versionString — typically the row ASC auto-creates after a
      successful upload, in PREPARE_FOR_SUBMISSION state.
-  3. Attaches the build to that version (PATCH the build relationship).
+  3. Attaches the build to that version (PATCH the build relationship)
+     and sets its releaseType — default AFTER_APPROVAL, so the version
+     auto-releases to the App Store the moment Apple approves it.
   4. Creates a reviewSubmission for the app, adds the version as an
      item, and PATCHes submitted=true to send it to Apple's review
      queue.
@@ -30,6 +32,9 @@ Environment:
                           target. Defaults to the version row that has
                           createdDate descending and matches one of
                           the editable states.
+  ASC_RELEASE_TYPE      — optional: AFTER_APPROVAL (default) | MANUAL |
+                          SCHEDULED. AFTER_APPROVAL releases the version
+                          to end users automatically once Apple approves.
 
 Usage:
   python3 scripts/asc_resubmit.py
@@ -188,6 +193,18 @@ def attach_build(token: str, version_id: str, build_id: str) -> None:
              body=body, expect_json=False)
 
 
+def set_release_type(token: str, version_id: str, release_type: str) -> None:
+    """PATCH /v1/appStoreVersions/{id} attributes.releaseType.
+
+    AFTER_APPROVAL makes the version go live the instant Apple approves it
+    (closest to "straight to the App Store"); MANUAL leaves it in Pending
+    Developer Release; SCHEDULED needs an earliestReleaseDate."""
+    body = {"data": {"type": "appStoreVersions", "id": version_id,
+                     "attributes": {"releaseType": release_type}}}
+    _request("PATCH", token, f"/appStoreVersions/{version_id}",
+             body=body, expect_json=False)
+
+
 def create_review_submission(token: str, app_id: str,
                              platform: str = "IOS") -> str:
     """Find an existing open reviewSubmission for this app+platform, or
@@ -273,6 +290,7 @@ def main() -> None:
     bundle_id = _env("ASC_BUNDLE_ID", "com.qvyshift.translate")
     build_ver = os.environ.get("ASC_BUILD_VERSION") or None
     version_string = os.environ.get("ASC_VERSION_STRING") or None
+    release_type = (os.environ.get("ASC_RELEASE_TYPE") or "AFTER_APPROVAL").upper()
 
     token = mint_jwt(key_id, issuer_id, p8)
 
@@ -295,8 +313,10 @@ def main() -> None:
     st = version["attributes"].get("appStoreState")
     print(f"  version_id={version_id} versionString={vs} state={st}")
 
-    print(f"[4/5] Attach build {build_id} to version {version_id}")
+    print(f"[4/5] Attach build {build_id} to version {version_id}, "
+          f"releaseType={release_type}")
     attach_build(token, version_id, build_id)
+    set_release_type(token, version_id, release_type)
 
     print(f"[5/5] Create reviewSubmission and submit")
     rs_id = create_review_submission(token, app_id)
