@@ -256,6 +256,22 @@ build_lttoolbox() {
   /usr/bin/sed -i '' \
     's|foreach(flag "-Wno-unused-result" "-flto")|foreach(flag "-Wno-unused-result")|' \
     "$src/CMakeLists.txt"
+  # lttoolbox's `cmake_policy(VERSION <running CMake>)` bumps every policy to the
+  # running CMake's defaults; on the runner's CMake 4.x that flips CMP0167 to NEW,
+  # making find_package(Boost) config-only so it ignores the header-only
+  # Boost_INCLUDE_DIR below (verified against CMake 4.3.3: reproduces "Could not
+  # find a package configuration file provided by Boost"). Force the legacy
+  # FindBoost module back on — the same fix build_cg3 applies. Guarded + idempotent
+  # (no-op on the Android SDK's CMake 3.22, where CMP0167 doesn't exist).
+  python3 - "$src/CMakeLists.txt" <<'PY'
+import sys
+p = sys.argv[1]
+s = open(p).read()
+anchor = "cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})"
+if "CMP0167" not in s and anchor in s:
+    s = s.replace(anchor, anchor + "\nif(POLICY CMP0167)\n\tcmake_policy(SET CMP0167 OLD)\nendif()", 1)
+    open(p, "w").write(s)
+PY
   # lttoolbox >= v3.8.3 (apertium/lttoolbox@3e5dbff, 2026-05-07) hard-requires
   # Boost headers: find_package(Boost 1.58 REQUIRED) for <boost/endian/conversion.hpp>.
   # Header-only — vendor just the boost/ tree (shared across slices) and pass an
