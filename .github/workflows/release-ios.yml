@@ -393,6 +393,27 @@ jobs:
           ASC_P8:        ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
         run: python3 scripts/asc_upload.py ipa/Translate.ipa
 
+      - name: Create App Store version (Apple does not auto-create it)
+        if: steps.gate.outputs.changed == 'true'
+        env:
+          ASC_KEY_ID:       ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          ASC_ISSUER_ID:    ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          ASC_P8:           ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          ASC_BUNDLE_ID:    ${{ env.PACKAGE_NAME }}
+          ASC_RELEASE_TYPE: AFTER_APPROVAL
+        # Uploading a build does NOT create an App Store version row, so the
+        # release-notes / description / submit steps would have nothing to act
+        # on. Create it here (idempotent) with the same version the archive job
+        # built — bump project.yml's current patch by 1, matching the archive +
+        # bookkeeping bump.
+        run: |
+          current=$(grep -oE 'CFBundleShortVersionString: "[^"]+"' ios/project.yml \
+            | head -1 | sed 's/.*"\([^"]*\)"/\1/')
+          IFS='.' read -r maj min pat <<<"$current"
+          export ASC_VERSION_STRING="$maj.$min.$((pat + 1))"
+          echo "Ensuring App Store version $ASC_VERSION_STRING exists"
+          python3 scripts/asc_create_version.py
+
       - name: Generate inventory-diff release notes
         if: steps.gate.outputs.changed == 'true'
         # release-notes.py takes (prior, current) — same convention as
