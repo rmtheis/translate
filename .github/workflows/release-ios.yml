@@ -182,6 +182,13 @@ jobs:
     name: Archive Translate.ipa
     runs-on: macos-15
     needs: [natives, pairs]
+    outputs:
+      # Consumed by the deploy job so ASC operations target exactly the
+      # build/version this archive produced — never "latest uploaded",
+      # which can resolve to the previous release while the fresh upload
+      # is still processing (that mis-pick 409'd the 2026-07 run).
+      version_string: ${{ steps.bump.outputs.version_string }}
+      bundle_version: ${{ steps.bump.outputs.bundle_version }}
     steps:
       - uses: actions/checkout@v5
 
@@ -206,6 +213,7 @@ jobs:
         run: bash scripts/stage-pair-odrs.sh pair-jars
 
       - name: Bump CFBundleVersion + CFBundleShortVersionString
+        id: bump
         # Android bumps yyyymmddHH for versionCode; iOS uses that same
         # format for CFBundleVersion (App Store's build-number field).
         # CFBundleShortVersionString increments the patch component —
@@ -220,6 +228,8 @@ jobs:
           sed -i '' "s|CFBundleShortVersionString: \"$current\"|CFBundleShortVersionString: \"$new_name\"|" ios/project.yml
           sed -i '' "s|CFBundleVersion: \"[0-9]*\"|CFBundleVersion: \"$build\"|" ios/project.yml
           echo "Built CFBundleShortVersionString=$new_name CFBundleVersion=$build"
+          echo "version_string=$new_name" >> "$GITHUB_OUTPUT"
+          echo "bundle_version=$build" >> "$GITHUB_OUTPUT"
 
       - name: Generate Xcode project
         working-directory: ios
@@ -396,21 +406,17 @@ jobs:
       - name: Create App Store version (Apple does not auto-create it)
         if: steps.gate.outputs.changed == 'true'
         env:
-          ASC_KEY_ID:       ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          ASC_ISSUER_ID:    ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          ASC_P8:           ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
-          ASC_BUNDLE_ID:    ${{ env.PACKAGE_NAME }}
-          ASC_RELEASE_TYPE: AFTER_APPROVAL
+          ASC_KEY_ID:         ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          ASC_ISSUER_ID:      ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          ASC_P8:             ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          ASC_BUNDLE_ID:      ${{ env.PACKAGE_NAME }}
+          ASC_RELEASE_TYPE:   AFTER_APPROVAL
+          ASC_VERSION_STRING: ${{ needs.build.outputs.version_string }}
         # Uploading a build does NOT create an App Store version row, so the
         # release-notes / description / submit steps would have nothing to act
-        # on. Create it here (idempotent) with the same version the archive job
-        # built — bump project.yml's current patch by 1, matching the archive +
-        # bookkeeping bump.
+        # on. Create it here (idempotent) with the exact version string the
+        # archive job stamped into the IPA.
         run: |
-          current=$(grep -oE 'CFBundleShortVersionString: "[^"]+"' ios/project.yml \
-            | head -1 | sed 's/.*"\([^"]*\)"/\1/')
-          IFS='.' read -r maj min pat <<<"$current"
-          export ASC_VERSION_STRING="$maj.$min.$((pat + 1))"
           echo "Ensuring App Store version $ASC_VERSION_STRING exists"
           python3 scripts/asc_create_version.py
 
@@ -460,6 +466,12 @@ jobs:
           # AFTER_APPROVAL = the version goes live automatically the moment Apple
           # approves it. Set MANUAL here to hold a version for manual release.
           ASC_RELEASE_TYPE: AFTER_APPROVAL
+          # Pin the exact build + version this run produced. Without the pin,
+          # asc_resubmit.py falls back to "most recently uploaded processed
+          # build" — which, while the fresh upload is still processing, is the
+          # PREVIOUS release's build; attaching that 409s (2026-07-02 run).
+          ASC_BUILD_VERSION:  ${{ needs.build.outputs.bundle_version }}
+          ASC_VERSION_STRING: ${{ needs.build.outputs.version_string }}
         # This is the step that actually gets a release to end users: asc_resubmit.py
         # waits for the uploaded build to finish processing, attaches it to the App
         # Store version, sets release-after-approval, and submits it to Apple's
@@ -469,16 +481,15 @@ jobs:
 
       - name: Commit version bump + inventory snapshot
         if: steps.gate.outputs.changed == 'true'
-        # Re-derive the same bump the build job made so the committed
-        # project.yml agrees with what's on App Store Connect.
+        # Write the exact values the build job stamped into the IPA so the
+        # committed project.yml agrees with what's on App Store Connect.
+        env:
+          NEW_NAME: ${{ needs.build.outputs.version_string }}
+          NEW_BUILD: ${{ needs.build.outputs.bundle_version }}
         run: |
-          current=$(grep -oE 'CFBundleShortVersionString: "[^"]+"' ios/project.yml \
-            | head -1 | sed 's/.*"\([^"]*\)"/\1/')
-          IFS='.' read -r maj min pat <<<"$current"
-          new_name="$maj.$min.$((pat + 1))"
-          build=$(date -u +%Y%m%d%H%M)
-          sed -i '' "s|CFBundleShortVersionString: \"$current\"|CFBundleShortVersionString: \"$new_name\"|" ios/project.yml
-          sed -i '' "s|CFBundleVersion: \"[0-9]*\"|CFBundleVersion: \"$build\"|" ios/project.yml
+          sed -i '' "s|CFBundleShortVersionString: \"[^\"]*\"|CFBundleShortVersionString: \"$NEW_NAME\"|" ios/project.yml
+          sed -i '' "s|CFBundleVersion: \"[0-9]*\"|CFBundleVersion: \"$NEW_BUILD\"|" ios/project.yml
+          new_name="$NEW_NAME"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

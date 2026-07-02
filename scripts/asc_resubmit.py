@@ -119,18 +119,22 @@ def find_app_id(token: str, bundle_id: str) -> str:
 
 
 def wait_for_build(token: str, app_id: str, build_version: str | None,
-                   max_wait_min: int = 30) -> dict:
+                   max_wait_min: int = 150) -> dict:
     """Poll until the target build is PROCESSED. If `build_version` is
     set, find by CFBundleVersion; otherwise pick the most recently
-    uploaded build for this app. Returns the build's full row."""
-    delays = [0, 30, 30, 30, 60, 60, 60, 90, 120, 120, 180, 180, 180, 180]
+    uploaded build for this app. Returns the build's full row.
+
+    Apple's processing usually finishes within minutes but has taken
+    ~2 h in practice (build 202607020535, 2026-07-02) — hence the
+    generous default deadline. Polls every 3 min after a few quick
+    early retries."""
     deadline = time.time() + max_wait_min * 60
-    for delay in delays:
-        if time.time() > deadline:
-            break
+    delay = 0
+    while time.time() <= deadline:
         if delay:
             print(f"  build not ready, waiting {delay}s...", flush=True)
             time.sleep(delay)
+        delay = min(180, (delay * 2) or 30)
         params = {"fields[builds]": "version,processingState,uploadedDate",
                   "limit": "10"}
         if build_version:
