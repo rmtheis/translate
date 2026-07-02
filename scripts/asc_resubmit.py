@@ -135,11 +135,15 @@ def wait_for_build(token: str, app_id: str, build_version: str | None,
             print(f"  build not ready, waiting {delay}s...", flush=True)
             time.sleep(delay)
         delay = min(180, (delay * 2) or 30)
+        # Use the top-level /builds endpoint: the /apps/{id}/builds
+        # relationship endpoint rejects filter[version] with
+        # PARAMETER_ERROR.ILLEGAL.
         params = {"fields[builds]": "version,processingState,uploadedDate",
+                  "filter[app]": app_id,
                   "limit": "10"}
         if build_version:
             params["filter[version]"] = build_version
-        data = _request("GET", token, f"/apps/{app_id}/builds", params=params)
+        data = _request("GET", token, "/builds", params=params)
         rows = data.get("data", [])
         if not rows:
             label = build_version or "(any)"
