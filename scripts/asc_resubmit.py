@@ -119,7 +119,8 @@ def find_app_id(token: str, bundle_id: str) -> str:
 
 
 def wait_for_build(token: str, app_id: str, build_version: str | None,
-                   max_wait_min: int = 150) -> dict:
+                   max_wait_min: int = 150,
+                   no_row_grace_min: int = 30) -> dict:
     """Poll until the target build is PROCESSED. If `build_version` is
     set, find by CFBundleVersion; otherwise pick the most recently
     uploaded build for this app. Returns the build's full row.
@@ -127,8 +128,15 @@ def wait_for_build(token: str, app_id: str, build_version: str | None,
     Apple's processing usually finishes within minutes but has taken
     ~2 h in practice (build 202607020535, 2026-07-02) — hence the
     generous default deadline. Polls every 3 min after a few quick
-    early retries."""
-    deadline = time.time() + max_wait_min * 60
+    early retries.
+
+    The 150-min deadline covers slow PROCESSING→VALID only. A build
+    that was actually delivered shows a row (state PROCESSING) within
+    minutes of upload — so if no row for the pinned version exists
+    after `no_row_grace_min`, the upload itself didn't take, and we
+    fail fast instead of burning the full deadline."""
+    start = time.time()
+    deadline = start + max_wait_min * 60
     delay = 0
     while time.time() <= deadline:
         if delay:
@@ -146,6 +154,14 @@ def wait_for_build(token: str, app_id: str, build_version: str | None,
         data = _request("GET", token, "/builds", params=params)
         rows = data.get("data", [])
         if not rows:
+            if build_version and time.time() - start > no_row_grace_min * 60:
+                sys.exit(
+                    f"ERROR: no build with CFBundleVersion={build_version} "
+                    f"appeared on App Store Connect within {no_row_grace_min} min. "
+                    f"A delivered build shows up (state PROCESSING) within minutes, "
+                    f"so the upload step most likely did not deliver a build this "
+                    f"run — check the 'Upload IPA to App Store Connect' step logs "
+                    f"before re-running.")
             label = build_version or "(any)"
             print(f"  no build matching version={label} yet")
             continue
