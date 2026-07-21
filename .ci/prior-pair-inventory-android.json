@@ -73,9 +73,9 @@
   },
   {
     "pair": "apertium-nno-nob",
-    "sha256": "8526cb8b7fafca5d1a85e62163a4dfa6a846ed9c5e1a371cd4d772110ae86616",
-    "bytes": 16776751,
-    "version": "1.6.0+g9104~1d1b1e90-1~sid1"
+    "sha256": "29882c7170e8176e7c29e74e0adf9ed868978f80a5ebe0fdc30453d4f9a15a0e",
+    "bytes": 16781735,
+    "version": "1.6.0+g9131~7d188158-1~sid1"
   },
   {
     "pair": "apertium-oci-cat",
@@ -109,9 +109,9 @@
   },
   {
     "pair": "apertium-sme-nob",
-    "sha256": "1bb4d3b2b04e6dd0e9fa34e8106d570fb95fab707b8d6b9f7351586143cdc535",
-    "bytes": 27111470,
-    "version": "0.6.1+g4081~79827a4b-25~sid1"
+    "sha256": "b25253400cabde2179b7fc2a864aea301a5a53c9327697688d72be6394846bf8",
+    "bytes": 27118320,
+    "version": "0.6.1+g4081~79827a4b-43~sid1"
   },
   {
     "pair": "apertium-spa-arg",
