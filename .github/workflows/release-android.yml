@@ -168,7 +168,7 @@ jobs:
       - name: Set up NDK (for install-natives strip pass)
         run: |
           yes | sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;${{ env.NDK_VERSION }}" \
-            "platform-tools" "platforms;android-35" "build-tools;36.0.0"
+            "platform-tools" "platforms;android-36" "build-tools;36.0.0"
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/${{ env.NDK_VERSION }}" >> $GITHUB_ENV
 
       - name: Install patchelf (used by scripts/install-natives-android.sh)

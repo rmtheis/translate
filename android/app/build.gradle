@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk 35
+    compileSdk 36
 
     namespace = "com.qvyshift.translate"
 
     defaultConfig {
         applicationId "com.qvyshift.translate"
         minSdkVersion 21
-        targetSdkVersion 35
+        targetSdkVersion 36
     }
 
     android {
