@@ -125,6 +125,12 @@ public class TranslatorActivity extends AppCompatActivity {
       if (text != null) {
         inputEditText.setText(text);
       }
+
+      // Play in-app review, gated on launch count + days installed so it never
+      // reaches someone still deciding whether they like the app. Inside the
+      // savedInstanceState == null branch so a process-death recreation isn't
+      // counted as a launch.
+      ReviewPrompt.onLaunch(this);
     }
   }
 

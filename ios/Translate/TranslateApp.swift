@@ -37,6 +37,7 @@ struct TranslateApp: App {
     var body: some Scene {
         WindowGroup {
             TranslatorView()
+                .reviewPrompt()
         }
     }
 }
