@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Default locale is Italian: every Sardinian speaker reads Italian, and the app is
+     aimed at Italy. English lives in values-en, Sardinian (LSC) in values-sc. -->
+<resources>
+    <string name="app_name">Traduttore Sardo</string>
+    <string name="lang_sardinian">Sardo</string>
+    <string name="lang_italian">Italiano</string>
+    <string name="swap_languages">Inverti le lingue</string>
+    <string name="input_hint">Scrivi qui</string>
+    <string name="translate">Traduci</string>
+    <string name="translating">Traduzione in corso…</string>
+    <string name="translation">Traduzione</string>
+    <string name="try_a_phrase">Prova una frase</string>
+    <string name="copy">Copia</string>
+    <string name="paste">Incolla</string>
+    <string name="share">Condividi</string>
+    <string name="copied">Copiato</string>
+    <string name="clear">Cancella</string>
+    <string name="about">Informazioni</string>
+    <string name="offline_note">Funziona senza internet</string>
+    <string name="unknown_word_note">Le parole segnate con * non sono nel dizionario.</string>
+    <string name="about_body">Traduzione automatica offline tra sardo e italiano, basata sul traduttore libero Apertium e sul pacchetto linguistico apertium-srd-ita.\n\nIl sardo è scritto secondo la Limba Sarda Comuna (LSC), lo standard ortografico della Regione Autonoma della Sardegna. Per tradurre dal sardo, scrivi in ortografia standard.\n\nLe parole segnate con * non sono nel dizionario.\n\nSoftware libero, licenza GNU GPL v3: github.com/rmtheis/translate (cartella sardu). Versione %1$s.</string>
+    <string name="error_prefix">Errore: %1$s</string>
+</resources>

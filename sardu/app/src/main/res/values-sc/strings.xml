@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Limba Sarda Comuna. Only strings I'm confident about; anything missing falls back
+     to the Italian default. -->
+<resources>
+    <string name="app_name">Tradutore Sardu</string>
+    <string name="lang_sardinian">Sardu</string>
+    <string name="lang_italian">Italianu</string>
+    <string name="input_hint">Iscrie inoghe</string>
+    <string name="translate">Tradue</string>
+    <string name="translating">Traduende…</string>
+    <string name="translation">Tradutzione</string>
+    <string name="try_a_phrase">Proa una frase</string>
+    <string name="copy">Còpia</string>
+    <string name="about">Informatziones</string>
+    <string name="offline_note">Funtzionat sena internet</string>
+</resources>

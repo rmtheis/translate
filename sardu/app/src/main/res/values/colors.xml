@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sardinian-flag red, toned down a step for large surfaces. -->
+    <color name="sardu_red">#B3202C</color>
+    <color name="sardu_red_dark">#7F1219</color>
+    <color name="sardu_cream">#FFF6E8</color>
+    <color name="ic_launcher_background">#B3202C</color>
+    <!-- App bar stays red in both themes (dark variant in values-night). -->
+    <color name="app_bar">#B3202C</color>
+</resources>

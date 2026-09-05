@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Sardu" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/sardu_red</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#FFDAD8</item>
+        <item name="colorOnPrimaryContainer">#410005</item>
+        <item name="colorSecondary">#775652</item>
+        <item name="colorSecondaryContainer">#FFDAD7</item>
+        <item name="colorOnSecondaryContainer">#2C1512</item>
+        <item name="android:statusBarColor">@color/sardu_red</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

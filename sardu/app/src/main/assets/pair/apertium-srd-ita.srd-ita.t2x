@@ -1,0 +1,906 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interchunk>
+  <section-def-cats>
+    <def-cat n="SN">
+      <cat-item tags="SN"/>
+      <cat-item tags="SN.*"/>
+      <cat-item tags="SPron.tn.*"/>
+    </def-cat>
+    <def-cat n="SA">
+      <cat-item tags="SA"/>
+      <cat-item tags="SA.*"/>
+      <cat-item tags="SAcomp.*"/>
+      <cat-item tags="SV.*.pp.*"/>
+    </def-cat>
+    <def-cat n="SAdv">
+      <cat-item tags="SAdv"/>
+      <cat-item tags="SAdv.*"/>
+    </def-cat>
+    <def-cat n="SV">
+      <cat-item tags="SV"/>
+      <cat-item tags="SV.*"/>
+    </def-cat>
+    <def-cat n="SV_pp">
+      <cat-item tags="SV.*.pp.*"/>
+    </def-cat>
+    <def-cat n="Ser">
+      <cat-item tags="SV.vbser"/>
+      <cat-item tags="SV.vbser.*"/>
+    </def-cat>
+    <def-cat n="SV_copulatiu">
+      <cat-item tags="SV.vbser"/>
+      <cat-item tags="SV.vbser.*"/>
+      <cat-item lemma="sembrare" tags="SV.*"/>
+      <cat-item lemma="parere" tags="SV.*"/>
+      <cat-item lemma="stare" tags="SV.*"/>
+    </def-cat>
+    <def-cat n="SV_copulatiu_pp">
+      <cat-item tags="SV.vbser.pp.*"/>
+      <cat-item lemma="sembrare" tags="SV.vblex.pp.*"/>
+      <cat-item lemma="parere" tags="SV.vblex.pp.*"/>
+      <cat-item lemma="stare" tags="SV.vblex.pp.*"/>
+    </def-cat>
+    <def-cat n="PREP">
+      <cat-item tags="pr"/>
+    </def-cat>
+  </section-def-cats>
+
+  <section-def-attrs>
+    <def-attr n="chunk">
+      <attr-item tags="SN"/>
+      <attr-item tags="SV"/>
+    </def-attr>
+
+    <def-attr n="gen">
+      <attr-item tags="m"/>
+      <attr-item tags="f"/>
+      <attr-item tags="mf"/>
+      <attr-item tags="GD"/>
+    </def-attr>
+
+    <def-attr n="sl_gen">
+      <attr-item tags="sl_m"/>
+      <attr-item tags="sl_f"/>
+      <attr-item tags="sl_mf"/>
+    </def-attr>
+
+    <def-attr n="nbr">
+      <attr-item tags="sg"/>
+      <attr-item tags="pl"/>
+      <attr-item tags="sp"/>
+      <attr-item tags="ND"/>
+    </def-attr>
+
+    <def-attr n="sl_nbr">
+      <attr-item tags="sl_sg"/>
+      <attr-item tags="sl_pl"/>
+      <attr-item tags="sl_sp"/>
+    </def-attr>
+
+    <def-attr n="pers">
+      <attr-item tags="p1"/>
+      <attr-item tags="p2"/>
+      <attr-item tags="p3"/>
+    </def-attr>
+  </section-def-attrs>
+
+  <section-def-vars>
+    <def-var n="number"/>
+  </section-def-vars>
+
+  <section-def-macros>
+    <def-macro n="GD2m" npar="1">
+      <choose>
+        <when>
+          <test>
+            <equal><clip pos="1" part="gen"/><lit-tag v="GD"/></equal>
+          </test>
+          <let><clip pos="1" part="gen"/><lit-tag v="m"/></let>
+        </when>
+      </choose>
+    </def-macro>
+
+    <def-macro n="f_acord_subj_vcop_atrib3" npar="3"> <!-- par1 = SN (sujet), par2 = SV_copulatiu, par3 = SA (attribut): accord en genre et nombre entre sujet et attribut -->
+      <choose>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="gen"/><lit-tag v="m"/></equal>
+              <equal><clip pos="3" part="gen"/><lit-tag v="f"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_gen"/><lit-tag v="sl_f"/></equal>
+                <equal><clip pos="3" part="sl_gen"/><lit-tag v="sl_mf"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="3" part="gen"/><lit-tag v="m"/></let>
+        </when>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="gen"/><lit-tag v="f"/></equal>
+              <equal><clip pos="3" part="gen"/><lit-tag v="m"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_gen"/><lit-tag v="sl_m"/></equal>
+                <equal><clip pos="3" part="sl_gen"/><lit-tag v="sl_mf"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="3" part="gen"/><lit-tag v="f"/></let>
+        </when>
+      </choose>
+      <choose>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="gen"/><lit-tag v="f"/></equal>
+              <equal><clip pos="3" part="gen"/><lit-tag v="GD"/></equal>
+            </and>
+          </test>
+          <let><clip pos="3" part="gen"/><lit-tag v="f"/></let>
+        </when>
+        <when>
+          <test>
+            <equal><clip pos="3" part="gen"/><lit-tag v="GD"/></equal>
+          </test>
+          <let><clip pos="3" part="gen"/><lit-tag v="m"/></let>
+        </when>
+      </choose>
+      <choose>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="nbr"/><lit-tag v="sg"/></equal>
+              <equal><clip pos="2" part="nbr"/><lit-tag v="sg"/></equal>
+              <equal><clip pos="3" part="nbr"/><lit-tag v="pl"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_nbr"/><lit-tag v="sl_pl"/></equal>
+                <equal><clip pos="3" part="sl_nbr"/><lit-tag v="sl_sp"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="3" part="nbr"/><lit-tag v="sg"/></let>
+        </when>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="nbr"/><lit-tag v="pl"/></equal>
+              <equal><clip pos="2" part="nbr"/><lit-tag v="pl"/></equal>
+              <equal><clip pos="3" part="nbr"/><lit-tag v="sg"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_nbr"/><lit-tag v="sl_sg"/></equal>
+                <equal><clip pos="3" part="sl_nbr"/><lit-tag v="sl_sp"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="3" part="nbr"/><lit-tag v="pl"/></let>
+        </when>
+      </choose>
+    </def-macro>
+
+    <def-macro n="f_acord_subj_vcop_atrib4" npar="4"> <!-- par1 = SN (sujet), par2 = SV_copulatiu, par3 = SDet, par4 = SA (attribut): accord en genre et nombre entre sujet et attribut -->
+      <choose>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="gen"/><lit-tag v="m"/></equal>
+              <equal><clip pos="4" part="gen"/><lit-tag v="f"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_gen"/><lit-tag v="sl_f"/></equal>
+                <equal><clip pos="4" part="sl_gen"/><lit-tag v="sl_mf"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="3" part="gen"/><lit-tag v="m"/></let>
+          <let><clip pos="4" part="gen"/><lit-tag v="m"/></let>
+        </when>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="gen"/><lit-tag v="f"/></equal>
+              <equal><clip pos="4" part="gen"/><lit-tag v="m"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_gen"/><lit-tag v="sl_m"/></equal>
+                <equal><clip pos="4" part="sl_gen"/><lit-tag v="sl_mf"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="3" part="gen"/><lit-tag v="f"/></let>
+          <let><clip pos="4" part="gen"/><lit-tag v="f"/></let>
+        </when>
+      </choose>
+      <choose>
+        <when>
+          <test>
+            <equal><clip pos="3" part="gen"/><lit-tag v="GD"/></equal>
+          </test>
+          <choose>
+            <when>
+              <test>
+                <equal><clip pos="4" part="gen"/><lit-tag v="m"/></equal>
+              </test>
+              <let><clip pos="3" part="gen"/><lit-tag v="m"/></let>
+            </when>
+            <when>
+              <test>
+                <equal><clip pos="4" part="gen"/><lit-tag v="f"/></equal>
+              </test>
+              <let><clip pos="3" part="gen"/><lit-tag v="f"/></let>
+            </when>
+            <otherwise>
+              <let><clip pos="3" part="gen"/><lit-tag v="m"/></let>
+            </otherwise>
+          </choose>
+        </when>
+      </choose>
+      <choose>
+        <when>
+          <test>
+            <equal><clip pos="4" part="gen"/><lit-tag v="GD"/></equal>
+          </test>
+          <choose>
+            <when>
+              <test>
+                <equal><clip pos="3" part="gen"/><lit-tag v="m"/></equal>
+              </test>
+              <let><clip pos="4" part="gen"/><lit-tag v="m"/></let>
+            </when>
+            <when>
+              <test>
+                <equal><clip pos="3" part="gen"/><lit-tag v="f"/></equal>
+              </test>
+              <let><clip pos="4" part="gen"/><lit-tag v="f"/></let>
+            </when>
+            <otherwise>
+              <let><clip pos="4" part="gen"/><lit-tag v="m"/></let>
+            </otherwise>
+          </choose>
+        </when>
+      </choose>
+      <choose>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="nbr"/><lit-tag v="sg"/></equal>
+              <equal><clip pos="2" part="nbr"/><lit-tag v="sg"/></equal>
+              <equal><clip pos="4" part="nbr"/><lit-tag v="pl"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_nbr"/><lit-tag v="sl_pl"/></equal>
+                <equal><clip pos="4" part="sl_nbr"/><lit-tag v="sl_sp"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="4" part="nbr"/><lit-tag v="sg"/></let>
+        </when>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="nbr"/><lit-tag v="pl"/></equal>
+              <equal><clip pos="2" part="nbr"/><lit-tag v="pl"/></equal>
+              <equal><clip pos="4" part="nbr"/><lit-tag v="sg"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_nbr"/><lit-tag v="sl_sg"/></equal>
+                <equal><clip pos="4" part="sl_nbr"/><lit-tag v="sl_sp"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="4" part="nbr"/><lit-tag v="pl"/></let>
+        </when>
+      </choose>
+    </def-macro>
+
+    <def-macro n="f_acord_subj_vaux_vcop_atrib4" npar="4"> <!-- par1 = SN (sujet), par2 = SV_copulatiu, par3 = SV_aux, = SV_ser, par4 = SA (attribut): accord en genre et nombre entre sujet et attribut -->
+      <choose>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="gen"/><lit-tag v="m"/></equal>
+              <equal><clip pos="3" part="gen"/><lit-tag v="f"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_gen"/><lit-tag v="sl_f"/></equal>
+                <equal><clip pos="3" part="sl_gen"/><lit-tag v="sl_mf"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="3" part="gen"/><lit-tag v="m"/></let>
+        </when>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="gen"/><lit-tag v="f"/></equal>
+              <equal><clip pos="3" part="gen"/><lit-tag v="m"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_gen"/><lit-tag v="sl_m"/></equal>
+                <equal><clip pos="3" part="sl_gen"/><lit-tag v="sl_mf"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="3" part="gen"/><lit-tag v="f"/></let>
+        </when>
+      </choose>
+      <choose>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="nbr"/><lit-tag v="sg"/></equal>
+              <equal><clip pos="2" part="nbr"/><lit-tag v="sg"/></equal>
+              <equal><clip pos="3" part="nbr"/><lit-tag v="pl"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_nbr"/><lit-tag v="sl_pl"/></equal>
+                <equal><clip pos="3" part="sl_nbr"/><lit-tag v="sl_sp"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="3" part="nbr"/><lit-tag v="sg"/></let>
+        </when>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="nbr"/><lit-tag v="pl"/></equal>
+              <equal><clip pos="2" part="nbr"/><lit-tag v="pl"/></equal>
+              <equal><clip pos="3" part="nbr"/><lit-tag v="sg"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_nbr"/><lit-tag v="sl_sg"/></equal>
+                <equal><clip pos="3" part="sl_nbr"/><lit-tag v="sl_sp"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="3" part="nbr"/><lit-tag v="pl"/></let>
+        </when>
+      </choose>
+      <choose>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="gen"/><lit-tag v="m"/></equal>
+              <equal><clip pos="4" part="gen"/><lit-tag v="f"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_gen"/><lit-tag v="sl_f"/></equal>
+                <equal><clip pos="4" part="sl_gen"/><lit-tag v="sl_mf"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="4" part="gen"/><lit-tag v="m"/></let>
+        </when>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="gen"/><lit-tag v="f"/></equal>
+              <equal><clip pos="4" part="gen"/><lit-tag v="m"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_gen"/><lit-tag v="sl_m"/></equal>
+                <equal><clip pos="4" part="sl_gen"/><lit-tag v="sl_mf"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="4" part="gen"/><lit-tag v="f"/></let>
+        </when>
+      </choose>
+      <choose>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="gen"/><lit-tag v="f"/></equal>
+              <equal><clip pos="4" part="gen"/><lit-tag v="GD"/></equal>
+            </and>
+          </test>
+          <let><clip pos="4" part="gen"/><lit-tag v="f"/></let>
+        </when>
+        <when>
+          <test>
+            <equal><clip pos="4" part="gen"/><lit-tag v="GD"/></equal>
+          </test>
+          <let><clip pos="4" part="gen"/><lit-tag v="m"/></let>
+        </when>
+      </choose>
+      <choose>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="nbr"/><lit-tag v="sg"/></equal>
+              <equal><clip pos="2" part="nbr"/><lit-tag v="sg"/></equal>
+              <equal><clip pos="4" part="nbr"/><lit-tag v="pl"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_nbr"/><lit-tag v="sl_pl"/></equal>
+                <equal><clip pos="4" part="sl_nbr"/><lit-tag v="sl_sp"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="4" part="nbr"/><lit-tag v="sg"/></let>
+        </when>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="nbr"/><lit-tag v="pl"/></equal>
+              <equal><clip pos="2" part="nbr"/><lit-tag v="pl"/></equal>
+              <equal><clip pos="4" part="nbr"/><lit-tag v="sg"/></equal>
+              <or>
+                <equal><clip pos="1" part="sl_nbr"/><lit-tag v="sl_sg"/></equal>
+                <equal><clip pos="4" part="sl_nbr"/><lit-tag v="sl_sp"/></equal>
+              </or>
+            </and>
+          </test>
+          <let><clip pos="4" part="nbr"/><lit-tag v="pl"/></let>
+        </when>
+      </choose>
+    </def-macro>
+
+    <def-macro n="f_acord_ppGD_atrib2" npar="2"> <!-- par1 = pp cum GD, par2 = SA (attribut): accord en genre et nombre entre verbe copulatif (participe) et attribut -->
+      <choose>
+        <when>
+          <test>
+            <and>
+              <equal><clip pos="1" part="gen"/><lit-tag v="GD"/></equal>
+              <equal><clip pos="2" part="gen"/><lit-tag v="f"/></equal>
+            </and>
+          </test>
+          <let><clip pos="1" part="gen"/><lit-tag v="f"/></let>
+        </when>
+        <when>
+          <test>
+            <equal><clip pos="1" part="gen"/><lit-tag v="GD"/></equal>
+          </test>
+          <let><clip pos="1" part="gen"/><lit-tag v="m"/></let>
+        </when>
+      </choose>
+    </def-macro>
+  </section-def-macros>
+
+  <section-rules>
+    <rule comment="RÈGLA: SA: GD > m">
+      <pattern>
+        <pattern-item n="SA"/>
+      </pattern>
+      <action>
+        <call-macro n="GD2m"><with-param pos="1"/></call-macro>
+        <out>
+          <chunk>
+            <clip pos="1" part="whole"/>
+          </chunk>
+        </out>
+      </action>
+    </rule>
+
+    <rule comment="RÈGLA: SN SV_copulatiu SA: sa die est bella > il giorno è bello">
+      <pattern>
+        <pattern-item n="SN"/>
+        <pattern-item n="SV_copulatiu"/>
+        <pattern-item n="SA"/>
+      </pattern>
+      <action>
+        <call-macro n="f_acord_subj_vcop_atrib3"><with-param pos="1"/><with-param pos="2"/><with-param pos="3"/></call-macro>
+        <out>
+          <chunk>
+            <clip pos="1" part="whole"/>
+          </chunk>
+          <b pos="1"/>
+          <chunk>
+            <clip pos="2" part="whole"/>
+          </chunk>
+          <b pos="2"/>
+          <chunk>
+            <clip pos="3" part="whole"/>
+          </chunk>
+        </out>
+      </action>
+    </rule>
+
+    <rule comment="RÈGLA: SN SV_copulatiu SAdv SA: sa die est semper bella > il giorno è sempre bello">
+      <pattern>
+        <pattern-item n="SN"/>
+        <pattern-item n="SV_copulatiu"/>
+        <pattern-item n="SAdv"/>
+        <pattern-item n="SA"/>
+      </pattern>
+      <action>
+        <call-macro n="f_acord_subj_vcop_atrib3"><with-param pos="1"/><with-param pos="2"/><with-param pos="4"/></call-macro>
+        <out>
+          <chunk>
+            <clip pos="1" part="whole"/>
+          </chunk>
+          <b pos="1"/>
+          <chunk>
+            <clip pos="2" part="whole"/>
+          </chunk>
+          <b pos="2"/>
+          <chunk>
+            <clip pos="3" part="whole"/>
+          </chunk>
+          <b pos="3"/>
+          <chunk>
+            <clip pos="4" part="whole"/>
+          </chunk>
+        </out>
+      </action>
+    </rule>
+
+    <rule comment="RÈGLA: SN PREP SN SV_copulatiu SA: sas dies de Pedru sunt bellas > i giorni di Pedru sono belli">
+      <pattern>
+        <pattern-item n="SN"/>
+        <pattern-item n="PREP"/>
+        <pattern-item n="SN"/>
+        <pattern-item n="SV_copulatiu"/>
+        <pattern-item n="SA"/>
+      </pattern>
+      <action>
+        <call-macro n="f_acord_subj_vcop_atrib3"><with-param pos="1"/><with-param pos="4"/><with-param pos="5"/></call-macro>
+        <out>
+          <chunk>
+            <clip pos="1" part="whole"/>
+          </chunk>
+          <b pos="1"/>
+          <chunk>
+            <clip pos="2" part="whole"/>
+          </chunk>
+          <b pos="2"/>
+          <chunk>
+            <clip pos="3" part="whole"/>
+          </chunk>
+          <b pos="3"/>
+          <chunk>
+            <clip pos="4" part="whole"/>
+          </chunk>
+          <b pos="4"/>
+          <chunk>
+            <clip pos="5" part="whole"/>
+          </chunk>
+        </out>
+      </action>
+    </rule>
+
+    <rule comment="RÈGLA: SN PREP SN SV_copulatiu SAdv SA: sas dies de Pedru sunt semper bellas > i giorni di Pedru sono sempre belli">
+      <pattern>
+        <pattern-item n="SN"/>
+        <pattern-item n="PREP"/>
+        <pattern-item n="SN"/>
+        <pattern-item n="SV_copulatiu"/>
+        <pattern-item n="SAdv"/>
+        <pattern-item n="SA"/>
+      </pattern>
+      <action>
+        <call-macro n="f_acord_subj_vcop_atrib3"><with-param pos="1"/><with-param pos="4"/><with-param pos="6"/></call-macro>
+        <out>
+          <chunk>
+            <clip pos="1" part="whole"/>
+          </chunk>
+          <b pos="1"/>
+          <chunk>
+            <clip pos="2" part="whole"/>
+          </chunk>
+          <b pos="2"/>
+          <chunk>
+            <clip pos="3" part="whole"/>
+          </chunk>
+          <b pos="3"/>
+          <chunk>
+            <clip pos="4" part="whole"/>
+          </chunk>
+          <b pos="4"/>
+          <chunk>
+            <clip pos="5" part="whole"/>
+          </chunk>
+          <b pos="5"/>
+          <chunk>
+            <clip pos="6" part="whole"/>
+          </chunk>
+        </out>
+      </action>
+    </rule>
+
+    <rule comment="RÈGLA: SN Ser SV_copulatiu_pp SA: sa die est istada bella > il giorno è stato bello">
+      <pattern>
+        <pattern-item n="SN"/>
+        <pattern-item n="Ser"/>
+        <pattern-item n="SV_copulatiu_pp"/>
+        <pattern-item n="SA"/>
+      </pattern>
+      <action>
+        <call-macro n="f_acord_subj_vcop_atrib4"><with-param pos="1"/><with-param pos="2"/><with-param pos="3"/><with-param pos="4"/></call-macro>
+        <out>
+          <chunk>
+            <clip pos="1" part="whole"/>
+          </chunk>
+          <b pos="1"/>
+          <chunk>
+            <clip pos="2" part="whole"/>
+          </chunk>
+          <b pos="2"/>
+          <chunk>
+            <clip pos="3" part="whole"/>
+          </chunk>
+          <b pos="3"/>
+          <chunk>
+            <clip pos="4" part="whole"/>
+          </chunk>
+        </out>
+      </action>
+    </rule>
+
+    <rule comment="RÈGLA: SN Ser SV_copulatiu_pp SAdv SA: sa die est istada semper bella > il giorno è stato sempre bello">
+      <pattern>
+        <pattern-item n="SN"/>
+        <pattern-item n="Ser"/>
+        <pattern-item n="SV_copulatiu_pp"/>
+        <pattern-item n="SAdv"/>
+        <pattern-item n="SA"/>
+      </pattern>
+      <action>
+        <call-macro n="f_acord_subj_vcop_atrib4"><with-param pos="1"/><with-param pos="2"/><with-param pos="3"/><with-param pos="5"/></call-macro>
+        <out>
+          <chunk>
+            <clip pos="1" part="whole"/>
+          </chunk>
+          <b pos="1"/>
+          <chunk>
+            <clip pos="2" part="whole"/>
+          </chunk>
+          <b pos="2"/>
+          <chunk>
+            <clip pos="3" part="whole"/>
+          </chunk>
+          <b pos="3"/>
+          <chunk>
+            <clip pos="4" part="whole"/>
+          </chunk>
+          <b pos="4"/>
+          <chunk>
+            <clip pos="5" part="whole"/>
+          </chunk>
+        </out>
+      </action>
+    </rule>
+
+    <rule comment="RÈGLA: SN Ser SAdv SV_copulatiu_pp SA: sa die est semper istada bella > il giorno è sempre stato bello">
+      <pattern>
+        <pattern-item n="SN"/>
+        <pattern-item n="Ser"/>
+        <pattern-item n="SAdv"/>
+        <pattern-item n="SV_copulatiu_pp"/>
+        <pattern-item n="SA"/>
+      </pattern>
+      <action>
+        <call-macro n="f_acord_subj_vcop_atrib4"><with-param pos="1"/><with-param pos="2"/><with-param pos="4"/><with-param pos="5"/></call-macro>
+        <out>
+          <chunk>
+            <clip pos="1" part="whole"/>
+          </chunk>
+          <b pos="1"/>
+          <chunk>
+            <clip pos="2" part="whole"/>
+          </chunk>
+          <b pos="2"/>
+          <chunk>
+            <clip pos="3" part="whole"/>
+          </chunk>
+          <b pos="3"/>
+          <chunk>
+            <clip pos="4" part="whole"/>
+          </chunk>
+          <b pos="4"/>
+          <chunk>
+            <clip pos="5" part="whole"/>
+          </chunk>
+        </out>
+      </action>
+    </rule>
+
+    <rule comment="RÈGLA: SN Ser SV_copulatiu_pp SA: sas dies de Pedru sunt istadas bellas > i giorni di Pedru sono stati belli">
+      <pattern>
+        <pattern-item n="SN"/>
+        <pattern-item n="PREP"/>
+        <pattern-item n="SN"/>
+        <pattern-item n="Ser"/>
+        <pattern-item n="SV_copulatiu_pp"/>
+        <pattern-item n="SA"/>
+      </pattern>
+      <action>
+        <call-macro n="f_acord_subj_vcop_atrib4"><with-param pos="1"/><with-param pos="2"/><with-param pos="5"/><with-param pos="6"/></call-macro>
+        <out>
+          <chunk>
+            <clip pos="1" part="whole"/>
+          </chunk>
+          <b pos="1"/>
+          <chunk>
+            <clip pos="2" part="whole"/>
+          </chunk>
+          <b pos="2"/>
+          <chunk>
+            <clip pos="3" part="whole"/>
+          </chunk>
+          <b pos="3"/>
+          <chunk>
+            <clip pos="4" part="whole"/>
+          </chunk>
+          <b pos="4"/>
+          <chunk>
+            <clip pos="5" part="whole"/>
+          </chunk>
+          <b pos="5"/>
+          <chunk>
+            <clip pos="6" part="whole"/>
+          </chunk>
+        </out>
+      </action>
+    </rule>
+
+    <rule comment="RÈGLA: SN Ser SV_copulatiu_pp SAdv SA: sas dies de Pedru sunt istadas semper bellas > i giorni di Pedru sono stati sempre belli">
+      <pattern>
+        <pattern-item n="SN"/>
+        <pattern-item n="PREP"/>
+        <pattern-item n="SN"/>
+        <pattern-item n="Ser"/>
+        <pattern-item n="SV_copulatiu_pp"/>
+        <pattern-item n="SAdv"/>
+        <pattern-item n="SA"/>
+      </pattern>
+      <action>
+        <call-macro n="f_acord_subj_vcop_atrib4"><with-param pos="1"/><with-param pos="2"/><with-param pos="5"/><with-param pos="7"/></call-macro>
+        <out>
+          <chunk>
+            <clip pos="1" part="whole"/>
+          </chunk>
+          <b pos="1"/>
+          <chunk>
+            <clip pos="2" part="whole"/>
+          </chunk>
+          <b pos="2"/>
+          <chunk>
+            <clip pos="3" part="whole"/>
+          </chunk>
+          <b pos="3"/>
+          <chunk>
+            <clip pos="4" part="whole"/>
+          </chunk>
+          <b pos="4"/>
+          <chunk>
+            <clip pos="5" part="whole"/>
+          </chunk>
+          <b pos="5"/>
+          <chunk>
+            <clip pos="6" part="whole"/>
+          </chunk>
+          <b pos="6"/>
+          <chunk>
+            <clip pos="7" part="whole"/>
+          </chunk>
+        </out>
+      </action>
+    </rule>
+
+    <rule comment="RÈGLA: SN Ser SAdv SV_copulatiu_pp SA: sas dies de Pedru sunt semper istadas bellas > i giorni di Pedru sono sempre stati belli">
+      <pattern>
+        <pattern-item n="SN"/>
+        <pattern-item n="PREP"/>
+        <pattern-item n="SN"/>
+        <pattern-item n="Ser"/>
+        <pattern-item n="SAdv"/>
+        <pattern-item n="SV_copulatiu_pp"/>
+        <pattern-item n="SA"/>
+      </pattern>
+      <action>
+        <call-macro n="f_acord_subj_vcop_atrib4"><with-param pos="1"/><with-param pos="2"/><with-param pos="6"/><with-param pos="7"/></call-macro>
+        <out>
+          <chunk>
+            <clip pos="1" part="whole"/>
+          </chunk>
+          <b pos="1"/>
+          <chunk>
+            <clip pos="2" part="whole"/>
+          </chunk>
+          <b pos="2"/>
+          <chunk>
+            <clip pos="3" part="whole"/>
+          </chunk>
+          <b pos="3"/>
+          <chunk>
+            <clip pos="4" part="whole"/>
+          </chunk>
+          <b pos="4"/>
+          <chunk>
+            <clip pos="5" part="whole"/>
+          </chunk>
+          <b pos="5"/>
+          <chunk>
+            <clip pos="6" part="whole"/>
+          </chunk>
+          <b pos="6"/>
+          <chunk>
+            <clip pos="7" part="whole"/>
+          </chunk>
+        </out>
+      </action>
+    </rule>
+
+    <rule comment="RÈGLA: Ser SV_pp SN: est arribada sa die > è arribato il giorno">
+      <pattern>
+        <pattern-item n="Ser"/>
+        <pattern-item n="SV_pp"/>
+        <pattern-item n="SN"/>
+      </pattern>
+      <action>
+        <call-macro n="f_acord_subj_vcop_atrib3"><with-param pos="3"/><with-param pos="1"/><with-param pos="2"/></call-macro>
+        <out>
+          <chunk>
+            <clip pos="1" part="whole"/>
+          </chunk>
+          <b pos="1"/>
+          <chunk>
+            <clip pos="2" part="whole"/>
+          </chunk>
+          <b pos="2"/>
+          <chunk>
+            <clip pos="3" part="whole"/>
+          </chunk>
+        </out>
+      </action>
+    </rule>
+
+    <rule comment="RÈGLA: Ser SAdv SV_pp SN: est semper arribada sa die > è sempre arribato il giorno">
+      <pattern>
+        <pattern-item n="Ser"/>
+        <pattern-item n="SAdv"/>
+        <pattern-item n="SV_pp"/>
+        <pattern-item n="SN"/>
+      </pattern>
+      <action>
+        <call-macro n="f_acord_subj_vcop_atrib3"><with-param pos="4"/><with-param pos="1"/><with-param pos="3"/></call-macro>
+        <out>
+          <chunk>
+            <clip pos="1" part="whole"/>
+          </chunk>
+          <b pos="1"/>
+          <chunk>
+            <clip pos="2" part="whole"/>
+          </chunk>
+          <b pos="2"/>
+          <chunk>
+            <clip pos="3" part="whole"/>
+          </chunk>
+          <b pos="3"/>
+          <chunk>
+            <clip pos="4" part="whole"/>
+          </chunk>
+        </out>
+      </action>
+    </rule>
+
+    <rule comment="RÈGLA: Ser SV_pp SAdv SN: est arribada semper sa die > è arribato sempre il giorno">
+      <pattern>
+        <pattern-item n="Ser"/>
+        <pattern-item n="SV_pp"/>
+        <pattern-item n="SAdv"/>
+        <pattern-item n="SN"/>
+      </pattern>
+      <action>
+        <call-macro n="f_acord_subj_vcop_atrib3"><with-param pos="4"/><with-param pos="1"/><with-param pos="2"/></call-macro>
+        <out>
+          <chunk>
+            <clip pos="1" part="whole"/>
+          </chunk>
+          <b pos="1"/>
+          <chunk>
+            <clip pos="2" part="whole"/>
+          </chunk>
+          <b pos="2"/>
+          <chunk>
+            <clip pos="3" part="whole"/>
+          </chunk>
+          <b pos="3"/>
+          <chunk>
+            <clip pos="4" part="whole"/>
+          </chunk>
+        </out>
+      </action>
+    </rule>
+
+  </section-rules>
+</interchunk>
+
+<!--
+Resources:
+    https://wiki.apertium.org/wiki/Chunking:_A_full_example
+    https://wiki.apertium.org/wiki/Chunking
+    https://wiki.apertium.org/wiki/Apertium_New_Language_Pair_HOWTO#Transfer_rules
+    https://wiki.apertium.org/wiki/A_long_introduction_to_transfer_rules
+    https://wiki.apertium.org/wiki/Transfer#Adding_structural_transfer_.28grammar.29_rules
+-->

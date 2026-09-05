@@ -79,3 +79,12 @@ ios/native/openfst/
 # of the release surface.
 ios/native/test-hola/
 ios/native/test-sme-nob/
+
+# ---------------------------------------------------------------------------
+# sardu/ (standalone Sardinian-Italian app; shares android/'s jniLibs)
+# ---------------------------------------------------------------------------
+sardu/local.properties
+sardu/build/
+sardu/app/build/
+sardu/.gradle/
+sardu/app/upload.keystore

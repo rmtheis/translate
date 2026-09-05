@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <!-- back bubble (cream) -->
+    <path android:fillColor="#FFE9C9"
+        android:pathData="M40,30 h34 a8,8 0 0 1 8,8 v18 a8,8 0 0 1 -8,8 h-14 l-9,8 v-8 h-11 a8,8 0 0 1 -8,-8 v-18 a8,8 0 0 1 8,-8 z"/>
+    <!-- front bubble (white) -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M28,44 h30 a8,8 0 0 1 8,8 v16 a8,8 0 0 1 -8,8 h-9 v8 l-9,-8 h-12 a8,8 0 0 1 -8,-8 v-16 a8,8 0 0 1 8,-8 z"/>
+    <!-- "S" hint in the front bubble, red -->
+    <path android:fillColor="#B3202C"
+        android:pathData="M49.5,52.5 c-4.2,0 -7,2.1 -7,5.1 c0,2.6 1.9,3.9 5.5,4.7 c2.9,0.6 3.7,1.1 3.7,2.1 c0,1.2 -1.2,1.9 -3.1,1.9 c-2.3,0 -3.6,-0.9 -3.9,-2.5 h-3.6 c0.3,3.6 3.1,5.6 7.5,5.6 c4.4,0 7,-2 7,-5.2 c0,-2.9 -2,-4.3 -5.9,-5.1 c-2.6,-0.5 -3.4,-1 -3.4,-1.9 c0,-1 1.1,-1.7 2.8,-1.7 c1.9,0 3,0.8 3.2,2.2 h3.6 c-0.2,-3.3 -2.8,-5.2 -6.4,-5.2 z"/>
+</vector>

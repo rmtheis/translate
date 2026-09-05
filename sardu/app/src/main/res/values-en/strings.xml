@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sardinian Translator</string>
+    <string name="lang_sardinian">Sardinian</string>
+    <string name="lang_italian">Italian</string>
+    <string name="swap_languages">Swap languages</string>
+    <string name="input_hint">Type here</string>
+    <string name="translate">Translate</string>
+    <string name="translating">Translating…</string>
+    <string name="translation">Translation</string>
+    <string name="try_a_phrase">Try a phrase</string>
+    <string name="copy">Copy</string>
+    <string name="paste">Paste</string>
+    <string name="share">Share</string>
+    <string name="copied">Copied</string>
+    <string name="clear">Clear</string>
+    <string name="about">About</string>
+    <string name="offline_note">Works without internet</string>
+    <string name="unknown_word_note">Words marked with * are not in the dictionary.</string>
+    <string name="about_body">Offline machine translation between Sardinian and Italian, built on the free Apertium translator and its apertium-srd-ita language pair.\n\nSardinian is written in Limba Sarda Comuna (LSC), the orthographic standard of the Autonomous Region of Sardinia. When translating from Sardinian, use standard spelling.\n\nWords marked with * are not in the dictionary.\n\nFree software, GNU GPL v3: github.com/rmtheis/translate (sardu folder). Version %1$s.</string>
+    <string name="error_prefix">Error: %1$s</string>
+</resources>
