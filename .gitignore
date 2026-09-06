@@ -88,3 +88,5 @@ sardu/build/
 sardu/app/build/
 sardu/.gradle/
 sardu/app/upload.keystore
+# Unstripped natives from the CI artifacts (scripts/install-natives-unstripped.sh)
+sardu/app/src/main/jniLibs/

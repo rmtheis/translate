@@ -3,12 +3,14 @@ apply plugin: 'com.android.application'
 android {
     namespace 'com.qvyshift.sardu'
     compileSdk 36
+    // AGP needs an NDK to strip jniLibs and extract their symbols (debugSymbolLevel).
+    ndkVersion '28.2.13676358'
 
     defaultConfig {
         applicationId 'com.qvyshift.sardu'
         minSdk 26
         targetSdk 36
-        versionCode 1
+        versionCode 2
         versionName '1.0.0'
         // Only the ABIs we have Apertium binaries for (android/native in the
         // translate monorepo). No x86 emulator support.
@@ -31,6 +33,11 @@ android {
 
     buildTypes {
         release {
+            // Keep native symbol tables + debug info in the AAB (BUNDLE-METADATA), so
+            // Play Console can symbolicate native crashes/ANRs. Requires UNSTRIPPED
+            // libs in jniLibs (scripts/install-natives-unstripped.sh); AGP strips the
+            // copies that ship to devices.
+            ndk { debugSymbolLevel 'FULL' }
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -50,15 +57,6 @@ android {
     // binary; keep it stored uncompressed so first-run extraction is a plain copy.
     androidResources {
         noCompress 'bin', 'prob', 'mode', 't1x', 't2x', 't3x'
-    }
-
-    // Apertium tools + shared libs are NOT duplicated here: reuse the monorepo's
-    // android/app/src/main/jniLibs (gitignored; populated locally by
-    // ../android/native/install-to-app.sh, on CI by scripts/install-natives-android.sh).
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['../../android/app/src/main/jniLibs']
-        }
     }
 
     compileOptions {

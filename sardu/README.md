@@ -5,7 +5,8 @@ Apertium's `apertium-srd-ita` pair. Text only, no ads, no network permission. A
 standalone test app to see whether a dedicated Sardinian app finds users; see
 `RESEARCH-single-pair-apps-2026-09.md` in the (private, out-of-git) `translate/` dir for the why.
 
-Status (2026-09-05): v1.0.0 (versionCode 1) submitted to Google Play production, awaiting review.
+Status (2026-09-05): v1.0.0 (versionCode 2, with native debug symbols) submitted to Google
+Play production, awaiting review.
 Lives in the public `rmtheis/translate` repo as `sardu/`, deliberately separate from
 `android/` so the monthly workflows in `.github/workflows/` (which only trigger on
 schedule / workflow_dispatch and only touch `android/`, `ios/`, `scripts/`) never see it.
@@ -23,9 +24,11 @@ sardu/
     Direction.java      srd-ita / ita-srd
     App.java            kicks off PairStore extraction at process start
   app/src/main/assets/pair/     the 28 files from pair-jars/apertium-srd-ita.jar (committed)
-  (jniLibs)                     NOT copied: app/build.gradle points sourceSets.jniLibs at
-                                ../android/app/src/main/jniLibs, so run the monorepo's
-                                native install step first (see ../android/native/README.md)
+  app/src/main/jniLibs/<abi>/   gitignored; UNSTRIPPED Apertium tools + libs, populated by
+                                scripts/install-natives-unstripped.sh from the monorepo's
+                                CI `natives-<abi>` artifacts (see "Native libs" below)
+  scripts/install-natives-unstripped.sh  the populate step (same renames as
+                                ../scripts/install-natives-android.sh, no llvm-strip)
   app/src/main/res/values/phrases.xml   curated phrase shortcuts (see below)
   scripts/verify-phrases.sh     re-runs every phrase through the real binaries on an
                                 emulator over adb; flags unknown-word markers
@@ -33,6 +36,28 @@ sardu/
                                 script that runs on the device (used by the above)
   screenshots/                  emulator captures from 2026-09-05 (light/dark, it/sc/en)
 ```
+
+## Native libs and debug symbols
+
+The app does not build Apertium itself; it takes the arm64-v8a / armeabi-v7a output of
+the monorepo's `release-android.yml` `natives` job (unstripped `bin/` + `lib/`):
+
+```sh
+RUN=$(gh run list -R rmtheis/translate --workflow release-android.yml --limit 1 --json databaseId -q '.[0].databaseId')
+gh run download $RUN -R rmtheis/translate -n natives-arm64-v8a   -D /tmp/natives/arm64-v8a
+gh run download $RUN -R rmtheis/translate -n natives-armeabi-v7a -D /tmp/natives/armeabi-v7a
+scripts/install-natives-unstripped.sh arm64-v8a   /tmp/natives/arm64-v8a
+scripts/install-natives-unstripped.sh armeabi-v7a /tmp/natives/armeabi-v7a
+```
+
+(Artifacts expire 7 days after the monthly run; `android/native/build.sh` is the
+fallback.) `app/build.gradle` sets `ndkVersion` and `release.ndk.debugSymbolLevel 'FULL'`,
+so AGP strips the libs it packages and stores the symbols under
+`BUNDLE-METADATA/com.android.tools.build.debugsymbols/` in the AAB (~90 MB, not
+downloaded by users); Play Console then symbolicates native crashes/ANRs. Without a
+configured NDK, AGP silently ships the libs unstripped and emits no symbols; check with
+`unzip -l app-release.aab | grep debugsymbols`. v1.0.0 versionCode 1 was built from an
+older local build without symbols and was superseded before it went live.
 
 ## Build / run
 
@@ -46,9 +71,11 @@ sardu/
   Corretto 17.
 - ABIs: `arm64-v8a` + `armeabi-v7a` only. **x86 emulators cannot run it**; use an arm64
   AVD (`Medium_Phone_API_36` = `emulator-5554` on this Mac).
-- Debug APK is ~52 MB because both ABIs' native tools are stored uncompressed
-  (`useLegacyPackaging`, required so `ProcessBuilder` can exec them). Publishing as an
-  AAB halves that per device.
+- Native tools are stored uncompressed (`useLegacyPackaging`, required so
+  `ProcessBuilder` can exec them). Play reports ~23 MB install size per device.
+- To install the release AAB on the emulator exactly as Play would ship it:
+  `bundletool build-apks --bundle=… --connected-device --device-id=emulator-5554 --ks=app/upload.keystore …`
+  then `bundletool install-apks`.
 - No `INTERNET` permission, on purpose.
 - Edge-to-edge via `androidx.activity` `EdgeToEdge.enable` (API 35+ enforces it);
   the app bar pads for the status bar and stays red in both themes (`@color/app_bar`).
@@ -113,7 +140,7 @@ and the About dialog names the repo (github.com/rmtheis/translate, `sardu/`).
 
 - Package `com.qvyshift.sardu`, Play Console app id `4973198328359141606`, developer
   account Qvyshift LLC. Created 2026-09-05; first production release 1.0.0
-  (versionCode 1) submitted for review the same day, all 177 countries, no staged
+  (versionCode 2) submitted for review the same day, all 177 countries, no staged
   rollout (single release, straight to production per house rule).
 - Listing languages: en-US (default, "Sardinian Italian Translator") and it-IT
   ("Traduttore Sardo Italiano"). Play has no Sardinian listing locale. Text, icon,
@@ -139,6 +166,4 @@ and the About dialog names the repo (github.com/rmtheis/translate, `sardu/`).
 - No release CI yet: bump `versionCode`, `./gradlew bundleRelease` with the upload-key
   env vars, upload with the Play API (see the monorepo's `android/upload` scripts for
   the pattern) or in the console.
-- Play warned that the bundle has native code without debug symbols; harmless, but
-  uploading `native-debug-symbols.zip` would make native crash reports readable.
 - Consider trimming to arm64-only for the first release if size matters.
