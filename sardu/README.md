@@ -5,7 +5,7 @@ Apertium's `apertium-srd-ita` pair. Text only, no ads, no network permission. A
 standalone test app to see whether a dedicated Sardinian app finds users; see
 `RESEARCH-single-pair-apps-2026-09.md` in the (private, out-of-git) `translate/` dir for the why.
 
-Status (2026-09-05): debug build runs on an arm64 emulator and on the moto g 5G.
+Status (2026-09-05): v1.0.0 (versionCode 1) submitted to Google Play production, awaiting review.
 Lives in the public `rmtheis/translate` repo as `sardu/`, deliberately separate from
 `android/` so the monthly workflows in `.github/workflows/` (which only trigger on
 schedule / workflow_dispatch and only touch `android/`, `ios/`, `scripts/`) never see it.
@@ -109,13 +109,36 @@ Apertium core and the srd-ita data are GPL-2+; the shipped binaries include
 VISL CG-3 (GPL-3), so the app is **GPL-3**. Source must be public when it ships,
 and the About dialog names the repo (github.com/rmtheis/translate, `sardu/`).
 
+## Google Play
+
+- Package `com.qvyshift.sardu`, Play Console app id `4973198328359141606`, developer
+  account Qvyshift LLC. Created 2026-09-05; first production release 1.0.0
+  (versionCode 1) submitted for review the same day, all 177 countries, no staged
+  rollout (single release, straight to production per house rule).
+- Listing languages: en-US (default, "Sardinian Italian Translator") and it-IT
+  ("Traduttore Sardo Italiano"). Play has no Sardinian listing locale. Text, icon,
+  feature graphic and phone screenshots were pushed with the Play Developer API
+  (`edits.listings`, `edits.images`); the bundle too (`edits.bundles.upload`). The
+  declarations (privacy policy, ads = none, sign-in = none, IARC = all ages, target
+  age 18+, data safety = no collection, no government/financial/health features,
+  advertising ID = not used) and category (Tools) were done in the console UI.
+- Privacy policy: https://www.qvyshift.com/privacy-policy-sardu.html (in the
+  `qvyshift-website` repo, `public/`; deploys on push to master).
+- Play "automatic protection" (installer check) was turned OFF at app creation:
+  GPL app, sideloading must keep working.
+- Release notes: leave empty, or use the stock behind-the-scenes set (house rule).
+- Screenshots for Play must be 9:16 to 16:9: crop the 1080x2400 emulator captures
+  to 1080x1920 (the bottom is empty anyway).
+
 ## Not done / open
 
 - No CI. Release signing: `app/upload.keystore` (gitignored) is the dedicated
   sardu upload key; the master copy and its passwords are in the private
   `translate/` dir (`sardu-upload.keystore`, `HANDOFF.md`). Build a signed AAB with
   `UPLOAD_KEYSTORE_PASSWORD=… UPLOAD_KEY_ALIAS=upload UPLOAD_KEY_PASSWORD=… ./gradlew bundleRelease`.
-- Store listing name for search: "Traduttore Sardo - Italiano offline" or similar;
-  screenshots via `../scripts/emulator-screenshot-setup.sh`; Play has no Sardinian
-  listing locale, so the listing is en-US + it-IT only.
+- No release CI yet: bump `versionCode`, `./gradlew bundleRelease` with the upload-key
+  env vars, upload with the Play API (see the monorepo's `android/upload` scripts for
+  the pattern) or in the console.
+- Play warned that the bundle has native code without debug symbols; harmless, but
+  uploading `native-debug-symbols.zip` would make native crash reports readable.
 - Consider trimming to arm64-only for the first release if size matters.
