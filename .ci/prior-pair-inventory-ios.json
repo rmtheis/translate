@@ -43,9 +43,9 @@
   },
   {
     "pair": "apertium-eng-spa",
-    "sha256": "98e346ab710a7795881bc446594329b36aeee5a0750d97e7038bc1eb257b1ee5",
-    "bytes": 2705756,
-    "version": "0.8.1+g1299~e10760b1-1~sid1"
+    "sha256": "94d123d4b5f2b85a4878680503f2e7c796a5fdeb4654967f0e573df305d9526e",
+    "bytes": 2815234,
+    "version": "0.8.1+g1300~b29ae922-1~sid1"
   },
   {
     "pair": "apertium-fra-cat",
@@ -73,9 +73,9 @@
   },
   {
     "pair": "apertium-nno-nob",
-    "sha256": "6a12789dd4f7aee145339b1d54a43daf2cba6f18c3d77d277080f581505f513b",
-    "bytes": 16788341,
-    "version": "1.6.0+g9158~67b00b0f-2~sid1"
+    "sha256": "16938f9df36f6d3440e69a17e5163e575f0153011d454ec81aa83852dda8bb4d",
+    "bytes": 16791950,
+    "version": "1.6.0+g9174~6aac22db-1~sid1"
   },
   {
     "pair": "apertium-oci-cat",
@@ -109,15 +109,15 @@
   },
   {
     "pair": "apertium-sme-nob",
-    "sha256": "8725329922df3891c6c756c392b097a521f501ea48af5141ca6146869a9e217c",
-    "bytes": 27832981,
-    "version": "0.6.1+g4081~79827a4b-75~sid1"
+    "sha256": "0f2de293bb59f6792177e9dc5344b6fdaf8749217f7c9d2965182d895675de50",
+    "bytes": 27838449,
+    "version": "0.6.1+g4081~79827a4b-95~sid1"
   },
   {
     "pair": "apertium-spa-arg",
-    "sha256": "a7138290bdeaa6549e690f31816232a358e7d4c3ecdc35d218a8c6a68dad6181",
-    "bytes": 2842372,
-    "version": "0.6.0+g418~d0ac7d37-88~sid1"
+    "sha256": "bc067c5f0a5270e6d30aa219391df0f3a3954daac07a24625ec272283756e4e4",
+    "bytes": 2842454,
+    "version": "0.6.0+g418~d0ac7d37-89~sid1"
   },
   {
     "pair": "apertium-spa-ast",
@@ -127,21 +127,21 @@
   },
   {
     "pair": "apertium-spa-cat",
-    "sha256": "e943615ed2e60220774804c863ef0b67a750864fd34ae8ab092f632963f543f1",
-    "bytes": 9110643,
-    "version": "2.2.0+g2408~7635fe70-6~sid1"
+    "sha256": "54fe7aa09c2933fa6d7d4800726c8f260e15769df45ca6d9e91c08d19c325356",
+    "bytes": 9110725,
+    "version": "2.2.0+g2408~7635fe70-7~sid1"
   },
   {
     "pair": "apertium-spa-glg",
-    "sha256": "76ad21e380658a835d72fdb161963391d83a1ebade824159ca0a759f8da65f14",
-    "bytes": 4653767,
-    "version": "2.1.0+g6~5ad9019e-87~sid1"
+    "sha256": "ca56c36157fdb6968ce53045a618e20be983a0f10b8d199a1cbc87c2728fe86e",
+    "bytes": 4653849,
+    "version": "2.1.0+g6~5ad9019e-88~sid1"
   },
   {
     "pair": "apertium-spa-ita",
-    "sha256": "f7c09fbc3cb91277f3e77c364e5535178c93f1e97fdd0e2d5b434c3469daf708",
-    "bytes": 2780397,
-    "version": "0.2.1+g543~3df5cbc3-46~sid1"
+    "sha256": "568d0e24abaeb297f535f7b4551fb88deb42b513ec5a6a12337def7d2bfa8fd2",
+    "bytes": 2780479,
+    "version": "0.2.1+g543~3df5cbc3-47~sid1"
   },
   {
     "pair": "apertium-srd-ita",
