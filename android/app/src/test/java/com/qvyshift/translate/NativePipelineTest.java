@@ -146,6 +146,82 @@ public class NativePipelineTest {
   }
 
   @Test
+  public void escapeStreamEscapesExactlyTheDestxtSet() {
+    // Same set apertium-destxt escapes: \ [ ] { } ^ $ / @ < >
+    assertEquals("Ci vediamo il 5\\/9 a mario\\@gmail.com, costa 10\\$",
+        NativePipeline.escapeStream("Ci vediamo il 5/9 a mario@gmail.com, costa 10$"));
+    assertEquals("\\^_\\^ \\{x\\} \\[y\\] \\<3 \\> a\\\\b",
+        NativePipeline.escapeStream("^_^ {x} [y] <3 > a\\b"));
+    // Not stream syntax: left alone (the unknown-word markers are handled on output).
+    assertEquals("#tag *s* +39 ~5 50% l'acqua \n",
+        NativePipeline.escapeStream("#tag *s* +39 ~5 50% l'acqua \n"));
+  }
+
+  @Test
+  public void unescapeStreamRoundTripsEscapeStream() {
+    String[] samples = {
+        "Vai su https://www.regione.sardegna.it e leggi",
+        "C:\\Users\\me \\ trailing\\",
+        "x < 5 > y [nota] {amico} ^_^ $20 @user",
+        "Ciao \uD83D\uDE00 come stai \uD83D\uDC4D\uD83C\uDFFD",
+        "",
+    };
+    for (String s : samples) {
+      assertEquals(s, NativePipeline.unescapeStream(NativePipeline.escapeStream(s)));
+    }
+    org.junit.Assert.assertNull(NativePipeline.unescapeStream(null));
+  }
+
+  @Test
+  public void unescapeAfterMarkerPrefKeepsMarkersAndRestoresLiterals() {
+    // Real srd-ita-style output: an escaped bilingual-miss marker at a word start, and an
+    // escaped literal "/" and "@" that came from the (escaped) user input.
+    String raw = "\\@Cras 5\\/9 in Casteddu, iscrie a mario\\@gmail.com";
+    assertEquals("*Cras 5/9 in Casteddu, iscrie a mario@gmail.com",
+        NativePipeline.unescapeStream(NativePipeline.applyMarkerPref(raw, true)));
+    assertEquals("Cras 5/9 in Casteddu, iscrie a mario@gmail.com",
+        NativePipeline.unescapeStream(NativePipeline.applyMarkerPref(raw, false)));
+  }
+
+  @Test
+  public void unescapeUndoesTheGeneratorsDoubleEscapeOnUnprocessedWords() {
+    // Real cat-eng output: the generator couldn't inflect the (unknown) email address and
+    // wrote its still-escaped form through lttoolbox's escaper again.
+    assertEquals(" Writes at *joan@correu.cat now\n", NativePipeline.unescapeStream(
+        NativePipeline.applyMarkerPref(" Writes at #joan\\\\\\@correu.cat now\n", true)));
+    // Real spa-eng output for "cuesta 20$".
+    assertEquals("It costs *$20 today", NativePipeline.unescapeStream(
+        NativePipeline.applyMarkerPref("It costs #\\\\\\$20 today", true)));
+    // Doubled backslashes that aren't in front of a stream character are left alone.
+    assertEquals("C:\\Users", NativePipeline.unescapeStream("C:\\\\Users"));
+  }
+
+  @Test
+  public void caretTailStartHoldsBackCaretsAfterTheLastWord() {
+    // lrx-proc mis-reads an escaped ^ in the final blank; that tail bypasses the pipeline.
+    assertEquals(10, NativePipeline.caretTailStart("come stai? ^_^"));   // head "come stai?"
+    assertEquals(6, NativePipeline.caretTailStart("Grazie ^^"));
+    assertEquals(4, NativePipeline.caretTailStart("Ciao\n^^\n"));
+    assertEquals(7, NativePipeline.caretTailStart("Ciao \uD83D\uDE00 ^^"));        // emoji is not a word
+    assertEquals(5, NativePipeline.caretTailStart("x ^ y ^"));
+    assertEquals(0, NativePipeline.caretTailStart("^_^"));                // nothing to translate
+    // A ^ before the last word is fine inside the stream: nothing held back.
+    assertEquals(-1, NativePipeline.caretTailStart("a ^b"));
+    assertEquals(-1, NativePipeline.caretTailStart("^_^ ciao"));
+    assertEquals(-1, NativePipeline.caretTailStart("5/9 a mario@gmail.com, 10$"));
+    assertEquals(-1, NativePipeline.caretTailStart(""));
+  }
+
+  @Test
+  public void recognizesStreamErrorsOnStderr() {
+    assertTrue(NativePipeline.isStreamError("Error: Malformed input stream."));
+    assertTrue(NativePipeline.isStreamError("Error: malformed input stream: bad tag\n"));
+    assertTrue(!NativePipeline.isStreamError("Warning: Soft limit of 500 cohorts reached"));
+    assertTrue(!NativePipeline.isStreamError(""));
+    assertTrue(!NativePipeline.isStreamError(null));
+  }
+
+  @Test
   public void emptyStagesIgnored() {
     List<List<String>> stages = NativePipeline.parseModeLine(" | lt-proc data/x.bin | ", pairDir);
     assertEquals(1, stages.size());

@@ -310,6 +310,61 @@ std::string read_mode_line(const std::string& path) {
   throw std::runtime_error("empty mode file: " + path);
 }
 
+// Mirror NativePipeline.escapeStream: backslash-escape the characters that
+// are syntax in Apertium's stream format (lttoolbox's escaped_chars, the set
+// apertium-destxt escapes). Mode files start at lt-proc, not at the
+// deformatter, so raw user text must be escaped before stage 1: unescaped,
+// lt-proc throws "Malformed input stream" at the first / @ $ ... (a date,
+// an email, a URL); < silently cuts the text off and [ leaves the rest
+// untranslated.
+// All of these are ASCII, so walking UTF-8 bytes is safe.
+bool is_stream_reserved(char c) {
+  switch (c) {
+    case '\\': case '[': case ']': case '{': case '}':
+    case '^': case '$': case '/': case '@': case '<': case '>':
+      return true;
+    default:
+      return false;
+  }
+}
+
+std::string escape_stream(const std::string& text) {
+  std::string out;
+  out.reserve(text.size() + 8);
+  for (char c : text) {
+    if (is_stream_reserved(c)) out.push_back('\\');
+    out.push_back(c);
+  }
+  return out;
+}
+
+// Mirror NativePipeline.unescapeStream: drop the stream escapes that
+// survive to the final output (\X -> X), as apertium-retxt does. Runs after
+// apply_marker_pref, which recognizes escaped markers (\@word) itself.
+std::string unescape_stream(const std::string& text) {
+  std::string once;
+  once.reserve(text.size());
+  for (size_t i = 0; i < text.size(); ++i) {
+    if (text[i] == '\\' && i + 1 < text.size()) ++i;
+    once.push_back(text[i]);
+  }
+  // lttoolbox's fallback for a word it can't generate ("#joan@correu.cat",
+  // "#$20") writes the still-escaped text through its escaper a second time,
+  // so those words keep one level ("\@") after the pass above. Drop a
+  // backslash left in front of a stream character; the only casualty is a
+  // user-typed backslash directly before one of them.
+  std::string out;
+  out.reserve(once.size());
+  for (size_t i = 0; i < once.size(); ++i) {
+    if (once[i] == '\\' && i + 1 < once.size() && once[i + 1] != '\\'
+        && is_stream_reserved(once[i + 1])) {
+      continue;
+    }
+    out.push_back(once[i]);
+  }
+  return out;
+}
+
 // Mirror NativePipeline.applyMarkerPref:
 // @word / #word / *word (optionally backslash-escaped) at start-of-string
 // or after whitespace → normalize to a single * (display_marks=true) or
@@ -368,7 +423,7 @@ extern "C" ApertiumResult apertium_translate(const char* mode_file_path,
       return result;
     }
 
-    std::string current(input ? input : "");
+    std::string current = escape_stream(input ? input : "");
     const char* trace = std::getenv("APERTIUM_TRACE");
     const bool trace_on = trace && trace[0] && trace[0] != '0';
     for (size_t i = 0; i < stages.size(); ++i) {
@@ -388,7 +443,8 @@ extern "C" ApertiumResult apertium_translate(const char* mode_file_path,
       }
     }
 
-    std::string final_text = apply_marker_pref(current, display_marks != 0);
+    std::string final_text =
+        unescape_stream(apply_marker_pref(current, display_marks != 0));
     result.output = aix::dup_cstr(final_text);
     if (!result.output) throw std::runtime_error("dup_cstr failed");
     return result;

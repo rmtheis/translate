@@ -148,6 +148,16 @@ Each wrapper takes `std::string` in, returns `std::string` out.
 stage's output into the next. Input is small (single translations
 typically <1 KB); the string copies are irrelevant to performance.
 
+The mode files start at `lt-proc`, not at the deformatter, so
+`apertium_translate` (`native/wrappers/apertium_core.cpp`) escapes the raw
+input the way `apertium-destxt` does (`\ [ ] { } ^ $ / @ < >`) and
+unescapes the final output — mirror of Android's
+`NativePipeline.escapeStream`/`unescapeStream`. Unescaped, stage 1 threw
+"Malformed input stream" on any `/`, `@`, `$`, … (dates, emails, URLs).
+`ApertiumCore.swift` holds back a trailing `^` run after the last word and
+re-attaches it (lrx-proc mis-reads an escaped `^` there), same as
+`NativePipeline.caretTailStart`.
+
 ### Threading, safety, and crash recovery
 
 - Translation calls are serialized on a dedicated serial
