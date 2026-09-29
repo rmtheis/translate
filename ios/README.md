@@ -329,6 +329,10 @@ Pull these verbatim, minimal adaptation:
 - Jobs: `natives` (xcframework build, matrix over simulator/device) →
   `pairs` (prep-pair.sh unchanged) → `build` (Xcode archive) →
   `deploy` (App Store Connect API upload).
+- Manual runs (`gh workflow run release-ios.yml -f force_publish=true`)
+  ship app-code-only changes; add `-f stock_notes=true` to post the stock
+  "Behind-the-scenes changes…" line instead of the pair-inventory diff.
+  `release-android.yml` takes the same two inputs.
 - Per project CLAUDE.md: "Always use the App Store Connect API directly
   (via PyJWT + requests) for any ASC operations." Never Fastlane.
 - ASC credentials: check `~/Documents/keystore/` for an existing API

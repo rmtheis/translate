@@ -7,6 +7,10 @@ on:
         description: Upload to Play even if no pair changed (app-code-only release)
         type: boolean
         default: false
+      stock_notes:
+        description: Use the stock "behind-the-scenes" release notes instead of the pair-inventory diff
+        type: boolean
+        default: false
   schedule:
     # Monthly on the 1st at 04:00 UTC
     - cron: '0 4 1 * *'
@@ -313,9 +317,17 @@ jobs:
         # NO .txt extension (it reads them as bytes). Naming them *.txt triggers
         # "Unrecognized language code: en-US.txt." because the parser treats the
         # whole filename after "whatsnew-" as the locale.
+        # stock_notes=true swaps in the house stock line (en-US is the only Play
+        # listing language), for app-code releases that shouldn't get pair notes.
+        env:
+          STOCK_NOTES: ${{ inputs.stock_notes }}
         run: |
           mkdir -p whatsnew
-          python3 scripts/release-notes.py prior.json pair-inventory.json > whatsnew/whatsnew-en-US
+          if [ "$STOCK_NOTES" = "true" ]; then
+            echo "Behind-the-scenes changes to keep things running smoothly." > whatsnew/whatsnew-en-US
+          else
+            python3 scripts/release-notes.py prior.json pair-inventory.json > whatsnew/whatsnew-en-US
+          fi
           cat whatsnew/whatsnew-en-US
 
       - name: Generate store listing "Languages" section

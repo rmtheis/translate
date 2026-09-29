@@ -13,6 +13,10 @@ on:
         description: Upload to TestFlight/App Store even if no pair changed
         type: boolean
         default: false
+      stock_notes:
+        description: Use the stock "behind-the-scenes" release notes instead of the pair-inventory diff
+        type: boolean
+        default: false
   schedule:
     # Monthly on the 2nd at 04:00 UTC — one day after Android, so their
     # prep-pair caches are already warm if we opt to reuse them.
@@ -423,10 +427,19 @@ jobs:
       - name: Generate inventory-diff release notes
         if: steps.gate.outputs.changed == 'true'
         # release-notes.py takes (prior, current) — same convention as
-        # the Android workflow's whatsnew step.
+        # the Android workflow's whatsnew step. stock_notes=true swaps in the
+        # house stock line instead; asc_release_notes.py writes the file to
+        # every ASC localization, and en-US is currently the only one — add
+        # per-locale stock translations here before adding a localization.
+        env:
+          STOCK_NOTES: ${{ inputs.stock_notes }}
         run: |
-          python3 scripts/release-notes.py prior.json pair-inventory.json \
-            > /tmp/release-notes.txt
+          if [ "$STOCK_NOTES" = "true" ]; then
+            echo "Behind-the-scenes changes to keep things running smoothly." > /tmp/release-notes.txt
+          else
+            python3 scripts/release-notes.py prior.json pair-inventory.json \
+              > /tmp/release-notes.txt
+          fi
           echo "--- release notes preview:"
           cat /tmp/release-notes.txt
 
