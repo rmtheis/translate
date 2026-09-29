@@ -5,8 +5,9 @@ Apertium's `apertium-srd-ita` pair. Text only, no ads, no network permission. A
 standalone test app to see whether a dedicated Sardinian app finds users; see
 `RESEARCH-single-pair-apps-2026-09.md` in the (private, out-of-git) `translate/` dir for the why.
 
-Status (2026-09-05): v1.0.0 (versionCode 2, with native debug symbols) submitted to Google
-Play production, awaiting review.
+Status (2026-09-29): v1.0.0 (versionCode 2, with native debug symbols) live on Google Play
+production (100%). v1.0.1 (versionCode 3) — input escaping fix, see "How translation
+works" — built and tested, not yet uploaded.
 Lives in the public `rmtheis/translate` repo as `sardu/`, deliberately separate from
 `android/` so the monthly workflows in `.github/workflows/` (which only trigger on
 schedule / workflow_dispatch and only touch `android/`, `ios/`, `scripts/`) never see it.
@@ -34,6 +35,8 @@ sardu/
                                 emulator over adb; flags unknown-word markers
   scripts/device-apertium.sh    the 12-stage srd-ita / ita-srd pipeline as a shell
                                 script that runs on the device (used by the above)
+  scripts/upload_to_play.py     uploads the release AAB to the Play production track
+                                (see "Google Play")
   screenshots/                  emulator captures from 2026-09-05 (light/dark, it/sc/en)
 ```
 
@@ -91,6 +94,19 @@ paths to `filesDir/pair/`, and spawns the 12 stages as processes from
 `nativeLibraryDir` piped together. Measured: ~310 ms per short sentence on the
 emulator, well under that on the phone. Unknown words come back with a `*` prefix and
 are shown as-is (the footnote explains it).
+
+The mode files start at `lt-proc`, not at Apertium's deformatter, so `NativePipeline`
+does the deformatter's escaping itself (1.0.1+): it backslash-escapes the stream
+characters `\ [ ] { } ^ $ / @ < >` in the input (the set `apertium-destxt` escapes) and
+strips the surviving escapes from the output. Without it, lt-proc stopped with
+"Malformed input stream" at the first `/`, `@`, `$`, … (a date like 5/9, an email, a
+URL) and the translation was silently cut off there (1.0.0 behaviour). Two upstream
+quirks are worked around there too: lrx-proc mis-reads an escaped `^` after the last
+word (that trailing text bypasses the pipeline and is re-attached verbatim), and the
+generator double-escapes words it can't inflect (a second unescape pass). Any stage
+that exits non-zero or reports a malformed stream now fails the translation with the
+stage named in the error ("Errore: Apertium stage N (tool) failed …") instead of
+returning partial text.
 
 The UI auto-translates 600 ms after typing stops, on IME Done, on the Translate
 button, on a phrase chip, and after Paste. Swap moves the current output into the
@@ -154,6 +170,14 @@ and the About dialog names the repo (github.com/rmtheis/translate, `sardu/`).
 - Play "automatic protection" (installer check) was turned OFF at app creation:
   GPL app, sideloading must keep working.
 - Release notes: leave empty, or use the stock behind-the-scenes set (house rule).
+- Releasing an update: bump `versionCode`/`versionName` in `app/build.gradle`, build the
+  signed AAB (see "Not done / open" for the upload-key env vars), then
+  `python3 scripts/upload_to_play.py --status completed --release-notes-dir
+  ~/Documents/app-store-optimization/stock-release-notes/behind-the-scenes`
+  (production track, straight to 100% like 1.0.0; Play keeps only the en-US and it-IT
+  notes). The script uses the shared publisher OAuth token at
+  `~/Documents/mines/android/.oauth_token.json`; without `--status` it only creates a
+  draft.
 - Screenshots for Play must be 9:16 to 16:9: crop the 1080x2400 emulator captures
   to 1080x1920 (the bottom is empty anyway).
 
@@ -164,6 +188,5 @@ and the About dialog names the repo (github.com/rmtheis/translate, `sardu/`).
   `translate/` dir (`sardu-upload.keystore`, `HANDOFF.md`). Build a signed AAB with
   `UPLOAD_KEYSTORE_PASSWORD=… UPLOAD_KEY_ALIAS=upload UPLOAD_KEY_PASSWORD=… ./gradlew bundleRelease`.
 - No release CI yet: bump `versionCode`, `./gradlew bundleRelease` with the upload-key
-  env vars, upload with the Play API (see the monorepo's `android/upload` scripts for
-  the pattern) or in the console.
+  env vars, then `scripts/upload_to_play.py` (see "Google Play").
 - Consider trimming to arm64-only for the first release if size matters.
