@@ -5,9 +5,10 @@ Apertium's `apertium-srd-ita` pair. Text only, no ads, no network permission. A
 standalone test app to see whether a dedicated Sardinian app finds users; see
 `RESEARCH-single-pair-apps-2026-09.md` in the (private, out-of-git) `translate/` dir for the why.
 
-Status (2026-09-29): v1.0.0 (versionCode 2, with native debug symbols) live on Google Play
-production (100%). v1.0.1 (versionCode 3) — input escaping fix, see "How translation
-works" — built and tested, not yet uploaded.
+Status (2026-09-29): v1.0.1 (versionCode 3, with native debug symbols) — the input
+escaping fix, see "How translation works" — uploaded to Google Play production at 100%
+with the stock release notes on 2026-09-29 (in Google review at upload time). It replaces
+v1.0.0 (versionCode 2), live since September.
 Lives in the public `rmtheis/translate` repo as `sardu/`, deliberately separate from
 `android/` so the monthly workflows in `.github/workflows/` (which only trigger on
 schedule / workflow_dispatch and only touch `android/`, `ios/`, `scripts/`) never see it.
