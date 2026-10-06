@@ -282,14 +282,24 @@ ready in case a reviewer asks.
 
 ### Privacy manifest (iOS 17+)
 
-`PrivacyInfo.xcprivacy` declares:
-- No tracking domains.
-- No data collection.
-- API reason codes for any of FileTimestamp (`C617.1`), DiskSpace
-  (`85F4.1`), UserDefaults (`CA92.1`), SystemBootTime (`35F9.1`) that
-  the app actually uses.
-
-Fully-offline app, no analytics; the manifest is short.
+`Translate/PrivacyInfo.xcprivacy` (added 2026-10-06; first ships in the
+release after 1.0.6, and only once the commit is pushed, because releases
+build from GitHub in `release-ios.yml`). xcodegen's `Translate` source glob
+puts it in Copy Bundle Resources at the root of the `.app`. It declares:
+- No tracking, no tracking domains, no collected data types (fully
+  offline, no analytics; ODR downloads come from Apple).
+- **UserDefaults `CA92.1`**: last pair, direction, the display-marks
+  toggle and the review-prompt counters (`AppStorageKey`, `ReviewPrompt`).
+- **FileTimestamp `C617.1`**: `stat()` is a file-timestamp API. It's
+  called by our own `native/wrappers/wrapper_common.h` (`ensure_exists`)
+  and by the statically linked CG-3, ICU (`umapfile`) and libxml2 code in
+  `ApertiumCore.a`. Those libraries ship no manifest of their own. All the
+  stat targets are pair data, ICU data or temp files inside the app's own
+  bundle/container.
+- No DiskSpace or SystemBootTime: `nm -u` on `ApertiumCore.a` and the app
+  binary shows no `statfs`/`statvfs`/`mach_absolute_time` imports. Re-check
+  with `nm -u native/ApertiumCore.xcframework/ios-arm64/ApertiumCore.a | grep -E '_(f?stat|statv?fs|mach_absolute_time)'`
+  whenever the native libraries change.
 
 ### Apple Developer, bundle ID, naming
 
@@ -369,7 +379,8 @@ Ordered. Each step should be verifiable before moving on.
    install → pick spa-cat → download dialog → translate.
 10. Port full catalog, tier grouping, remember-last-pair, combined
     About/Settings dialog.
-11. Ship `PrivacyInfo.xcprivacy` with accurate declarations.
+11. Ship `PrivacyInfo.xcprivacy` with accurate declarations. (Done
+    2026-10-06 — see "Privacy manifest" above.)
 12. Write the GitHub Actions release workflow (natives → pairs → build
     → deploy).
 13. First TestFlight build via the App Store Connect API.
