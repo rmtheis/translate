@@ -170,9 +170,11 @@ jobs:
           name: pairs
 
       - name: Set up NDK (for install-natives strip pass)
+        # platforms;android-37.0 = compileSdk 37 (AGP 9.4.1). AGP 9.4.1 still
+        # builds with build-tools 36.0.0.
         run: |
           yes | sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;${{ env.NDK_VERSION }}" \
-            "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+            "platform-tools" "platforms;android-37.0" "build-tools;36.0.0"
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/${{ env.NDK_VERSION }}" >> $GITHUB_ENV
 
       - name: Install patchelf (used by scripts/install-natives-android.sh)
@@ -262,6 +264,12 @@ jobs:
     # workflow_dispatch both deploy to the production track. The pair-change
     # gate below is the only thing that can still skip the actual Play upload
     # (when no pair changed since the last release).
+    #
+    # Every release goes out as a 5% STAGED rollout (status inProgress,
+    # userFraction 0.05), not straight to 100%. The central Play rollout advancer
+    # (app-store-optimization/play-rollout, which lists com.qvyshift.translate in
+    # its packages.json) walks it up to 100% and holds it if crash/ANR vitals
+    # regress. Emergency stop: halt the release in Play Console.
     steps:
       - uses: actions/checkout@v5
 
@@ -334,7 +342,7 @@ jobs:
         if: steps.gate.outputs.changed == 'true'
         run: python3 scripts/store-listing.py pair-inventory.json > listing-languages.txt
 
-      - name: Upload to Play production
+      - name: Upload to Play production (5% staged rollout)
         if: steps.gate.outputs.changed == 'true'
         uses: r0adkll/upload-google-play@v1
         with:
@@ -342,7 +350,9 @@ jobs:
           packageName: ${{ env.PACKAGE_NAME }}
           releaseFiles: app-release.aab
           track: production
-          status: completed
+          # Staged rollout: the play-rollout advancer takes it from 5% to 100%.
+          status: inProgress
+          userFraction: 0.05
           whatsNewDirectory: whatsnew
 
       # The Play Console full-description isn't updated by r0adkll/upload-google-play;

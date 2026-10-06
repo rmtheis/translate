@@ -1,23 +1,21 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk 36
+    compileSdk = 37
 
     namespace = "com.qvyshift.translate"
 
     defaultConfig {
         applicationId "com.qvyshift.translate"
-        minSdkVersion 21
-        targetSdkVersion 36
+        // minSdk 21 is deliberate (wide device coverage). Never raise it.
+        minSdk = 21
+        targetSdk = 37
     }
 
-    android {
-        lintOptions {
-//            checkReleaseBuilds false
-            // Or, if you prefer, you can continue to check for errors in release builds,
-            // but continue the build even when errors are found:
-            abortOnError false
-        }
+    lint {
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError = false
     }
 
     // CI populates app/upload.keystore from a base64 secret; local dev falls back to the
@@ -37,16 +35,20 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
-            signingConfig (file('upload.keystore').exists()
+            // AGP 9 rejects proguard-android.txt (it carried -dontoptimize), so R8
+            // now optimizes this app for the first time. Checked for 1.0.12: unit
+            // tests, translation in several pairs, pair download/switch, upgrade
+            // from 1.0.11 on the minified build.
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-project.txt'
+            signingConfig = file('upload.keystore').exists()
                 ? signingConfigs.upload
-                : signingConfigs.debug)
+                : signingConfigs.debug
         }
     }
 
     // Native binaries in jniLibs need to be extracted to disk so ProcessBuilder can exec them.
     // Otherwise AGP 8+ keeps them compressed inside the APK.
-    packagingOptions {
+    packaging {
         jniLibs {
             useLegacyPackaging = true
         }
@@ -71,6 +73,13 @@ dependencies {
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'com.google.android.play:asset-delivery:2.2.2'
     implementation 'com.google.android.play:review:2.0.2'
+
+    // Direct pins over the old fragment/activity that asset-delivery and material
+    // drag in (fragment 1.1.0 is flagged as outdated by Play Console). These are the
+    // newest releases that still declare minSdkVersion 21: fragment 1.9.0 and
+    // activity 1.12.0 raised it to 23. Do NOT bump past them: minSdk stays 21.
+    implementation 'androidx.fragment:fragment:1.8.9'
+    implementation 'androidx.activity:activity:1.11.0'
 
     testImplementation 'junit:junit:4.13.2'
 }

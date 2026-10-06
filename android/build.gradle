@@ -5,7 +5,8 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.9.2'
+        // AGP 9.4.1 on Gradle 9.6.1 / JDK 17 (compileSdk 37 needs AGP >= 9.1.1).
+        classpath 'com.android.tools.build:gradle:9.4.1'
     }
 }
 
