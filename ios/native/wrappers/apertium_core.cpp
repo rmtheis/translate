@@ -215,6 +215,88 @@ std::string non_mode_flags(const std::string& flags) {
   return out;
 }
 
+// apertium-transfer/-interchunk/-postchunk take the rules XML and the .bin
+// compiled from it; the .bin's pattern matcher returns rule numbers that index
+// the XML's <rule>s, so the two must match. Apertium builds X.t1x.bin from
+// X.t1x, and a pair with rule variants (alt="oci@aran") ships the
+// variant-filtered X.t1x next to the unfiltered apertium-<pkg>.X.t1x. The
+// Debian build of apertium-oci-cat (2022, 357b2f07) passes the unfiltered file
+// with oci-cat.t1x.bin (155 vs 132 rules; t2x/t3x mismatch too), so transfer
+// ran the wrong rule's actions and segfaulted on "L'ostal es grand.". Upstream
+// fixed modes.xml in a81f6fd1 (2025-03). When X.tNx exists, read it instead.
+std::string rules_xml_for_bin(const std::string& xml, const std::string& bin) {
+  static const std::string ext = ".bin";
+  if (bin.size() <= ext.size()
+      || bin.compare(bin.size() - ext.size(), ext.size(), ext) != 0) {
+    return xml;
+  }
+  std::string src = bin.substr(0, bin.size() - ext.size());
+  if (src == xml || ::access(src.c_str(), R_OK) != 0) return xml;
+  return src;
+}
+
+// cg-proc prints a CG-3 dependency link as a tag, <#N→M>, on every cohort a
+// SETPARENT/SETCHILD rule touched. CG-3 added that to the Apertium stream
+// format in f5d37748 (2022-01); grammars written before then don't expect it.
+// hbs-mkd.rlx's experimental SETPARENT rules fire on adjective + noun ("Dobar
+// dan."), apertium-pretransfer then reads the tag's '#' as a multiword split
+// (^Dobar#1→2><adj>…<$), and apertium-transfer segfaults on the result. Android
+// runs the real binaries and crashes the same way. No stage in the pairs we
+// ship reads the tags, so drop them. Only <#digits→digits> inside a lexical
+// unit is dropped; escaped characters and [superblanks] pass through.
+bool is_dependency_tag(const std::string& s, size_t begin, size_t end) {
+  static const std::string arrow = "\xE2\x86\x92";  // U+2192 in UTF-8
+  size_t i = begin;
+  if (i >= end || s[i] != '#') return false;
+  ++i;
+  auto digits = [&]() {
+    size_t start = i;
+    while (i < end && std::isdigit(static_cast<unsigned char>(s[i]))) ++i;
+    return i > start;
+  };
+  if (!digits()) return false;
+  if (s.compare(i, arrow.size(), arrow) != 0) return false;
+  i += arrow.size();
+  return digits() && i == end;
+}
+
+std::string strip_dependency_tags(const std::string& s) {
+  if (s.find("\xE2\x86\x92") == std::string::npos) return s;
+  std::string out;
+  out.reserve(s.size());
+  bool in_lu = false;
+  for (size_t i = 0; i < s.size(); ++i) {
+    char c = s[i];
+    if (c == '\\' && i + 1 < s.size()) {
+      out.push_back(c);
+      out.push_back(s[++i]);
+      continue;
+    }
+    if (!in_lu && c == '[') {
+      // Superblank or [[wordbound blank]]: copy through the closing ']'.
+      size_t j = i;
+      while (j < s.size() && s[j] != ']') j += (s[j] == '\\') ? 2 : 1;
+      if (j >= s.size()) j = s.size() - 1;
+      out.append(s, i, j - i + 1);
+      i = j;
+      continue;
+    }
+    if (c == '^') {
+      in_lu = true;
+    } else if (c == '$') {
+      in_lu = false;
+    } else if (c == '<' && in_lu) {
+      size_t close = s.find('>', i + 1);
+      if (close != std::string::npos && is_dependency_tag(s, i + 1, close)) {
+        i = close;
+        continue;
+      }
+    }
+    out.push_back(c);
+  }
+  return out;
+}
+
 // ---------- stage dispatch ----------
 
 ApertiumResult run_stage(const std::vector<std::string>& stage,
@@ -252,6 +334,7 @@ ApertiumResult run_stage(const std::vector<std::string>& stage,
     std::string trules   = take_file(a);
     std::string datafile = take_file(a);
     std::string biltrans = opt_file(a);
+    trules = rules_xml_for_bin(trules, datafile);
     return apertium_transfer(in.c_str(), trules.c_str(), datafile.c_str(),
                              biltrans.empty() ? nullptr : biltrans.c_str(),
                              a.flags.c_str(), tmp_dir);
@@ -259,12 +342,14 @@ ApertiumResult run_stage(const std::vector<std::string>& stage,
   if (tool == "apertium-interchunk") {
     std::string t2x  = take_file(a);
     std::string data = take_file(a);
+    t2x = rules_xml_for_bin(t2x, data);
     return apertium_interchunk(in.c_str(), t2x.c_str(), data.c_str(),
                                a.flags.c_str(), tmp_dir);
   }
   if (tool == "apertium-postchunk") {
     std::string t3x  = take_file(a);
     std::string data = take_file(a);
+    t3x = rules_xml_for_bin(t3x, data);
     return apertium_postchunk(in.c_str(), t3x.c_str(), data.c_str(),
                               a.flags.c_str(), tmp_dir);
   }
@@ -284,7 +369,17 @@ ApertiumResult run_stage(const std::vector<std::string>& stage,
   }
   if (tool == "cg-proc") {
     std::string grammar = take_file(a);
-    return apertium_cg_proc(in.c_str(), grammar.c_str(), a.flags.c_str(), tmp_dir);
+    ApertiumResult r = apertium_cg_proc(in.c_str(), grammar.c_str(),
+                                        a.flags.c_str(), tmp_dir);
+    if (r.output) {
+      std::string stripped = strip_dependency_tags(r.output);
+      if (stripped.size() != std::strlen(r.output)) {
+        std::free(r.output);
+        r.output = aix::dup_cstr(stripped);
+        if (!r.output) r.error = aix::dup_cstr("dup_cstr failed");
+      }
+    }
+    return r;
   }
   if (tool == "apertium-anaphora") {
     std::string arx = take_file(a);

@@ -135,9 +135,17 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
 
 ## Known issues
 
-- None open on master. In 1.0.12 and earlier, Northern Sami → Norwegian Bokmål and
-  Norwegian Bokmål → Nynorsk fail; the fix ships with the next release (see the release
-  log).
+- Serbo-Croatian → Macedonian and Occitan → Catalan fail on many inputs ("Dobar dan.",
+  "Ja sam student.", "L'ostal es grand."): apertium-transfer segfaults (exit code 139),
+  so `NativePipeline.checkStages` fails the translation. Both are pair-data problems, seen
+  2026-10-07 with the 1.0.12 CI binaries and pair JARs: CG-3 dependency tags (`<#1→2>`)
+  from hbs-mkd's grammar, which apertium-pretransfer mangles, and an oci-cat mode file that
+  passes the unfiltered `apertium-oci-cat.oci-cat.t1x`/`t2x`/`t3x` with the `.bin`s built
+  from the filtered `oci-cat.t1x`/... files. iOS works around both in
+  `ios/native/wrappers/apertium_core.cpp` (see `ios/README.md`, "Mode-file tools and
+  flags"); `NativePipeline` has no equivalent yet.
+- In 1.0.12 and earlier, Northern Sami → Norwegian Bokmål and Norwegian Bokmål → Nynorsk
+  fail; the fix ships with the next release (see the release log).
 
 ## Release log
 

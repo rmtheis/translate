@@ -192,6 +192,28 @@ every `wrappers/*.cpp`, so there's no list to update there.
   MERGE_BEG/MERGE_END when the CG variable `sitat.lastå` is set, which
   the app never does, so in the app lt-merge just re-serializes the
   stream.
+- apertium-transfer, -interchunk and -postchunk get the rules XML that
+  their `.bin` was compiled from: when `X.t1x.bin`'s source `X.t1x` sits
+  in the pair dir, `rules_xml_for_bin()` uses it in place of the mode's
+  XML. The .bin's matcher returns rule numbers that index the XML's
+  `<rule>`s. Pairs with rule variants (`alt="oci@aran"`) ship both the
+  variant-filtered `X.t1x` and the unfiltered `apertium-<pkg>.X.t1x`. The
+  2022 Debian build of apertium-oci-cat (357b2f07) passes the unfiltered
+  files (t1x 155 rules vs 132, t2x 23 vs 22, t3x 12 vs 7), so every
+  oci→cat sentence ran the wrong rules' actions. Some segfaulted (see the
+  1.0.6 entry in "Known issues"). Upstream fixed `modes.xml` in a81f6fd1
+  (2025-03). Among the 49 directions only oci→cat's three stages hit
+  this case.
+- cg-proc output loses CG-3 dependency tags (`<#1→2>`,
+  `strip_dependency_tags()`). CG-3 prints one on every cohort a
+  SETPARENT/SETCHILD rule touched, in the Apertium format since cg3
+  f5d37748 (2022-01). apertium-pretransfer reads the tag's `#` as a
+  multiword split (`^Dobar#1→2><adj>…<$`) and apertium-transfer then
+  segfaults. Only `hbs-mkd.rlx` (experimental SETPARENT rules, last
+  edited 2017) prints them among the 49 directions. nob-nno's
+  `merge-names.rlx.bin` has the grammar's dependency flag from
+  MERGECOHORTS but prints no tags. Escaped text and `[superblanks]` are
+  left alone, so a typed `<#1→2>` still comes through.
 - Upstream `exit()` calls are not patched to throw (the plan under "The
   core iOS blocker" was never carried out), so an lttoolbox exit such as
   "Unexpected trailing backslash" still ends the app. Input escaping keeps
@@ -211,6 +233,12 @@ every `wrappers/*.cpp`, so there's no list to update there.
   (it fights CrashReporter and Apple discourages it). Mitigation for
   v1 is "don't ship corrupt pairs". If this becomes a real problem
   post-launch, move translation to an XPC service — out of scope now.
+  It happened in 1.0.6 with two pairs whose data doesn't fit current
+  Apertium tools (hbs→mkd, oci→cat; see "Mode-file tools and flags").
+  Android runs each stage as a subprocess, so the same segfault (exit
+  code 139 under `adb shell`) fails only that translation there:
+  `NativePipeline.checkStages` reports the apertium-transfer stage as
+  failed.
 
 ### HFST / OpenFST
 
@@ -396,13 +424,19 @@ Pull these verbatim, minimal adaptation:
 
 ## Known issues
 
-- Serbo-Croatian → Macedonian and Occitan → Catalan crash the app
-  (SIGSEGV in `apertium-transfer`) on some inputs, e.g. "Dobar dan." and
-  "L'ostal es grand.". Seen in live 1.0.6 and with natives rebuilt at
-  upstream HEAD on 2026-10-06. In hbs→mkd the stream is already malformed
-  after cg-proc (`^Dobar#1→2><adj>…<$`, CG-3 dependency marks); oci→cat's
-  stream looks valid, but transfer logs "Null access at word[index]"
-  before crashing. Not fixed yet.
+- 1.0.6 and earlier crash the app (SIGSEGV in `apertium-transfer`) on
+  Serbo-Croatian → Macedonian and Occitan → Catalan input such as "Dobar
+  dan.", "Ja sam student.", "L'ostal es grand." and "Lo gat dormís sus la
+  cadièra vièlha.". Both are pair-data problems: Android's real binaries
+  segfault on the same streams. Fixed on master for the next release (see
+  "Mode-file tools and flags" and the release log).
+- Occitan → Catalan pair data is the 2022 Debian nightly (357b2f07,
+  still the current package on 2026-10-07). Its analyzer misses common
+  words, so "L'ostal es grand." comes out as "El *ostal *es *grand.".
+  In cat→oci the bilingual dictionary gives Aranese forms the generator
+  can't produce ("La casa és gran." → "*Eth casa *èster granda."), the
+  same on Android. Upstream apertium-oci-cat has commits up to 2026-02
+  that the nightly doesn't include.
 
 ## Release log
 
@@ -421,6 +455,33 @@ Pull these verbatim, minimal adaptation:
   - The `lt-merge`, `lt-merge --unmerge` and `lt-proc -g -b` stages are
     byte-identical to host-built lttoolbox binaries.
   - `nm -u` required-reason APIs are unchanged (`_stat` only).
+  - The "byte-identical" count includes hbs→mkd and oci→cat, which
+    crashed on the first sentence with both natives (see the next item).
+- **Next release, continued** (committed 2026-10-07): fixes the hbs→mkd
+  and oci→cat crashes in `apertium_core.cpp` (`rules_xml_for_bin()`,
+  `strip_dependency_tags()`; see "Mode-file tools and flags"). Also under
+  `ios/native/`, so it needs the same natives rebuild. QA 2026-10-07 on
+  an iPhone 17 / iOS 27.0 simulator, with the CI pair JARs from
+  release-ios.yml run 36962949842 and natives built locally at upstream
+  HEAD (lttoolbox ed9b682, apertium c0a91d8, cg3 7b7ff6d, hfst fcfb18e,
+  same as 2026-10-06):
+  - 49 directions, 151 sentences: no crashes. 47 directions are
+    byte-identical to the same natives without the fix. hbs→mkd and
+    oci→cat now translate 8/8 each (both crashed on the first sentence
+    before), e.g. "Dobar dan." → "Добар даден." and "Lo gat dormís sus la
+    cadièra vièlha." → "El gat dorm sobre la *cadièra *vièlha.". A
+    further 28 hbs→mkd and 25 oci→cat sentences (punctuation, caps,
+    email, `$`/`€`, typed `<#1→2>`) translate without a crash.
+  - Android (the 1.0.12 CI arm64 binaries, run from `adb shell` on an
+    API 36 arm64 emulator, same JARs) segfaults in apertium-transfer on
+    the same inputs. With the two fixes applied by hand there (dependency
+    tags stripped after cg-proc, filtered t1x/t2x/t3x in the mode), its
+    output matches iOS on all 16 sentences.
+  - The real app (ODR tags stripped, as `verify-ios-translate.sh` does)
+    translates all four crash inputs plus mkd→hbs and cat→oci and stays
+    running; an unsigned Release device build links.
+  - `nm -u` required-reason APIs are unchanged (`_stat` only; the new
+    `access()` call isn't one).
 - **1.0.6** (released 2026-09-29): natives from the 2026-09-29 CI build.
 
 ## First-session plan (new session picks up here)
