@@ -98,4 +98,31 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
 - On-demand pair packs only work when installed with bundletool's local testing:
   `bundletool build-apks --local-testing --bundle=app/build/outputs/bundle/release/app-release.aab --output=qa.apks --ks ~/.android/debug.keystore ...`
   then `bundletool install-apks --apks=qa.apks --device-id=<emulator>`.
+- A clean worktree has no `local.properties`: `export ANDROID_HOME=~/Library/Android/sdk`
+  first (CI runners set it).
 - arm64 emulators only (no x86 natives). Never a physical device for QA.
+- Upgrade test: install the live AAB's APK set (`build-apks --local-testing` re-signs it
+  with the debug key), download a few pairs, change settings, then `install-apks` the
+  new set over it. The app restarts during that install and asks for the stale packs
+  *before* bundletool has pushed the new ones, so the refresh hangs; force-stop and
+  relaunch, and the pairs re-extract at the new versionCode. Don't use "Download all"
+  on the Medium Phone AVD: the extracted pairs fill `/data`, and the upgrade install
+  then fails with "not enough space".
+
+## Known issues
+
+- **Northern Sami → Norwegian Bokmål doesn't work** (live since at least 1.0.11):
+  `sme-nob.mode` starts with `hfst-proc`, but `scripts/install-natives-android.sh`
+  doesn't install it, so translation fails with "native binary not executable: …/libhfst_proc.so".
+  The natives artifact does build `hfst-proc`; the fix is to package it as
+  `libhfst_proc.so` (and test sme-nob), or drop the pair from `PairCatalog`.
+
+## Release log
+
+- **1.0.12** (versionCode = the CI run's `yyyymmddHH`; prepared 2026-10-06): AGP 9.4.1,
+  Gradle 9.6.1, target 37, first R8-optimized build, first 5% staged release. QA on the
+  minified, debug-signed QA build: 18/18 unit tests, lintVital clean, smoke PASS on
+  Medium_Phone_API_37 and Medium_Tablet_API_37, translations byte-identical to 1.0.11 in
+  6 directions (eng↔spa, spa→cat, nno→nob, rus→ukr, cat→ita), upgrade from 1.0.11 keeps
+  the chosen pair, the marks setting and the downloaded pairs.
+- **1.0.11** (2026092911): input-escaping fix, 100% on production.
