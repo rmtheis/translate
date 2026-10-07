@@ -195,6 +195,19 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
     typed `<#1→2>`, which comes through unchanged) all translate.
   - Unit tests: 28/28 on master with this change (`NativePipelineTest` 24, 6 of them new
     for the two workarounds; `LanguageTitlesTest` 4).
+- **Next release, continued** (`ce128a9`, 2026-10-07): the pair list names Serbo-Croatian
+  instead of showing the code ("hbs → Macedonian", "Macedonian → hbs (SR)", "hbs → English",
+  "English → hbs"). `LanguageTitles` asks `Locale` first, and no Android version names the
+  `hbs` macrolanguage, so `codeToTitle` now has it ("Serbo-Croatian", as on iOS). Every other
+  code in the 49 offered directions gets a `Locale` name: checked on API 29/34/35/36 emulators
+  in all 74 system UI languages, and for API 21–28 against the ICU 53–60 source. A pair title
+  is also the saved selection (`PREF_lastModeTitle`) and the `mode` extra, so a title that
+  isn't installed goes through `LanguageTitles.upgradeTitle()` (bare code → current name)
+  before the first-pair fallback. QA 2026-10-07 on Medium_Phone_API_37 with minified QA builds
+  of ccbbe53 without and with the change (CI 1.0.12 natives + pairs): 22/22 unit tests; with
+  "Macedonian → hbs (SR)" saved and English → Spanish also installed, the upgraded app reopens
+  on "Macedonian → Serbo-Croatian (SR)"; `--es mode 'hbs → Macedonian'` opens
+  "Serbo-Croatian → Macedonian".
 - **1.0.12** (versionCode = the CI run's `yyyymmddHH`; prepared 2026-10-06): AGP 9.4.1,
   Gradle 9.6.1, target 37, first R8-optimized build, first 5% staged release. QA on the
   minified, debug-signed QA build: 18/18 unit tests, lintVital clean, smoke PASS on
