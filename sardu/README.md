@@ -11,7 +11,7 @@ escaping fix, see "How translation works" — is live on Google Play production 
 **v1.0.2 (versionCode 4)** is the toolchain / target-37 release: AGP 9.4.1, Gradle
 9.6.1, compileSdk/targetSdk 37, fragment/activity pins, no app-code change. Built and
 QA'd on 2026-10-06 (see "R8, resources and QA"); it goes to production at **5% staged**
-with the stock notes (see "Google Play"), not yet uploaded at the time of writing.
+with the stock notes (see "Google Play"). **Published 2026-10-06** (production, `inProgress` at 5%); the play-rollout advancer walks it up (`com.qvyshift.sardu` is in its roster).
 Lives in the public `rmtheis/translate` repo as `sardu/`, deliberately separate from
 `android/` so the monthly workflows in `.github/workflows/` (which only trigger on
 schedule / workflow_dispatch and only touch `android/`, `ios/`, `scripts/`) never see it.
