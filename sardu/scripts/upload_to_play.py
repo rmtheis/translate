@@ -2,10 +2,12 @@
 """Upload the Sardinian Translator release AAB to Google Play.
 
     python3 scripts/upload_to_play.py                    # DRAFT production release
-    python3 scripts/upload_to_play.py --status completed \
+    python3 scripts/upload_to_play.py --rollout 0.05 \
         --release-notes-dir ~/Documents/app-store-optimization/stock-release-notes/behind-the-scenes
-                                                         # straight to 100% (how sardu ships)
-    python3 scripts/upload_to_play.py --rollout 0.05     # staged rollout instead
+                                                         # 5% staged (how sardu ships from 1.0.2;
+                                                         # play-rollout walks it to 100%)
+    python3 scripts/upload_to_play.py --status completed ...   # straight to 100% (1.0.0/1.0.1)
+    add --dry-run to any of these: upload + set the track + validate, then DELETE the edit
 
 Build the AAB first (see README "Build / run" and "Google Play"). House rules:
 production track only (no internal/staging); release notes are the stock
@@ -70,6 +72,9 @@ def main():
                          "(e.g. 0.05). Overrides --status.")
     ap.add_argument("--release-notes-dir", default=None, metavar="DIR",
                     help="directory of <locale>.txt release notes (stock set)")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="upload, set the track and validate the edit, then delete it: "
+                         "nothing is published")
     args = ap.parse_args()
 
     if args.rollout is not None and not (0 < args.rollout <= 1):
@@ -77,7 +82,8 @@ def main():
     if not AAB.exists():
         sys.exit(f"AAB not found: {AAB} — run ./gradlew bundleRelease first")
     print(f"uploading {AAB.name} ({AAB.stat().st_size // 1024} KB) "
-          f"to {PACKAGE} {TRACK} as {args.status if args.rollout is None else 'inProgress'}")
+          f"to {PACKAGE} {TRACK} as {args.status if args.rollout is None else 'inProgress'}"
+          + (" (DRY RUN)" if args.dry_run else ""))
 
     from googleapiclient.errors import HttpError
     from googleapiclient.http import MediaFileUpload
@@ -100,6 +106,15 @@ def main():
     service.edits().tracks().update(
         editId=eid, track=TRACK, packageName=PACKAGE,
         body={"releases": [release]}).execute()
+
+    if args.dry_run:
+        service.edits().validate(editId=eid, packageName=PACKAGE).execute()
+        service.edits().delete(editId=eid, packageName=PACKAGE).execute()
+        notes = len(release.get("releaseNotes", []))
+        print(f"DRY RUN OK: versionCode {vc} on {TRACK} as {release['status']}"
+              + (f" @ {release['userFraction']:.0%}" if "userFraction" in release else "")
+              + f", {notes} release-note locales; edit validated and deleted, nothing published")
+        return
 
     try:
         service.edits().commit(editId=eid, packageName=PACKAGE).execute()

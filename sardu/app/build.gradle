@@ -1,17 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace 'com.qvyshift.sardu'
-    compileSdk 36
+    namespace = 'com.qvyshift.sardu'
+    compileSdk = 37
     // AGP needs an NDK to strip jniLibs and extract their symbols (debugSymbolLevel).
-    ndkVersion '28.2.13676358'
+    ndkVersion = '28.2.13676358'
 
     defaultConfig {
-        applicationId 'com.qvyshift.sardu'
-        minSdk 26
-        targetSdk 36
-        versionCode 3
-        versionName '1.0.1'
+        applicationId = 'com.qvyshift.sardu'
+        minSdk = 26
+        targetSdk = 37
+        versionCode = 4
+        versionName = '1.0.2'
         // Only the ABIs we have Apertium binaries for (android/native in the
         // translate monorepo). No x86 emulator support.
         ndk { abiFilters 'arm64-v8a', 'armeabi-v7a' }
@@ -23,10 +23,10 @@ android {
         upload {
             def ks = file('upload.keystore')
             if (ks.exists()) {
-                storeFile ks
-                storePassword System.getenv('UPLOAD_KEYSTORE_PASSWORD') ?: ''
-                keyAlias     System.getenv('UPLOAD_KEY_ALIAS') ?: ''
-                keyPassword  System.getenv('UPLOAD_KEY_PASSWORD') ?: ''
+                storeFile = ks
+                storePassword = System.getenv('UPLOAD_KEYSTORE_PASSWORD') ?: ''
+                keyAlias      = System.getenv('UPLOAD_KEY_ALIAS') ?: ''
+                keyPassword   = System.getenv('UPLOAD_KEY_PASSWORD') ?: ''
             }
         }
     }
@@ -37,17 +37,17 @@ android {
             // Play Console can symbolicate native crashes/ANRs. Requires UNSTRIPPED
             // libs in jniLibs (scripts/install-natives-unstripped.sh); AGP strips the
             // copies that ship to devices.
-            ndk { debugSymbolLevel 'FULL' }
-            minifyEnabled true
-            shrinkResources true
+            ndk { debugSymbolLevel = 'FULL' }
+            minifyEnabled = true
+            shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig (file('upload.keystore').exists() ? signingConfigs.upload : signingConfigs.debug)
+            signingConfig = file('upload.keystore').exists() ? signingConfigs.upload : signingConfigs.debug
         }
     }
 
     // The Apertium tools are executables disguised as lib*.so. They must be extracted
     // to disk (not left compressed in the APK) so ProcessBuilder can exec them.
-    packagingOptions {
+    packaging {
         jniLibs {
             useLegacyPackaging = true
         }
@@ -60,13 +60,17 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
 dependencies {
-    implementation 'androidx.activity:activity:1.10.1'
+    // Pinned explicitly (house rule for every target-37 release): Play Console flags
+    // old transitive fragment/activity versions as outdated. fragment 1.9.1 and
+    // activity 1.13.0 need minSdk 23; sardu is minSdk 26.
+    implementation 'androidx.activity:activity:1.13.0'
+    implementation 'androidx.fragment:fragment:1.9.1'
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'com.google.android.material:material:1.12.0'

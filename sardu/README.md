@@ -5,10 +5,13 @@ Apertium's `apertium-srd-ita` pair. Text only, no ads, no network permission. A
 standalone test app to see whether a dedicated Sardinian app finds users; see
 `RESEARCH-single-pair-apps-2026-09.md` in the (private, out-of-git) `translate/` dir for the why.
 
-Status (2026-09-29): v1.0.1 (versionCode 3, with native debug symbols) — the input
-escaping fix, see "How translation works" — uploaded to Google Play production at 100%
-with the stock release notes on 2026-09-29 (in Google review at upload time). It replaces
-v1.0.0 (versionCode 2), live since September.
+Status (2026-10-06): v1.0.1 (versionCode 3, with native debug symbols) — the input
+escaping fix, see "How translation works" — is live on Google Play production at 100%
+(uploaded 2026-09-29 with the stock release notes; it replaced v1.0.0, versionCode 2).
+**v1.0.2 (versionCode 4)** is the toolchain / target-37 release: AGP 9.4.1, Gradle
+9.6.1, compileSdk/targetSdk 37, fragment/activity pins, no app-code change. Built and
+QA'd on 2026-10-06 (see "R8, resources and QA"); it goes to production at **5% staged**
+with the stock notes (see "Google Play"), not yet uploaded at the time of writing.
 Lives in the public `rmtheis/translate` repo as `sardu/`, deliberately separate from
 `android/` so the monthly workflows in `.github/workflows/` (which only trigger on
 schedule / workflow_dispatch and only touch `android/`, `ios/`, `scripts/`) never see it.
@@ -55,7 +58,7 @@ scripts/install-natives-unstripped.sh armeabi-v7a /tmp/natives/armeabi-v7a
 ```
 
 (Artifacts expire 7 days after the monthly run; `android/native/build.sh` is the
-fallback.) `app/build.gradle` sets `ndkVersion` and `release.ndk.debugSymbolLevel 'FULL'`,
+fallback.) `app/build.gradle` sets `ndkVersion` and `release.ndk.debugSymbolLevel = 'FULL'`,
 so AGP strips the libs it packages and stores the symbols under
 `BUNDLE-METADATA/com.android.tools.build.debugsymbols/` in the AAB (~90 MB, not
 downloaded by users); Play Console then symbolicates native crashes/ANRs. Without a
@@ -70,13 +73,22 @@ older local build without symbols and was superseded before it went live.
 ~/Library/Android/sdk/platform-tools/adb -s emulator-5554 install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-- Gradle 8.11.1 wrapper, AGP 8.9.2, compileSdk/targetSdk 36, **minSdk 26** (adaptive
-  icon only, no legacy PNGs). `~/.gradle/gradle.properties` points Gradle at
-  Corretto 17.
+- Gradle 9.6.1 wrapper, AGP 9.4.1, compileSdk/targetSdk 37 (since 1.0.2), **minSdk 26**
+  (adaptive icon only, no legacy PNGs). JDK 17: `~/.gradle/gradle.properties` points
+  Gradle at Corretto 17. Java only, so AGP 9's built-in Kotlin, kapt and `buildconfig`
+  changes don't apply (AGP 9 still puts `kotlin-stdlib` on the classpath; R8 drops it).
+- `androidx.activity` 1.13.0 and `androidx.fragment` 1.9.1 are pinned directly (Play
+  Console flags old transitive versions; material pulls in fragment 1.1.0). Both need
+  minSdk 23. Check the resolved versions in `META-INF/androidx.*.version` in the AAB.
+- There are no unit tests (`testDebugUnitTest` is NO-SOURCE). AGP 9 only creates
+  unit-test tasks for the tested build type, so `testReleaseUnitTest` doesn't exist.
 - ABIs: `arm64-v8a` + `armeabi-v7a` only. **x86 emulators cannot run it**; use an arm64
-  AVD (`Medium_Phone_API_36` = `emulator-5554` on this Mac).
-- Native tools are stored uncompressed (`useLegacyPackaging`, required so
-  `ProcessBuilder` can exec them). Play reports ~23 MB install size per device.
+  AVD (`Medium_Phone_API_37` / `Medium_Tablet_API_37`, or `Medium_Phone_API_36`).
+- Native tools are stored **compressed** in the APK and extracted to `nativeLibraryDir`
+  at install (`packaging.jniLibs.useLegacyPackaging = true` plus the manifest's
+  `extractNativeLibs="true"`, which AGP warns about), so `ProcessBuilder` can exec them.
+  The 16 KB zip-offset rule therefore doesn't apply; every arm64 `.so` has ELF `p_align`
+  ≥ 0x4000. Play reports ~23 MB install size per device.
 - To install the release AAB on the emulator exactly as Play would ship it:
   `bundletool build-apks --bundle=… --connected-device --device-id=emulator-5554 --ks=app/upload.keystore …`
   then `bundletool install-apks`.
@@ -86,6 +98,35 @@ older local build without symbols and was superseded before it went live.
 - Per-app locale testing on the emulator:
   `adb shell cmd locale set-app-locales com.qvyshift.sardu --locales it-IT` (or `sc`;
   pass `""` to reset).
+
+## R8, resources and QA (checked for 1.0.2, the first AGP-9 / target-37 release)
+
+- `release` is minified with `proguard-android-optimize.txt` (it always was) plus
+  `-dontobfuscate`, and resource shrinking is on. AGP 9's R8 removed more dead library
+  code: the universal APK went from 1,172 to 964 classes.
+- No WorkManager, Room, Firebase, ML Kit or JNI (the Apertium tools are exec'd as
+  processes), so none of the AGP-9 constructor traps apply. `App`, `MainActivity`, the
+  `androidx.startup` provider/initializers, `ProfileInstallReceiver` and
+  `MaterialComponentsViewInflater` keep `<init>()`.
+- `usage.txt` is identical with and without
+  `-Pandroid.r8.strictFullModeForKeepRules=false` (`--rerun-tasks` both times).
+- AGP 9's R8 resource shrinker drops more than 1.0.1 did (3,667 vs 4,312 resource
+  names): unused Material date/time-picker, bottom-sheet and navigation resources, plus
+  the never-referenced `color/sardu_cream` and `color/sardu_red_dark`. No code looks up
+  app or library resources by name (`getIdentifier` is only called for `android:`
+  framework resources), and every reference in the shipped XML resolves.
+- The native libs, pair assets and debug symbols in the 1.0.2 AAB are byte-identical
+  to 1.0.1's.
+- QA build: build the release AAB, then make a debug-signed universal APK from it
+  (exactly the release code: minified, non-debuggable):
+  `bundletool build-apks --mode=universal --bundle=app/build/outputs/bundle/release/app-release.aab --output=qa.apks --ks ~/.android/debug.keystore --ks-pass pass:android --ks-key-alias androiddebugkey --key-pass pass:android`.
+  Do the same with the previous release's AAB for the upgrade test (both
+  debug-signed, so `adb install -r` works).
+- To drive the app over adb with any text (apostrophes, `$`, `\`), push the text to
+  the device and send it in: `adb shell 'am start -a android.intent.action.SEND -t text/plain --es android.intent.extra.TEXT "$(cat /data/local/tmp/t.txt)" -n com.qvyshift.sardu/.MainActivity'`
+  after a force-stop (`am start` reuses a running `singleTop` MainActivity, and the app
+  doesn't handle `onNewIntent`). Read the result with `uiautomator dump`
+  (`outputText`).
 
 ## How translation works
 
@@ -171,14 +212,19 @@ and the About dialog names the repo (github.com/rmtheis/translate, `sardu/`).
 - Play "automatic protection" (installer check) was turned OFF at app creation:
   GPL app, sideloading must keep working.
 - Release notes: leave empty, or use the stock behind-the-scenes set (house rule).
-- Releasing an update: bump `versionCode`/`versionName` in `app/build.gradle`, build the
-  signed AAB (see "Not done / open" for the upload-key env vars), then
-  `python3 scripts/upload_to_play.py --status completed --release-notes-dir
+- Releasing an update: check every track's versionCodes first (never reuse one), bump
+  `versionCode`/`versionName` in `app/build.gradle`, build the signed AAB (see "Not
+  done / open" for the upload-key env vars), then
+  `python3 scripts/upload_to_play.py --rollout 0.05 --release-notes-dir
   ~/Documents/app-store-optimization/stock-release-notes/behind-the-scenes`
-  (production track, straight to 100% like 1.0.0; Play keeps only the en-US and it-IT
-  notes). The script uses the shared publisher OAuth token at
-  `~/Documents/mines/android/.oauth_token.json`; without `--status` it only creates a
-  draft.
+  (production track, 5% staged, `inProgress`; Play keeps only the en-US and it-IT
+  notes). From 1.0.2 on, releases are staged and the central play-rollout advancer
+  (`~/Documents/app-store-optimization/play-rollout/`, `packages.json`) walks them to
+  100%; 1.0.0 and 1.0.1 went straight to 100% with `--status completed`. Add
+  `--dry-run` to upload, set the track and validate, then delete the edit (nothing
+  published). The script uses the shared publisher OAuth token at
+  `~/Documents/mines/android/.oauth_token.json`; without `--rollout`/`--status` it
+  only creates a draft.
 - Screenshots for Play must be 9:16 to 16:9: crop the 1080x2400 emulator captures
   to 1080x1920 (the bottom is empty anyway).
 
