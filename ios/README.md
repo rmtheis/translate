@@ -409,9 +409,8 @@ ready in case a reviewer asks.
 
 ### Privacy manifest (iOS 17+)
 
-`Translate/PrivacyInfo.xcprivacy` (added 2026-10-06; first ships in the
-release after 1.0.6, and only once the commit is pushed, because releases
-build from GitHub in `release-ios.yml`). xcodegen's `Translate` source glob
+`Translate/PrivacyInfo.xcprivacy` (added 2026-10-06, on origin; first
+ships in the release after 1.0.6). xcodegen's `Translate` source glob
 puts it in Copy Bundle Resources at the root of the `.app`. It declares:
 - No tracking, no tracking domains, no collected data types (fully
   offline, no analytics; ODR downloads come from Apple).
