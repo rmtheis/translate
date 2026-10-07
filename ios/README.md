@@ -303,7 +303,7 @@ update there.
   stage leaves open stays open for the rest of the session. Once open()
   fails, lttoolbox's `openOutTextFile` exits the app with "Cannot open
   file '…/apertium_…_out_…' for writing" (a simulator process tops out at
-  256 descriptors). Two sources, both fixed for the next release:
+  256 descriptors). Two sources, both fixed in 1.0.7:
   - Upstream readers. apertium's `TransferBase::read()` opens the
     compiled rules (`X.t1x.bin`, ...) and never closes them: through 1.0.6
     every apertium-transfer, -interchunk and -postchunk stage leaked a
@@ -450,7 +450,7 @@ ready in case a reviewer asks.
 ### Privacy manifest (iOS 17+)
 
 `Translate/PrivacyInfo.xcprivacy` (added 2026-10-06, on origin; first
-ships in the release after 1.0.6). xcodegen's `Translate` source glob
+ships in 1.0.7). xcodegen's `Translate` source glob
 puts it in Copy Bundle Resources at the root of the `.app`. It declares:
 - No tracking, no tracking domains, no collected data types (fully
   offline, no analytics; ODR downloads come from Apple).
@@ -573,8 +573,8 @@ Pull these verbatim, minimal adaptation:
   dan.", "Ja sam student.", "L'ostal es grand." and "Lo gat dormís sus la
   cadièra vièlha.". Both are pair-data problems: Android's real binaries
   segfault on the same streams (the translation fails there through
-  1.0.12). Fixed on master for the next release on both platforms (see
-  "Mode-file tools and flags" and the release log).
+  1.0.12). Fixed in iOS 1.0.7 and Android 1.0.13 (see "Mode-file tools
+  and flags" and the release log).
 - Occitan → Catalan pair data is the 2022 Debian nightly (357b2f07,
   still the current package on 2026-10-07). Its analyzer misses common
   words, so "L'ostal es grand." comes out as "El *ostal *es *grand.".
@@ -585,7 +585,12 @@ Pull these verbatim, minimal adaptation:
 
 ## Release log
 
-- **Next release** (on master, not yet released): adds the `lt-merge`
+- **1.0.7** (build 202610072025; submitted to App Review 2026-10-07 by
+  release-ios.yml run 37678901292 with `force_publish` + `stock_notes`,
+  AFTER_APPROVAL; natives built on CI at the same upstream commits as the
+  QA below: lttoolbox ed9b682, apertium c0a91d8, lex-tools 1ccefa6,
+  recursive f48e2f3, separable 18045e4, anaphora 55b1778, cg3 7b7ff6d,
+  hfst d1128ce): adds the `lt-merge`
   wrapper and the `lt-proc -b -g` dispatch fix (see "Mode-file tools and
   flags"). Norwegian Bokmål → Nynorsk failed in every iOS release with
   `stage 8 (lt-merge): unknown tool: lt-merge`. This changes
@@ -602,7 +607,7 @@ Pull these verbatim, minimal adaptation:
   - `nm -u` required-reason APIs are unchanged (`_stat` only).
   - The "byte-identical" count includes hbs→mkd and oci→cat, which
     crashed on the first sentence with both natives (see the next item).
-- **Next release, continued** (committed 2026-10-07): fixes the hbs→mkd
+- **1.0.7, continued** (committed 2026-10-07): fixes the hbs→mkd
   and oci→cat crashes in `apertium_core.cpp` (`rules_xml_for_bin()`,
   `strip_dependency_tags()`; see "Mode-file tools and flags"). Also under
   `ios/native/`, so it needs the same natives rebuild. QA 2026-10-07 on
@@ -627,7 +632,7 @@ Pull these verbatim, minimal adaptation:
     running; an unsigned Release device build links.
   - `nm -u` required-reason APIs are unchanged (`_stat` only; the new
     `access()` call isn't one).
-- **Next release, continued** (committed 2026-10-07): Android's colors
+- **1.0.7, continued** (committed 2026-10-07): Android's colors
   (see "UI — SwiftUI"), light-only. App code only. Screenshots retaken
   with the new colors (8 iPhone 6.9", 8 iPad 13"; same scenes and
   translations, CI 1.0.6 natives + run 36962949842 pair JARs, iOS 27.0
@@ -637,7 +642,7 @@ Pull these verbatim, minimal adaptation:
   `screenshots/`. The 8 scene sentences translate byte-identically with
   master's natives (through `0b7e0c3`, upstream as on 2026-10-06), so the
   shots match what 1.0.7 will show.
-- **Next release, continued** (committed 2026-10-07): every mode-file
+- **1.0.7, continued** (committed 2026-10-07): every mode-file
   option now reaches the wrappers and works as in the upstream CLI (see
   "Mode-file tools and flags"). That covers lt-proc `-w`/`-c`/`-N1`,
   cg-proc `-g` and grammar `CMDARGS`, and hfst-proc's defaults, and
@@ -665,7 +670,7 @@ Pull these verbatim, minimal adaptation:
     "enno/ennå<v:…>"), cg-proc `-g` drops reading tags, and hfst-proc
     `-e`/`-k`/`-N`/`-W`. All match the CLIs.
   - `nm -u` required-reason APIs are unchanged (`_stat` only).
-- **Next release, continued** (committed 2026-10-07): fixes a file
+- **1.0.7, continued** (committed 2026-10-07): fixes a file
   descriptor leak in apertium-transfer, -interchunk and -postchunk (see
   "Threading, safety, and crash recovery"). It aborted the app after
   enough translations in one session, in every iOS release so far.
@@ -675,7 +680,7 @@ Pull these verbatim, minimal adaptation:
   descriptor left open by any of the 14 tools over about 5,800 stage
   runs. Before, that process died after 137 translations. Output is
   byte-identical to the same code without the patch.
-- **Next release, continued** (committed 2026-10-07): failure paths,
+- **1.0.7, continued** (committed 2026-10-07): failure paths,
   from a review of 8beea8d..0b7e0c3 (see "Threading, safety, and crash
   recovery"). A stage that threw left its files open, so about 250 failed
   translations brought back the "Cannot open file … for writing" exit; a

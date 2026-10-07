@@ -182,9 +182,8 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
 
 - In 1.0.12 and earlier, Northern Sami → Norwegian Bokmål and Norwegian Bokmål → Nynorsk
   fail, and so do Serbo-Croatian → Macedonian and Occitan → Catalan on many inputs ("Dobar
-  dan.", "L'ostal es grand."; apertium-transfer exits with 139, a segfault). The fixes ship
-  with the next release (see the release log and "Pair-data workarounds in
-  `NativePipeline`").
+  dan.", "L'ostal es grand."; apertium-transfer exits with 139, a segfault). Fixed in
+  1.0.13 (see the release log and "Pair-data workarounds in `NativePipeline`").
 - 1.0.12 and earlier don't work on Android 5.0–7.1 (API 21–25), although minSdk is 21. On
   API 21–23 the app crashes at every launch (`NoClassDefFoundError` for the
   `Map.computeIfAbsent` lambda in `PairListAdapter`: its class implements
@@ -192,32 +191,32 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
   "error: java.lang.NoSuchMethodError: No virtual method isAlive()Z" (`NativePipeline`), and
   once a pair is downloaded every launch crashes in `App.onCreate` (`File.toPath` in
   `PairDownloadManager.readMarker`, API 26). Play's install export has no API 21–25 installs
-  through September 2026 and Play reports no crashes. Fixed in the next release, and lint
+  through September 2026 and Play reports no crashes. Fixed in 1.0.13, and lint
   now fails the release build on such calls (see "Toolchain").
 - In 1.0.12 and earlier, text over about 64 KiB never translates: the button stays on
   "Translating…" (and disabled) until the app is killed. Stage 0's
   stdin was written on the translation thread before stage 1 was started, so nothing drained
-  stage 0's stdout and both pipes filled. Fixed in the next release.
+  stage 0's stdout and both pipes filled. Fixed in 1.0.13.
 - Occitan → Catalan is the 2022 Debian nightly's data: its analyzer misses common words, so
   "L'ostal es grand." comes out as "El *ostal *es *grand.", the same as on iOS.
 
 ## Release log
 
-- **Next release** (on master, not yet released): ships `libhfst_proc.so` and
+- **1.0.13** (2026100720; published 2026-10-07 to production at 5% staged by
+  release-android.yml run 37678897602, `force_publish` + `stock_notes`): ships `libhfst_proc.so` and
   `liblt_merge.so` for both ABIs, plus the `lt-merge` mapping in `NativePipeline`. Fixes
   sme→nob ("native binary not executable: …/libhfst_proc.so") and nob→nno ("no native
   binary mapping for tool 'lt-merge'"). sme→nob was broken since at least 1.0.11; nob→nno
   at least since the April 2026 pair JARs, whose mode already ran `lt-merge`. CI now runs
-  `check-pair-tools.py`. Natives unchanged: the build reuses the cached 1.0.12 natives
-  (same `android/native/` SHA) as long as the cache is still there. GitHub evicts caches
-  unused for 7 days, and the 1.0.12 run last used it 2026-10-07 00:29 UTC.
+  `check-pair-tools.py`. Natives unchanged: the run restored the cached 1.0.12 natives
+  (same `android/native/` SHA, cache hit for both ABIs), the ones QA'd below.
   QA 2026-10-06 on Medium_Phone_API_37: 18/18 unit tests, CI 1.0.12 natives + pairs.
   On-device upgrade from the live 1.0.12 AAB: before the upgrade, all 8 sme→nob and
   4 nob→nno test sentences failed; after it, all translate (escaped `/` and `@`
   included). eng→spa, spa→eng and nno→nob are byte-identical to 1.0.12 (11/11). The
   new arm64 libs have `p_align` 0x4000/0x10000. armeabi-v7a is checked only statically
   (ELF + `DT_NEEDED`); there's no arm32 emulator.
-- **Next release, continued** (committed 2026-10-07): Serbo-Croatian → Macedonian and
+- **1.0.13, continued** (committed 2026-10-07): Serbo-Croatian → Macedonian and
   Occitan → Catalan translate instead of failing with "apertium-transfer failed with exit
   code 139" (see "Pair-data workarounds in `NativePipeline`"). App code only; pair JARs and
   natives unchanged. QA 2026-10-07 on Medium_Phone_API_36 with the release-android.yml run
@@ -232,7 +231,7 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
     typed `<#1→2>`, which comes through unchanged) all translate.
   - Unit tests: 28/28 on master with this change (`NativePipelineTest` 24, 6 of them new
     for the two workarounds; `LanguageTitlesTest` 4).
-- **Next release, continued** (`ce128a9`, 2026-10-07): the pair list names Serbo-Croatian
+- **1.0.13, continued** (`ce128a9`, 2026-10-07): the pair list names Serbo-Croatian
   instead of showing the code ("hbs → Macedonian", "Macedonian → hbs (SR)", "hbs → English",
   "English → hbs"). `LanguageTitles` asks `Locale` first, and no Android version names the
   `hbs` macrolanguage, so `codeToTitle` now has it ("Serbo-Croatian", as on iOS). Every other
@@ -245,7 +244,7 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
   "Macedonian → hbs (SR)" saved and English → Spanish also installed, the upgraded app reopens
   on "Macedonian → Serbo-Croatian (SR)"; `--es mode 'hbs → Macedonian'` opens
   "Serbo-Croatian → Macedonian".
-- **Next release, continued** (2026-10-07): the app works on Android 5.0–7.1 (API 21–25)
+- **1.0.13, continued** (2026-10-07): the app works on Android 5.0–7.1 (API 21–25)
   again, and long text translates instead of hanging (both in "Known issues"). App code
   only; pair JARs and natives unchanged.
   - `NativePipeline` checks `SDK_INT` before `Process.isAlive`/`destroyForcibly` (`destroy()`
