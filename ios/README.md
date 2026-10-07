@@ -274,7 +274,9 @@ update there.
   Android runs each stage as a subprocess, so the same segfault (exit
   code 139 under `adb shell`) fails only that translation there:
   `NativePipeline.checkStages` reports the apertium-transfer stage as
-  failed.
+  failed. That is how hbs→mkd and oci→cat failed on Android through
+  1.0.12; `NativePipeline` now has the same two workarounds
+  (`android/README.md`, "Pair-data workarounds in `NativePipeline`").
 - Every stage runs inside the app's one long-lived process, so anything a
   CLI leaves for `exit()` to clean up adds up. apertium's
   `TransferBase::read()` opens the compiled rules (`X.t1x.bin`, ...) and
@@ -531,7 +533,8 @@ Pull these verbatim, minimal adaptation:
   Serbo-Croatian → Macedonian and Occitan → Catalan input such as "Dobar
   dan.", "Ja sam student.", "L'ostal es grand." and "Lo gat dormís sus la
   cadièra vièlha.". Both are pair-data problems: Android's real binaries
-  segfault on the same streams. Fixed on master for the next release (see
+  segfault on the same streams (the translation fails there through
+  1.0.12). Fixed on master for the next release on both platforms (see
   "Mode-file tools and flags" and the release log).
 - Occitan → Catalan pair data is the 2022 Debian nightly (357b2f07,
   still the current package on 2026-10-07). Its analyzer misses common

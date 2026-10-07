@@ -226,9 +226,140 @@ public class NativePipeline {
           rewritten.add(rewritePath(t, pairBaseDir));
         }
       }
+      useRulesXmlForBin(rewritten);
       stages.add(rewritten);
     }
     return stages;
+  }
+
+  /** Tools whose first two file arguments are a rules XML and the .bin compiled from it. */
+  private static final List<String> RULES_TOOLS =
+      Arrays.asList("apertium-transfer", "apertium-interchunk", "apertium-postchunk");
+
+  /**
+   * apertium-transfer/-interchunk/-postchunk take the rules XML and the .bin compiled from it;
+   * the .bin's pattern matcher returns rule numbers that index the XML's {@code <rule>}s, so the
+   * two must match. Apertium builds {@code X.t1x.bin} from {@code X.t1x}, and a pair with rule
+   * variants ({@code alt="oci@aran"}) ships the variant-filtered {@code X.t1x} next to the
+   * unfiltered {@code apertium-<pkg>.X.t1x}. The Debian build of apertium-oci-cat (2022,
+   * 357b2f07) passes the unfiltered files with the filtered .bins (t1x 155 rules vs 132; t2x and
+   * t3x mismatch too), so transfer ran the wrong rules' actions and segfaulted on "L'ostal es
+   * grand.". Upstream fixed modes.xml in a81f6fd1 (2025-03). When {@code X.tNx} sits in the pair
+   * dir, the stage gets it in place of the mode's XML, as {@code rules_xml_for_bin()} in
+   * {@code ios/native/wrappers/apertium_core.cpp} does.
+   */
+  static void useRulesXmlForBin(List<String> stage) {
+    if (!RULES_TOOLS.contains(stage.get(0))) return;
+    int xml = -1;
+    for (int i = 1; i < stage.size(); i++) {
+      String t = stage.get(i);
+      if (t.startsWith("-") && t.length() > 1) {
+        // apertium-transfer's -x/--extended is the only option with a value; getopt takes it
+        // from the next word unless it's attached (-xfile, --extended=file).
+        boolean valueInNextWord = t.startsWith("--")
+            ? t.length() > 2 && "--extended".startsWith(t)
+            : t.indexOf('x') == t.length() - 1;
+        if (valueInNextWord) i++;
+        continue;
+      }
+      if (xml < 0) {
+        xml = i;
+      } else {
+        stage.set(xml, rulesXmlForBin(stage.get(xml), t));
+        return;
+      }
+    }
+  }
+
+  /** {@code X.tNx} when {@code bin} is {@code X.tNx.bin} and that file exists, else {@code xml}. */
+  static String rulesXmlForBin(String xml, String bin) {
+    if (!bin.endsWith(".bin") || bin.length() <= ".bin".length()) return xml;
+    String src = bin.substring(0, bin.length() - ".bin".length());
+    if (src.equals(xml) || !new File(src).isFile()) return xml;
+    return src;
+  }
+
+  /** U+2192 RIGHTWARDS ARROW in UTF-8, the separator in a CG-3 dependency tag. */
+  private static final byte[] DEPENDENCY_ARROW = {(byte) 0xE2, (byte) 0x86, (byte) 0x92};
+
+  /**
+   * Drops the CG-3 dependency tags ({@code <#N→M>}) from cg-proc's output. cg-proc prints one on
+   * every cohort a SETPARENT/SETCHILD rule touched; CG-3 added that to the Apertium stream format
+   * in f5d37748 (2022-01), and grammars written before then don't expect it. hbs-mkd.rlx's
+   * experimental SETPARENT rules fire on adjective + noun ("Dobar dan."), apertium-pretransfer
+   * then reads the tag's {@code #} as a multiword split ({@code ^Dobar#1→2><adj>…<$}), and
+   * apertium-transfer segfaults on the result. No stage in the pairs we ship reads the tags. Only
+   * {@code <#digits→digits>} inside a lexical unit is dropped; escaped characters and
+   * {@code [superblanks]} pass through. Works on bytes (every character it looks at is ASCII
+   * apart from the arrow), so output without a tag comes back as the same array, untouched. Same
+   * filter as {@code strip_dependency_tags()} in {@code ios/native/wrappers/apertium_core.cpp}.
+   */
+  static byte[] stripDependencyTags(byte[] s) {
+    if (!contains(s, DEPENDENCY_ARROW)) return s;
+    ByteArrayOutputStream out = new ByteArrayOutputStream(s.length);
+    boolean inLu = false;
+    for (int i = 0; i < s.length; i++) {
+      byte c = s[i];
+      if (c == '\\' && i + 1 < s.length) {
+        out.write(c);
+        out.write(s[++i]);
+        continue;
+      }
+      if (!inLu && c == '[') {
+        // Superblank or [[wordbound blank]]: copy through the closing ']'.
+        int j = i;
+        while (j < s.length && s[j] != ']') j += s[j] == '\\' ? 2 : 1;
+        if (j >= s.length) j = s.length - 1;
+        out.write(s, i, j - i + 1);
+        i = j;
+        continue;
+      }
+      if (c == '^') {
+        inLu = true;
+      } else if (c == '$') {
+        inLu = false;
+      } else if (c == '<' && inLu) {
+        int close = i + 1;
+        while (close < s.length && s[close] != '>') close++;
+        if (close < s.length && isDependencyTag(s, i + 1, close)) {
+          i = close;
+          continue;
+        }
+      }
+      out.write(c);
+    }
+    return out.toByteArray();
+  }
+
+  /** Whether {@code s[begin, end)} is {@code #digits→digits}. */
+  private static boolean isDependencyTag(byte[] s, int begin, int end) {
+    int i = begin;
+    if (i >= end || s[i] != '#') return false;
+    i = skipDigits(s, i + 1, end);
+    if (i == begin + 1 || !startsWith(s, DEPENDENCY_ARROW, i)) return false;
+    int arrowEnd = i + DEPENDENCY_ARROW.length;
+    i = skipDigits(s, arrowEnd, end);
+    return i > arrowEnd && i == end;
+  }
+
+  private static int skipDigits(byte[] s, int i, int end) {
+    while (i < end && s[i] >= '0' && s[i] <= '9') i++;
+    return i;
+  }
+
+  private static boolean startsWith(byte[] s, byte[] prefix, int at) {
+    if (at < 0 || at > s.length - prefix.length) return false;
+    for (int j = 0; j < prefix.length; j++) {
+      if (s[at + j] != prefix[j]) return false;
+    }
+    return true;
+  }
+
+  private static boolean contains(byte[] s, byte[] needle) {
+    for (int i = 0; i <= s.length - needle.length; i++) {
+      if (startsWith(s, needle, i)) return true;
+    }
+    return false;
   }
 
   static String rewritePath(String token, File pairBaseDir) {
@@ -304,9 +435,16 @@ public class NativePipeline {
           }
         } else {
           // Pipe previous stage's stdout to this stage's stdin on a background thread.
+          // cg-proc's output is read whole and filtered first (see stripDependencyTags), so a
+          // tag can't straddle two reads.
+          final boolean fromCgProc = isCgProc(stages.get(i - 1));
           Thread t = new Thread(() -> {
             try (InputStream in = source.getInputStream();
                  OutputStream out = dest.getOutputStream()) {
+              if (fromCgProc) {
+                out.write(stripDependencyTags(readFully(in)));
+                return;
+              }
               byte[] buf = new byte[8192];
               int n;
               while ((n = in.read(buf)) != -1) out.write(buf, 0, n);
@@ -320,14 +458,13 @@ public class NativePipeline {
         prev = p;
       }
 
-      // Drain the final stage's stdout.
-      StringBuilder sb = new StringBuilder();
-      try (BufferedReader r = new BufferedReader(
-          new InputStreamReader(prev.getInputStream(), StandardCharsets.UTF_8))) {
-        char[] buf = new char[4096];
-        int n;
-        while ((n = r.read(buf)) != -1) sb.append(buf, 0, n);
+      // Drain the final stage's stdout. A cg-proc there gets the same filter as one mid-pipeline
+      // (sme-nob's mode ends with cg-proc -1 -n -g).
+      byte[] output;
+      try (InputStream in = prev.getInputStream()) {
+        output = readFully(in);
       }
+      if (isCgProc(stages.get(stages.size() - 1))) output = stripDependencyTags(output);
       for (Process p : running) {
         try {
           p.waitFor();
@@ -337,12 +474,24 @@ public class NativePipeline {
         }
       }
       checkStages(stages, running, stderrs);
-      return sb.toString();
+      return new String(output, StandardCharsets.UTF_8);
     } finally {
       for (Process p : running) {
         if (p.isAlive()) p.destroyForcibly();
       }
     }
+  }
+
+  private static boolean isCgProc(List<String> stage) {
+    return "cg-proc".equals(stage.get(0));
+  }
+
+  private static byte[] readFully(InputStream in) throws IOException {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    byte[] buf = new byte[8192];
+    int n;
+    while ((n = in.read(buf)) != -1) bytes.write(buf, 0, n);
+    return bytes.toByteArray();
   }
 
   /** Exit status of a stage killed by SIGPIPE (128 + 13): a casualty of a later stage dying. */

@@ -89,6 +89,27 @@ monthly cron and on manual dispatch. Don't upload by hand.
   `android/native/` changes the natives cache key, and the cache-miss rebuild (~1 h)
   clones lttoolbox, apertium, cg3, HFST, ... at upstream HEAD, so every tool changes.
 
+## Pair-data workarounds in `NativePipeline`
+
+Two pair-data bugs that segfault apertium-transfer are worked around in the app, not in
+`android/native/prep-pair.sh`: a changed pair JAR changes its hash, which trips the monthly
+release gate and turns into inventory-diff release notes. iOS has the same two in
+`ios/native/wrappers/apertium_core.cpp` (`ios/README.md`, "Mode-file tools and flags").
+
+- `useRulesXmlForBin()`, applied in `parseModeLine`: apertium-transfer, -interchunk and
+  -postchunk get `X.t1x` in place of the mode's rules XML when the stage's `.bin` is
+  `X.t1x.bin` and `X.t1x` is in the pair dir. A `.bin`'s rule numbers index the XML it was
+  compiled from. The 2022 Debian oci-cat mode passes the unfiltered
+  `apertium-oci-cat.oci-cat.t1x`/`t2x`/`t3x` (155/23/12 rules) with `.bin`s built from the
+  `alt`-filtered `oci-cat.t1x`/... (132/22/7), so every oci→cat sentence ran the wrong rules.
+  In the 1.0.12 pair set no other mode's stages have such a file.
+- `stripDependencyTags()`: every cg-proc stage's output is read whole (the pipe to the next
+  stage, or the final drain: sme-nob's mode ends with `cg-proc -1 -n -g`), and CG-3
+  dependency tags (`<#1→2>`) inside lexical units are dropped. hbs-mkd.rlx's SETPARENT rules
+  make cg-proc print them, apertium-pretransfer reads the `#` as a multiword split, and
+  apertium-transfer crashes. Escaped text and `[superblanks]` pass through, and output without
+  a `→` is passed on as the same bytes, so the other directions that run cg-proc don't change.
+
 ## Local builds and QA
 
 `jniLibs/` and the pair JARs are populated from CI artifacts (they expire 7 days after
@@ -135,17 +156,13 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
 
 ## Known issues
 
-- Serbo-Croatian → Macedonian and Occitan → Catalan fail on many inputs ("Dobar dan.",
-  "Ja sam student.", "L'ostal es grand."): apertium-transfer segfaults (exit code 139),
-  so `NativePipeline.checkStages` fails the translation. Both are pair-data problems, seen
-  2026-10-07 with the 1.0.12 CI binaries and pair JARs: CG-3 dependency tags (`<#1→2>`)
-  from hbs-mkd's grammar, which apertium-pretransfer mangles, and an oci-cat mode file that
-  passes the unfiltered `apertium-oci-cat.oci-cat.t1x`/`t2x`/`t3x` with the `.bin`s built
-  from the filtered `oci-cat.t1x`/... files. iOS works around both in
-  `ios/native/wrappers/apertium_core.cpp` (see `ios/README.md`, "Mode-file tools and
-  flags"); `NativePipeline` has no equivalent yet.
 - In 1.0.12 and earlier, Northern Sami → Norwegian Bokmål and Norwegian Bokmål → Nynorsk
-  fail; the fix ships with the next release (see the release log).
+  fail, and so do Serbo-Croatian → Macedonian and Occitan → Catalan on many inputs ("Dobar
+  dan.", "L'ostal es grand."; apertium-transfer exits with 139, a segfault). The fixes ship
+  with the next release (see the release log and "Pair-data workarounds in
+  `NativePipeline`").
+- Occitan → Catalan is the 2022 Debian nightly's data: its analyzer misses common words, so
+  "L'ostal es grand." comes out as "El *ostal *es *grand.", the same as on iOS.
 
 ## Release log
 
@@ -163,6 +180,21 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
   included). eng→spa, spa→eng and nno→nob are byte-identical to 1.0.12 (11/11). The
   new arm64 libs have `p_align` 0x4000/0x10000. armeabi-v7a is checked only statically
   (ELF + `DT_NEEDED`); there's no arm32 emulator.
+- **Next release, continued** (committed 2026-10-07): Serbo-Croatian → Macedonian and
+  Occitan → Catalan translate instead of failing with "apertium-transfer failed with exit
+  code 139" (see "Pair-data workarounds in `NativePipeline`"). App code only; pair JARs and
+  natives unchanged. QA 2026-10-07 on Medium_Phone_API_36 with the release-android.yml run
+  37552230291 (1.0.12) arm64 natives and pair JARs, minified QA builds of ccbbe53 without and
+  with the change, 49 directions through the app UI (the iOS QA corpus):
+  - 47 directions byte-identical (157 sentences).
+  - hbs→mkd: 6 of 8 sentences failed before, 8/8 translate after; oci→cat: 4 of 8 failed
+    before, 8/8 after. All 16 match the iOS output (`a5f2578`), e.g. "Dobar dan." →
+    "Добар даден.", "Ja sam student." → "Јас сам студент.", "Lo gat dormís sus la cadièra
+    vièlha." → "El gat dorm sobre la *cadièra *vièlha.".
+  - A further 28 hbs→mkd and 25 oci→cat sentences (caps, punctuation, email, `$`/`€`, a
+    typed `<#1→2>`, which comes through unchanged) all translate.
+  - Unit tests: 28/28 on master with this change (`NativePipelineTest` 24, 6 of them new
+    for the two workarounds; `LanguageTitlesTest` 4).
 - **1.0.12** (versionCode = the CI run's `yyyymmddHH`; prepared 2026-10-06): AGP 9.4.1,
   Gradle 9.6.1, target 37, first R8-optimized build, first 5% staged release. QA on the
   minified, debug-signed QA build: 18/18 unit tests, lintVital clean, smoke PASS on
