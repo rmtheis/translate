@@ -143,7 +143,17 @@ public class TranslatorActivity extends AppCompatActivity {
         currentModeTitle = App.prefs.getString(App.PREF_lastModeTitle, null);
       }
 
-      // 2. If the saved pair is no longer installed, fall back to the first pair in the
+      // 2. A title saved by 1.0.12 or earlier (or passed as EXTRA_MODE) can name a language by
+      //    its raw code ("hbs → Macedonian"). Map it to today's title and persist that.
+      if (currentModeTitle != null && !installedTitles.contains(currentModeTitle)) {
+        String upgraded = LanguageTitles.upgradeTitle(currentModeTitle);
+        if (installedTitles.contains(upgraded)) {
+          currentModeTitle = upgraded;
+          App.prefs.edit().putString(App.PREF_lastModeTitle, currentModeTitle).apply();
+        }
+      }
+
+      // 3. If the saved pair is no longer installed, fall back to the first pair in the
       //    same order the dropdown shows (tier-grouped via PairCatalog.ENABLED, with
       //    alphabetical ordering inside each tier as declared in the catalog), and
       //    persist that fallback so subsequent launches reopen on it. Don't crash if

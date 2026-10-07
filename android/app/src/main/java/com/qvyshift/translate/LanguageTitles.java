@@ -3,6 +3,8 @@ package com.qvyshift.translate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Duplicate of selected code from https://svn.code.sf.net/p/apertium/svn/trunk/lttoolbox-java/src/org/apertium/Translator.java
@@ -80,6 +82,34 @@ public class LanguageTitles {
     return title.toString();
   }
 
+  /**
+   * The current title for a pair title saved by an older version ({@link App#PREF_lastModeTitle},
+   * or a {@link TranslatorActivity#EXTRA_MODE} extra). A language that neither Locale nor
+   * codeToTitle had a name for was titled by its raw code: through 1.0.12 that was hbs, so the
+   * Serbo-Croatian pairs were "hbs → Macedonian", "Macedonian → hbs (SR)", ... Each side that
+   * starts with a bare code gets that code's current name; anything else comes back unchanged.
+   */
+  public static String upgradeTitle(String title) {
+    if (title == null) return null;
+    for (String arrow : new String[]{" → ", " ⇆ "}) {
+      int i = title.indexOf(arrow);
+      if (i >= 0) {
+        return upgradeLanguage(title.substring(0, i)) + arrow
+            + upgradeLanguage(title.substring(i + arrow.length()));
+      }
+    }
+    return title;
+  }
+
+  /** A bare code at the start of a title side: "hbs", "hbs (SR)", "sme(MID)". */
+  private static final Pattern RAW_CODE = Pattern.compile("([a-z]{2,3})(?= ?\\(|$)");
+
+  private static String upgradeLanguage(String side) {
+    Matcher m = RAW_CODE.matcher(side);
+    if (!m.lookingAt()) return side;
+    return getTitleForCode(m.group(1)) + side.substring(m.end());
+  }
+
   private static String getTitleForCode(String code) {
     String title;
     title = new Locale(code).getDisplayLanguage();
@@ -101,6 +131,10 @@ public class LanguageTitles {
     codeToTitle.put("ast", "Asturian");
     codeToTitle.put("sme", "Northern Sami");
     codeToTitle.put("nob", "Norwegian Bokmål");
+    // Android's Locale has no name for the hbs macrolanguage (API 21-37, every UI language), so
+    // without this the pairs read "hbs → Macedonian". Same name as iOS's PairCatalog.swift. The
+    // other codes in PairCatalog.ENABLED all get a Locale name.
+    codeToTitle.put("hbs", "Serbo-Croatian");
 
     //Incubator
     codeToTitle.put("sco", "Scots");
