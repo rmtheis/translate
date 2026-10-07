@@ -158,6 +158,45 @@ unescapes the final output — mirror of Android's
 re-attaches it (lrx-proc mis-reads an escaped `^` there), same as
 `NativePipeline.caretTailStart`.
 
+### Mode-file tools and flags
+
+`run_stage()` in `native/wrappers/apertium_core.cpp` maps each `.mode`
+stage's tool name to its wrapper. A tool without a case fails the whole
+direction with `stage N (<tool>): unknown tool: <tool>`. That is how
+Bokmål → Nynorsk failed through 1.0.6: `nob-nno.mode` runs `lt-merge`
+twice. A new tool needs `wrappers/<tool>.cpp`, a declaration in
+`apertium_core.h` and a `run_stage()` case. `build.sh wrappers` compiles
+every `wrappers/*.cpp`, so there's no list to update there.
+
+- `scripts/check-pair-tools.py --ios <pair-jars-dir>` checks every
+  direction `PairCatalog.swift` offers against the `run_stage()` names;
+  the `pairs` job of `release-ios.yml` runs it. In the 2026-10 pair set
+  the 49 directions use 14 tools, and `lt-merge` was the only one missing.
+- It checks tool names only, not flags. `classify_argv()` folds short
+  flags into one letter string, maps a few long options (`--null-flush`,
+  `--trace`, `--first`, `--unmerge`, `--weight-classes N`, ...) and drops
+  the rest; each wrapper picks the letters it honors. Android runs the
+  real binaries, so a dropped flag is an iOS-only difference. Known one:
+  lt-proc gets only its mode, so `-w` (dictionary case, ~34 directions),
+  `-c` and `-N1` are ignored.
+- lt-proc: `-b` together with `-g` is bilingual generation, as in
+  `lt_proc.cc` (`lt-proc $1 -b X.autogen.bin` in nob-nno and 9 other
+  directions, `lt-proc -b $1` in sme-nob). Until 2026-10-06 the
+  dispatcher passed only the first mode letter, so `$1 -b` ran plain
+  generation and nob→nno printed every generator alternative
+  ("enno/ennå"). The other directions' output didn't change on the QA
+  sentences.
+- lt-merge (`wrappers/lt_merge.cpp`) makes the same calls as
+  `lt_merge.cc`: `FSTProcessor::quoteMerge`, or `quoteUnmerge` for
+  `--unmerge`, with no dictionary. `merge-quotes.rlx` only tags
+  MERGE_BEG/MERGE_END when the CG variable `sitat.lastå` is set, which
+  the app never does, so in the app lt-merge just re-serializes the
+  stream.
+- Upstream `exit()` calls are not patched to throw (the plan under "The
+  core iOS blocker" was never carried out), so an lttoolbox exit such as
+  "Unexpected trailing backslash" still ends the app. Input escaping keeps
+  user text away from the known ones.
+
 ### Threading, safety, and crash recovery
 
 - Translation calls are serialized on a dedicated serial
@@ -336,9 +375,14 @@ Pull these verbatim, minimal adaptation:
 
 - GitHub Actions workflow patterned on
   `../.github/workflows/release.yml`.
-- Jobs: `natives` (xcframework build, matrix over simulator/device) →
-  `pairs` (prep-pair.sh unchanged) → `build` (Xcode archive) →
-  `deploy` (App Store Connect API upload).
+- Jobs: `natives` (both xcframework slices) → `pairs` (prep-pair.sh
+  unchanged, then `check-pair-tools.py --ios`) → `build` (Xcode archive)
+  → `deploy` (App Store Connect API upload).
+- `natives` is cached by the tree SHA of `ios/native/`. Any change there
+  (a wrapper, `build.sh`) is a cache miss: `build.sh all` re-clones
+  lttoolbox, apertium, cg3, HFST, ... at upstream HEAD, so every tool
+  changes, and the job takes ~27 min (2026-09-29 run). Re-QA the
+  translations after such a release.
 - Manual runs (`gh workflow run release-ios.yml -f force_publish=true`)
   ship app-code-only changes; add `-f stock_notes=true` to post the stock
   "Behind-the-scenes changes…" line instead of the pair-inventory diff.
@@ -349,6 +393,35 @@ Pull these verbatim, minimal adaptation:
   key `.p8`; otherwise generate a new App Store Connect API key. Store
   as `APP_STORE_CONNECT_API_KEY_P8`, `APP_STORE_CONNECT_API_KEY_ID`,
   `APP_STORE_CONNECT_ISSUER_ID` in GitHub secrets.
+
+## Known issues
+
+- Serbo-Croatian → Macedonian and Occitan → Catalan crash the app
+  (SIGSEGV in `apertium-transfer`) on some inputs, e.g. "Dobar dan." and
+  "L'ostal es grand.". Seen in live 1.0.6 and with natives rebuilt at
+  upstream HEAD on 2026-10-06. In hbs→mkd the stream is already malformed
+  after cg-proc (`^Dobar#1→2><adj>…<$`, CG-3 dependency marks); oci→cat's
+  stream looks valid, but transfer logs "Null access at word[index]"
+  before crashing. Not fixed yet.
+
+## Release log
+
+- **Next release** (on master, not yet released): adds the `lt-merge`
+  wrapper and the `lt-proc -b -g` dispatch fix (see "Mode-file tools and
+  flags"). Norwegian Bokmål → Nynorsk failed in every iOS release with
+  `stage 8 (lt-merge): unknown tool: lt-merge`. This changes
+  `ios/native/`, so the natives job rebuilds from upstream HEAD (see "CI
+  / release"). QA 2026-10-06 on an iPhone 17 / iOS 27.0 simulator, with
+  the 1.0.6 CI pair JARs and natives built locally at that day's upstream
+  HEAD (lttoolbox ed9b682, apertium c0a91d8, cg3 7b7ff6d, hfst fcfb18e):
+  - nob→nno: 9/9 sentences translate (all failed on the 1.0.6 natives),
+    e.g. "Jeg har ikke lest boka ennå." → "Eg har ikkje lese boka enno.".
+  - The other 48 directions are byte-identical to the 1.0.6 natives
+    (130 sentences, eng→spa and nno→nob included).
+  - The `lt-merge`, `lt-merge --unmerge` and `lt-proc -g -b` stages are
+    byte-identical to host-built lttoolbox binaries.
+  - `nm -u` required-reason APIs are unchanged (`_stat` only).
+- **1.0.6** (released 2026-09-29): natives from the 2026-09-29 CI build.
 
 ## First-session plan (new session picks up here)
 

@@ -34,11 +34,17 @@ void apertium_result_free(ApertiumResult r);
 
 // lt-proc. `flag` is a single-letter mode selector matching the CLI:
 //   "a" analysis, "g" generation, "b" bilingual, "p" post-gen,
-//   "s" SAO, "t" transliteration, "e" decompose-nouns.
+//   "s" SAO, "t" transliteration, "e" decompose-nouns;
+//   or "bg" for bilingual generation (lt-proc -b -g).
 ApertiumResult apertium_lt_proc(const char* input,
                                 const char* bin_path,
                                 const char* flag,
                                 const char* tmp_dir);
+
+// lt-merge. Flags: "u" (--unmerge), "z" (null-flush; always on).
+ApertiumResult apertium_lt_merge(const char* input,
+                                 const char* flags,
+                                 const char* tmp_dir);
 
 // --- apertium --------------------------------------------------------------
 
@@ -129,10 +135,10 @@ ApertiumResult apertium_hfst_proc(const char* input,
                                   const char* flags,
                                   const char* tmp_dir);
 
-// cg-proc. Flags recognized: t (trace), 1 (single run). Stream-format,
-// wordform-case, word-forms, generation, and null-flush flags from the
-// CLI aren't exposed by cg3's public C API; Apertium pipelines use the
-// defaults (Apertium stream format), so we drop unknown flags silently.
+// cg-proc. Flags: t (trace), w (wordform case), n (no word forms),
+// g (generation), 1 (first reading only), z (null-flush). d, r, s and f
+// are accepted and ignored (Apertium stream format only); any other
+// letter is an error.
 ApertiumResult apertium_cg_proc(const char* input,
                                 const char* grammar_file,
                                 const char* flags,

@@ -165,6 +165,13 @@ jobs:
             bash android/native/prep-pair.sh "$pair"
           done < /tmp/pairs.txt
 
+      # Every tool an offered direction's .mode runs needs a run_stage() case
+      # in ios/native/wrappers/apertium_core.cpp ("unknown tool: lt-merge"
+      # broke nob→nno through 1.0.6). Source-level check, so it runs here
+      # rather than after the natives build.
+      - name: Check offered directions' tools are wrapped
+        run: python3 scripts/check-pair-tools.py --ios pair-jars
+
       - name: Compute pair inventory
         id: inv
         run: |

@@ -157,6 +157,7 @@ Argv classify_argv(const std::vector<std::string>& argv) {
       if      (t == "--null-flush") a.flags.push_back('z');
       else if (t == "--trace")      a.flags.push_back('t');
       else if (t == "--first")      a.flags.push_back('1');
+      else if (t == "--unmerge")    a.flags.push_back('u');  // lt-merge
       // else silently drop; wrappers reject unknown short flags.
     } else {
       a.files.push_back(t);
@@ -180,16 +181,22 @@ std::string opt_file(Argv& a) {
   return s;
 }
 
-// Pick exactly one mode letter for lt-proc. The CLI accepts a/g/b/p/s/t/e.
-char lt_proc_mode_letter(const std::string& flags) {
+// Pick the mode for lt-proc. The CLI accepts a/g/b/p/s/t/e. As in lt_proc.cc,
+// -b wins over -g, and -b together with -g is bilingual generation (gm_bilgen),
+// which apertium_lt_proc reads as "bg": `lt-proc $1 -b X.autogen.bin` (nob-nno,
+// spa-cat, ...) and `lt-proc -b $1 ...` (sme-nob) arrive as flags "gb" / "bg".
+// Otherwise the first mode letter.
+std::string lt_proc_mode(const std::string& flags) {
+  if (flags.find('b') != std::string::npos)
+    return flags.find('g') != std::string::npos ? "bg" : "b";
   for (char c : flags) {
     switch (c) {
-      case 'a': case 'g': case 'b': case 'p':
-      case 's': case 't': case 'e': return c;
+      case 'a': case 'g': case 'p':
+      case 's': case 't': case 'e': return std::string(1, c);
       default: break;
     }
   }
-  return 'a';  // default to analysis
+  return "a";  // default to analysis
 }
 
 // Strip flags that aren't single-letter mode selectors.
@@ -221,10 +228,12 @@ ApertiumResult run_stage(const std::vector<std::string>& stage,
   Argv a = classify_argv(stage);
 
   if (tool == "lt-proc") {
-    char mode = lt_proc_mode_letter(a.flags);
-    char mode_s[2] = {mode, '\0'};
+    std::string mode = lt_proc_mode(a.flags);
     std::string bin = take_file(a);
-    return apertium_lt_proc(in.c_str(), bin.c_str(), mode_s, tmp_dir);
+    return apertium_lt_proc(in.c_str(), bin.c_str(), mode.c_str(), tmp_dir);
+  }
+  if (tool == "lt-merge") {
+    return apertium_lt_merge(in.c_str(), a.flags.c_str(), tmp_dir);
   }
   if (tool == "apertium-tagger") {
     // -g is always set by our wrapper; strip it from the flag passthrough.
