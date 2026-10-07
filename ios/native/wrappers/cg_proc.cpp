@@ -16,6 +16,8 @@
 #include "TextualParser.hpp"
 #include "BinaryGrammar.hpp"
 #include "ApertiumApplicator.hpp"
+#include "options.hpp"
+#include "options_parser.hpp"
 
 #include <fstream>
 
@@ -30,8 +32,10 @@ extern "C" ApertiumResult apertium_cg_proc(const char* input,
     if (!tmp_dir)      throw std::runtime_error("tmp_dir is NULL");
     aix::ensure_exists(grammar_file);
 
-    // Mirror cg-proc.cpp's main loop: parse flags, load grammar via
-    // BinaryGrammar, hand off to ApertiumApplicator.
+    // Mirror cg-proc.cpp's main(): parse flags, load grammar via
+    // BinaryGrammar, hand off to ApertiumApplicator. apertium_core.cpp has
+    // already rejected the options that take a value (-s, -r, -f other
+    // than 1).
     bool trace = false;
     bool wordform_case = false;
     bool print_word_forms = true;
@@ -45,13 +49,13 @@ extern "C" ApertiumResult apertium_cg_proc(const char* input,
         case 't': trace = true; break;
         case 'w': wordform_case = true; break;
         case 'n': print_word_forms = false; break;
-        case 'g': delimit_lexical_units = false; break;
+        case 'g':  // generation: surface-form readings, printed without tags
+          delimit_lexical_units = false;
+          surface_readings = true;
+          break;
         case '1': only_first = true; break;
         case 'z': null_flush = true; break;
         case 'd': /* -d: disambiguation — default mode, no-op */ break;
-        case 'r': /* -r RULE — not supported in wrapper; would need an arg */ break;
-        case 's': /* -s NUM sections — would need an arg; skip */ break;
-        case 'f': /* -f stream format — we always use Apertium */ break;
         default:
           throw std::runtime_error(std::string("unknown cg-proc flag: ") + *c);
       }
@@ -76,6 +80,32 @@ extern "C" ApertiumResult apertium_cg_proc(const char* input,
       throw std::runtime_error("could not parse grammar");
     }
     grammar.reindex();
+
+    // cg-proc.cpp folds the CMDARGS a grammar embeds into vislcg3's global
+    // option table before setOptions() (nob-nno's merge-quotes.rlx carries
+    // "--num-windows 10"). The table is process-wide here, so start from and
+    // go back to the values it had before the first grammar touched it. The
+    // option values point into cmdargs/cmdargs_override, which therefore
+    // outlive setOptions().
+    using namespace Options;
+    static const options_t pristine = options;
+    struct RestoreOptions {
+      ~RestoreOptions() { options = pristine; }
+    } restore_options;
+    options = pristine;
+    options_t from_grammar = pristine, from_grammar_override = pristine;
+    // The extra NUL is cg-proc.cpp's too: parse_opts steps past the last
+    // token's terminator.
+    std::string cmdargs = grammar.cmdargs + '\0';
+    std::string cmdargs_override = grammar.cmdargs_override + '\0';
+    if (!grammar.cmdargs.empty()) parse_opts(&cmdargs[0], from_grammar);
+    if (!grammar.cmdargs_override.empty()) {
+      parse_opts(&cmdargs_override[0], from_grammar_override);
+    }
+    for (size_t i = 0; i < options.size(); ++i) {
+      if (from_grammar[i].doesOccur && !options[i].doesOccur) options[i] = from_grammar[i];
+      if (from_grammar_override[i].doesOccur) options[i] = from_grammar_override[i];
+    }
 
     CG3::ApertiumApplicator app(std::cerr);
     app.wordform_case = wordform_case;

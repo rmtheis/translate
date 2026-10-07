@@ -165,27 +165,50 @@ stage's tool name to its wrapper. A tool without a case fails the whole
 direction with `stage N (<tool>): unknown tool: <tool>`. That is how
 Bokmål → Nynorsk failed through 1.0.6: `nob-nno.mode` runs `lt-merge`
 twice. A new tool needs `wrappers/<tool>.cpp`, a declaration in
-`apertium_core.h` and a `run_stage()` case. `build.sh wrappers` compiles
-every `wrappers/*.cpp`, so there's no list to update there.
+`apertium_core.h`, a `tool_options()` entry and a `dispatch_stage()` case.
+`build.sh wrappers` compiles every `wrappers/*.cpp`, so there's no list to
+update there.
 
+- Options: `tool_options()` holds each tool's option table, copied from
+  its upstream `main()` (`lt_proc.cc`, `cg-proc.cpp`, `hfst-proc.cc`,
+  ...). `parse_argv()` reads a stage's arguments with it the way
+  getopt_long does on Linux/Android, where the Android app runs the real
+  binaries: `-bc`, `-N1` or `-N 1`, `--weight-classes 1`, long-option
+  prefixes. Options without a value reach the wrapper as letters (`"wg"`
+  for `-w -g`), counts (`-N`, `-L`, `-M`, hfst-proc `-l`) as ints. An
+  option the tool doesn't define fails the stage (the CLI prints its usage
+  and exits). So does one marked `on_ios = false`: lt-proc `-i`/`-r`,
+  cg-proc `-s`/`-r` and `-f` other than 1, hfst-proc `-C`/`-x`/`-j`/`-v`,
+  and a few more that no wrapper implements and no offered direction uses.
+  cg-proc has no long options, because cg3's CMake build never defines
+  `HAVE_GETOPT_LONG`.
 - `scripts/check-pair-tools.py --ios <pair-jars-dir>` checks every
-  direction `PairCatalog.swift` offers against the `run_stage()` names;
-  the `pairs` job of `release-ios.yml` runs it. In the 2026-10 pair set
-  the 49 directions use 14 tools, and `lt-merge` was the only one missing.
-- It checks tool names only, not flags. `classify_argv()` folds short
-  flags into one letter string, maps a few long options (`--null-flush`,
-  `--trace`, `--first`, `--unmerge`, `--weight-classes N`, ...) and drops
-  the rest; each wrapper picks the letters it honors. Android runs the
-  real binaries, so a dropped flag is an iOS-only difference. Known one:
-  lt-proc gets only its mode, so `-w` (dictionary case, ~34 directions),
-  `-c` and `-N1` are ignored.
-- lt-proc: `-b` together with `-g` is bilingual generation, as in
-  `lt_proc.cc` (`lt-proc $1 -b X.autogen.bin` in nob-nno and 9 other
-  directions, `lt-proc -b $1` in sme-nob). Until 2026-10-06 the
-  dispatcher passed only the first mode letter, so `$1 -b` ran plain
-  generation and nob→nno printed every generator alternative
-  ("enno/ennå"). The other directions' output didn't change on the QA
-  sentences.
+  direction `PairCatalog.swift` offers: each tool needs a `run_stage()`
+  case and each option must parse against `tool_options()`. The `pairs`
+  job of `release-ios.yml` runs it. In the 2026-10 pair set the 49
+  directions use 14 tools, and `lt-merge` was the only one missing.
+- Until 2026-10-07 the dispatcher kept only a few options and dropped the
+  rest without an error: lt-proc got only its mode letter, so `-w`
+  (dictionary case, 42 directions), `-c` (rus-bel, spa-ast) and `-N1`
+  (nno-nob) were ignored, and `-N1` was split into the letters N and 1.
+- lt-proc (`wrappers/lt_proc.cpp`) picks its mode and settings as
+  `lt_proc.cc` does. The checks run in a fixed order, whatever the order
+  on the command line, so `lt-proc $1 -b X.autogen.bin` (nob-nno and 9
+  other directions) and `lt-proc -b $1` (sme-nob) are both bilingual
+  generation. Until 2026-10-06 `$1 -b` ran plain generation, and nob→nno
+  printed every generator alternative ("enno/ennå").
+- cg-proc: `-g` turns on `surface_readings` as well as turning off LU
+  delimiting, as `cg-proc.cpp` does. Readings then print without tags, and
+  a leading `@` becomes `#` (`cg-proc -1 -n -g` after bilingual generation
+  in 11 directions). The grammar's embedded `CMDARGS` go into vislcg3's
+  option table before `setOptions()`, as in cg-proc (nob-nno's
+  `merge-quotes.rlx` carries `--num-windows 10`). That table is a process
+  global, and the wrapper restores it after each call.
+- hfst-proc: options as in `hfst-proc.cc`, including its default of
+  filtering compound analyses (`-k` turns it off). The filter only counts
+  boundaries when `-e` is given, so it doesn't affect sme-nob
+  (`--weight-classes 1 -w -p`). The settings are globals, and the wrapper
+  resets them on every call.
 - lt-merge (`wrappers/lt_merge.cpp`) makes the same calls as
   `lt_merge.cc`: `FSTProcessor::quoteMerge`, or `quoteUnmerge` for
   `--unmerge`, with no dictionary. `merge-quotes.rlx` only tags
@@ -218,6 +241,19 @@ every `wrappers/*.cpp`, so there's no list to update there.
   core iOS blocker" was never carried out), so an lttoolbox exit such as
   "Unexpected trailing backslash" still ends the app. Input escaping keeps
   user text away from the known ones.
+- Reference output: the native build tree also has every upstream CLI
+  built for the simulator (`out/ios-arm64-sim/bin/lt-proc`,
+  `apertium/apertium/apertium-transfer`,
+  `apertium-separable/src/lsx-proc`,
+  `apertium-recursive/src/rtx-proc`,
+  `out/ios-arm64-sim/bin/hfst-apertium-proc`, ...). The simulator's
+  `/bin/sh` can pipe a whole mode line through them in one
+  `xcrun simctl spawn <udid> /bin/sh -c '...'`; substitute `$1` with `-g`
+  and drop `$2` first. Export `DYLD_ROOT_PATH` (the iOS runtime's
+  `runtimeRoot` from `xcrun simctl list runtimes -j`) at the start of the
+  `sh -c` string, or every child fails with "DYLD_ROOT_PATH not set for
+  simulator program". oci→cat and hbs→mkd differ from it on purpose (the
+  two items above).
 
 ### Threading, safety, and crash recovery
 
@@ -530,6 +566,34 @@ Pull these verbatim, minimal adaptation:
   with the new colors (8 iPhone 6.9", 8 iPad 13"; same scenes and
   translations, CI 1.0.6 natives + run 36962949842 pair JARs, iOS 27.0
   simulators); not yet uploaded to ASC (see "App Store screenshots").
+- **Next release, continued** (committed 2026-10-07): every mode-file
+  option now reaches the wrappers and works as in the upstream CLI (see
+  "Mode-file tools and flags"). That covers lt-proc `-w`/`-c`/`-N1`,
+  cg-proc `-g` and grammar `CMDARGS`, and hfst-proc's defaults, and
+  `check-pair-tools.py --ios` now checks options. Also under
+  `ios/native/`. QA 2026-10-07 on an iPhone 17 / iOS 27.0 simulator, with
+  pair JARs matching the 1.0.6 pair inventory, natives at the same
+  upstream commits as above and 172 test sentences:
+  - Stage by stage, 47 directions are byte-identical to the real CLIs
+    from the same build tree, run in the simulator (418 sentence ×
+    direction runs). Before the change, lt-proc `-w` differed in all 42
+    `-w` directions (lemma case: `^LIVRO/LIVRO<n>` instead of
+    `^LIVRO/livro<n>`). hbs→mkd and oci→cat differ on purpose: those are
+    the crash fixes above, and the real apertium-transfer segfaults there.
+  - Final output changed in 5 of 426 translations, each now matching the
+    real tools: por→cat "A Maria tem um cão…" gives "La Maria té un gos…"
+    (was "A Maria"); nno→nob "Eg las avisa…" gives "Jeg leste avisen…"
+    (was "aviste"); nob→nno "Vi kastet stener i vannet." gives "Me kasta
+    steinar i vatnet." (was "Vi kasta"); nob→swe "Mye av arbeidet er
+    gjort allerede." gives "…är gjort redan." (was "gjorda"). In nob→swe,
+    "Vi kastet stener i vannet." now gives "Ägna kasten stenar i
+    vattnet." (was "Ägna kastade…"). That's worse Swedish, but it's what
+    the real tools produce.
+  - Crafted stage inputs cover the options the sentences don't reach:
+    lt-proc `-N1` keeps one generator alternative ("enno", not
+    "enno/ennå<v:…>"), cg-proc `-g` drops reading tags, and hfst-proc
+    `-e`/`-k`/`-N`/`-W`. All match the CLIs.
+  - `nm -u` required-reason APIs are unchanged (`_stat` only).
 - **1.0.6** (released 2026-09-29): natives from the 2026-09-29 CI build.
 
 ## First-session plan (new session picks up here)

@@ -83,6 +83,8 @@ void skip_hfst3_header(std::istream& is) {
 extern "C" ApertiumResult apertium_hfst_proc(const char* input,
                                              const char* bin_path,
                                              const char* flags,
+                                             int max_analyses,
+                                             int max_weight_classes,
                                              const char* tmp_dir) {
   ApertiumResult result{nullptr, nullptr};
   std::string in_path, out_path;
@@ -91,29 +93,45 @@ extern "C" ApertiumResult apertium_hfst_proc(const char* input,
     if (!tmp_dir)  throw std::runtime_error("tmp_dir is NULL");
     aix::ensure_exists(bin_path);
 
-    // Mode selector. hfst-apertium-proc uses:
-    //   a — analysis (default, Apertium output format)
-    //   g — generation (unknown mode)
-    //   n — generation (clean)
-    //   d — generation (debugged)
-    //   t — tokenization
-    char cmd = 'a';
+    // Option handling as in hfst-proc.cc's main(). The flags set globals that
+    // outlive the call, so put every one back to its default first.
+    displayWeightsFlag = false;
+    maxAnalyses = max_analyses > 0 ? max_analyses : INT32_MAX;                  // -N
+    maxWeightClasses = max_weight_classes > 0 ? max_weight_classes : INT32_MAX; // -l, --weight-classes
+    processCompounds = false;
+    rawMode = false;
+    displayRawAnalysisInCG = false;
+    char cmd = 0;
+    char output_type = 0;
+    char capitalization = 0;
+    bool filter_compound_analyses = true;
     bool null_flush = false;
-    CapitalizationMode caps = IgnoreCase;
     for (const char* c = flags ? flags : ""; *c; ++c) {
       switch (*c) {
-        case 'a': case 'g': case 'n': case 'd': case 't': cmd = *c; break;
+        case 'a': case 'g': case 'n': case 'd': case 't':
+          if (cmd) throw std::runtime_error("multiple hfst-proc operation modes given");
+          cmd = *c;
+          break;
+        case 'p':  // Apertium stream format, the default and the only one wired up
+          if (output_type) throw std::runtime_error("multiple hfst-proc output modes given");
+          output_type = *c;
+          break;
+        case 'k': filter_compound_analyses = false; break;
+        case 'e': processCompounds = true; break;
+        case 'W': displayWeightsFlag = true; break;
+        case 'r': displayRawAnalysisInCG = true; break;
+        case 'q': case 's': displayWeightsFlag = true; break;  // as hfst-proc.cc does
+        case 'c': case 'w': case 'X': capitalization = *c; break;
         case 'z': null_flush = true; break;
-        case 'c': caps = CaseSensitive; break;
-        case 'w': caps = DictionaryCase; break;
-        // -p = Apertium output format. That IS the default in our
-        // wrapper, so accept and ignore. Other output formats (-C CG,
-        // -x Xerox, -j transliterate) are supported by the upstream
-        // binary but not wired up here — Apertium pipelines always use -p.
-        case 'p': break;
-        default:
-          throw std::runtime_error(std::string("unknown hfst-proc flag: ") + *c);
+        default:  // -v, and the -C/-x/-j output formats
+          throw std::runtime_error(std::string("hfst-proc flag not supported on iOS: ") + *c);
       }
+    }
+    CapitalizationMode caps = IgnoreCase;
+    switch (capitalization) {
+      case 'c': caps = CaseSensitive; break;
+      case 'w': caps = DictionaryCase; break;
+      case 'X': caps = CaseSensitiveDictionaryCase; rawMode = true; break;
     }
 
     in_path  = aix::spit_tmp(tmp_dir, "hfst_in", input);
@@ -131,7 +149,7 @@ extern "C" ApertiumResult apertium_hfst_proc(const char* input,
       throw std::runtime_error("cannot open tmp I/O files");
 
     TokenIOStream ts(in_stream, out_stream, transducer.get_alphabet(),
-                     null_flush, /*raw=*/false);
+                     null_flush, rawMode);
 
     Applicator* app = nullptr;
     OutputFormatter* fmt = nullptr;
@@ -142,7 +160,7 @@ extern "C" ApertiumResult apertium_hfst_proc(const char* input,
       case 'd': app = new GenerationApplicator(transducer, ts, gm_all, caps); break;
       case 'a':
       default:
-        fmt = new ApertiumOutputFormatter(ts, /*filter_compound=*/false);
+        fmt = new ApertiumOutputFormatter(ts, filter_compound_analyses);
         app = new AnalysisApplicator(transducer, ts, *fmt, caps);
         break;
     }

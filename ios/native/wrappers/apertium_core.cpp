@@ -12,19 +12,16 @@
 
 #include <algorithm>
 #include <cctype>
-#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <fstream>
+#include <map>
 #include <regex>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-// Defined in hfst_proc.cpp; redeclared here so the mode-line parser can
-// honor --weight-classes N by writing the hfst-proc global directly.
-extern int maxWeightClasses;
 
 namespace {
 
@@ -119,51 +116,186 @@ std::vector<std::vector<std::string>> parse_mode_line(const std::string& line,
   return stages;
 }
 
-// Split a stage's argv into {flags-letters, positional-files, opts}.
-// Flags that look like `-X` or `--long` are collected as single-letter
-// strings (we concatenate all single-letter short flags into one
-// string per wrapper's convention). Long options get a tiny whitelist;
-// long options that take an argument (like `--weight-classes N`) are
-// stashed in a key→value map so downstream can honor them.
-struct Argv {
-  std::string flags;
-  std::vector<std::string> files;
-  std::unordered_map<std::string, std::string> long_opts_with_arg;
+// One command-line option of a pipeline tool, as the tool's upstream main()
+// declares it. on_ios is false for options no wrapper implements; none of the
+// offered directions passes one, and scripts/check-pair-tools.py --ios fails
+// CI if a pair update starts to.
+struct OptSpec {
+  char short_opt;
+  const char* long_opt;  // nullptr: no long form
+  bool has_arg;
+  bool on_ios = true;
 };
 
-// Long options that take a positional argument.
-const std::vector<std::string>& long_opts_with_arg_names() {
-  static const std::vector<std::string> n{
-    "--weight-classes", "--max-analyses", "--sections",
+// The options each tool's CLI accepts, from its upstream main(): lt_proc.cc,
+// lt_merge.cc, cg-proc.cpp, hfst-proc.cc, lrx_proc.cc, lsx_proc.cc,
+// rtx_proc.cc, apertium_{transfer,interchunk,postchunk,pretransfer,
+// posttransfer}.cc, tagger.cc and anaphora.cc. -h/--help and -v/--version are
+// left out: the CLIs exit on them without translating. cg-proc has no long
+// options: cg3's CMake build never defines HAVE_GETOPT_LONG, so cg-proc reads
+// its options with plain getopt(). A tool missing here is an unknown tool.
+const std::unordered_map<std::string, std::vector<OptSpec>>& tool_options() {
+  static const std::vector<OptSpec> hfst_proc{
+    {'q', "quiet", false}, {'s', "silent", false}, {'v', "verbose", false, false},
+    {'a', "analysis", false}, {'g', "generation", false},
+    {'n', "non-marked-gen", false}, {'d', "debugged-gen", false},
+    {'t', "tokenize", false}, {'j', "transliterate", false, false},
+    {'p', "apertium", false}, {'x', "xerox", false, false}, {'C', "cg", false, false},
+    {'k', "keep-compounds", false}, {'e', "do-compounds", false},
+    {'W', "show-weights", false}, {'r', "show-raw-in-cg", false},
+    {'N', "analyses", true}, {'l', "weight-classes", true},
+    {'c', "case-sensitive", false}, {'w', "dictionary-case", false},
+    {'z', "null-flush", false}, {'X', "raw", false},
   };
-  return n;
+  static const std::unordered_map<std::string, std::vector<OptSpec>> t{
+    {"lt-proc", {
+      {'a', "analysis", false}, {'b', "bilingual", false},
+      {'c', "case-sensitive", false}, {'d', "debugged-gen", false},
+      {'e', "decompose-nouns", false}, {'g', "generation", false},
+      {'i', "ignored-chars", true, false}, {'r', "restore-chars", true, false},
+      {'l', "tagged-gen", false}, {'m', "tagged-nm-gen", false},
+      {'n', "non-marked-gen", false}, {'o', "surf-bilingual", false},
+      {'O', "surf-bilingual-keep", false}, {'p', "post-generation", false},
+      {'x', "inter-generation", false}, {'s', "sao", false},
+      {'t', "transliteration", false}, {'z', "null-flush", false},
+      {'w', "dictionary-case", false}, {'C', "careful-case", false},
+      {'I', "no-default-ignore", false}, {'W', "show-weights", false},
+      {'N', "analyses", true}, {'L', "weight-classes", true},
+      {'M', "compound-max-elements", true}}},
+    {"lt-merge", {{'u', "unmerge", false}, {'z', "null-flush", false}}},
+    {"cg-proc", {
+      {'d', nullptr, false}, {'s', nullptr, true, false}, {'f', nullptr, true},
+      {'t', nullptr, false}, {'r', nullptr, true, false}, {'n', nullptr, false},
+      {'g', nullptr, false}, {'1', nullptr, false}, {'w', nullptr, false},
+      {'z', nullptr, false}}},
+    {"hfst-proc", hfst_proc},
+    {"hfst-apertium-proc", hfst_proc},
+    {"lrx-proc", {
+      {'t', "trace", false}, {'d', "debug", false},
+      {'z', "null-flush", false}, {'m', "max-ent", false}}},
+    {"lsx-proc", {
+      {'p', "postgen", false}, {'r', "repeat", false},
+      {'w', "dictionary-case", false}, {'z', "null-flush", false}}},
+    {"rtx-proc", {
+      {'a', "anaphora", false}, {'b', "both", false},
+      {'e', "everything", false}, {'f', "filter-trace", false},
+      {'F', "filter", false}, {'m', "mode", true, false}, {'r', "rules", false},
+      {'s', "steps", false}, {'t', "trx", false}, {'T', "tree", false},
+      {'z', "null-flush", false}}},
+    {"apertium-transfer", {
+      {'b', "from-bilingual", false}, {'n', "no-bilingual", false},
+      {'x', "extended", true, false}, {'c', "case-sensitive", false},
+      {'w', "dictionary-case", false}, {'z', "null-flush", false},
+      {'t', "trace", false}, {'T', "trace_att", false}}},
+    {"apertium-interchunk", {
+      {'t', "trace", false}, {'w', "dictionary-case", false},
+      {'z', "null-flush", false}}},
+    {"apertium-postchunk", {
+      {'t', "trace", false}, {'w', "dictionary-case", false},
+      {'z', "null-flush", false}}},
+    {"apertium-pretransfer", {
+      {'e', "compounds", false}, {'n', "no-surface-forms", false},
+      {'z', "null-flush", false}}},
+    {"apertium-posttransfer", {{'z', "null-flush", false}}},
+    {"apertium-tagger", {
+      {'b', "sent-seg", false}, {'d', "debug", false},
+      {'e', "skip-on-error", false}, {'f', "first", false},
+      {'m', "mark", false}, {'p', "show-superficial", false},
+      {'z', "null-flush", false}, {'u', "unigram", true, false},
+      {'w', "sliding-window", false}, {'x', "perceptron", false},
+      {'g', "tagger", false}, {'r', "retrain", true, false},
+      {'s', "supervised", true, false}, {'t', "train", true, false}}},
+    {"apertium-anaphora", {{'d', "debug", false}, {'z', "null-flush", false}}},
+  };
+  return t;
 }
 
-Argv classify_argv(const std::vector<std::string>& argv) {
+// A stage's arguments after option parsing: the options without a value as
+// letters in command-line order ("wg" for `-w -g`), the options with a value
+// (the last one wins, as the CLIs read them) and the file arguments.
+struct Argv {
+  std::string flags;
+  std::map<char, std::string> values;
+  std::vector<std::string> files;
+};
+
+// Parse argv[1..] the way getopt_long does on Linux/Android, where the
+// Android app runs these CLIs: bundled short options (-bc), a value attached
+// (-N1) or in the next word (-N 1, --weight-classes 1, --analyses=1), long
+// options by name or unique prefix, options after file arguments, and "--"
+// ending the options. An option the tool doesn't define fails the stage, as
+// the CLI's usage-and-exit does; so does one that isn't on_ios.
+Argv parse_argv(const std::vector<std::string>& argv,
+                const std::vector<OptSpec>& spec) {
   Argv a;
+  auto store = [&](const OptSpec& o, std::string value) {
+    if (!o.on_ios)
+      throw std::runtime_error(std::string("option -") + o.short_opt
+                               + " is not supported on iOS");
+    if (o.has_arg) a.values[o.short_opt] = std::move(value);
+    else           a.flags.push_back(o.short_opt);
+  };
   for (size_t i = 1; i < argv.size(); ++i) {
     const std::string& t = argv[i];
-    if (t.size() >= 2 && t[0] == '-' && t[1] != '-') {
-      for (size_t j = 1; j < t.size(); ++j) a.flags.push_back(t[j]);
-    } else if (t.size() > 2 && t.substr(0, 2) == "--") {
-      // Long option — may take an argument from argv[i+1].
-      const auto& arg_opts = long_opts_with_arg_names();
-      if (std::find(arg_opts.begin(), arg_opts.end(), t) != arg_opts.end()
-          && i + 1 < argv.size()) {
-        a.long_opts_with_arg[t] = argv[i + 1];
-        ++i;  // consume value
-        continue;
+    if (t == "--") {
+      a.files.insert(a.files.end(), argv.begin() + i + 1, argv.end());
+      break;
+    }
+    if (t.size() > 2 && t.compare(0, 2, "--") == 0) {
+      size_t eq = t.find('=');
+      std::string name = t.substr(2, eq == std::string::npos ? eq : eq - 2);
+      const OptSpec* match = nullptr;
+      int prefix_matches = 0;
+      for (const auto& o : spec) {
+        if (!o.long_opt) continue;
+        if (name == o.long_opt) { match = &o; prefix_matches = 1; break; }
+        if (std::strncmp(o.long_opt, name.c_str(), name.size()) == 0) {
+          match = &o;
+          ++prefix_matches;
+        }
       }
-      if      (t == "--null-flush") a.flags.push_back('z');
-      else if (t == "--trace")      a.flags.push_back('t');
-      else if (t == "--first")      a.flags.push_back('1');
-      else if (t == "--unmerge")    a.flags.push_back('u');  // lt-merge
-      // else silently drop; wrappers reject unknown short flags.
+      if (!match || prefix_matches > 1)
+        throw std::runtime_error("unknown option --" + name);
+      if (!match->has_arg) {
+        if (eq != std::string::npos)
+          throw std::runtime_error("option --" + name + " takes no value");
+        store(*match, "");
+      } else if (eq != std::string::npos) {
+        store(*match, t.substr(eq + 1));
+      } else if (i + 1 < argv.size()) {
+        store(*match, argv[++i]);
+      } else {
+        throw std::runtime_error("option --" + name + " needs a value");
+      }
+    } else if (t.size() > 1 && t[0] == '-') {
+      for (size_t j = 1; j < t.size(); ++j) {
+        auto o = std::find_if(spec.begin(), spec.end(),
+                              [&](const OptSpec& s) { return s.short_opt == t[j]; });
+        if (o == spec.end())
+          throw std::runtime_error(std::string("unknown option -") + t[j]);
+        if (!o->has_arg) { store(*o, ""); continue; }
+        if (j + 1 < t.size())       store(*o, t.substr(j + 1));
+        else if (i + 1 < argv.size()) store(*o, argv[++i]);
+        else throw std::runtime_error(std::string("option -") + t[j] + " needs a value");
+        break;
+      }
     } else {
       a.files.push_back(t);
     }
   }
   return a;
+}
+
+// Remove count option `c` (lt-proc -N 1, hfst-proc --weight-classes 1) from
+// a.values; 0 if it wasn't given. Like the CLIs, reject a count below 1.
+int take_count(Argv& a, char c) {
+  auto it = a.values.find(c);
+  if (it == a.values.end()) return 0;
+  int n = std::atoi(it->second.c_str());
+  if (n < 1)
+    throw std::runtime_error(std::string("invalid count for -") + c + ": " + it->second);
+  a.values.erase(it);
+  return n;
 }
 
 std::string take_file(Argv& a) {
@@ -179,40 +311,6 @@ std::string opt_file(Argv& a) {
   std::string s = a.files.front();
   a.files.erase(a.files.begin());
   return s;
-}
-
-// Pick the mode for lt-proc. The CLI accepts a/g/b/p/s/t/e. As in lt_proc.cc,
-// -b wins over -g, and -b together with -g is bilingual generation (gm_bilgen),
-// which apertium_lt_proc reads as "bg": `lt-proc $1 -b X.autogen.bin` (nob-nno,
-// spa-cat, ...) and `lt-proc -b $1 ...` (sme-nob) arrive as flags "gb" / "bg".
-// Otherwise the first mode letter.
-std::string lt_proc_mode(const std::string& flags) {
-  if (flags.find('b') != std::string::npos)
-    return flags.find('g') != std::string::npos ? "bg" : "b";
-  for (char c : flags) {
-    switch (c) {
-      case 'a': case 'g': case 'p':
-      case 's': case 't': case 'e': return std::string(1, c);
-      default: break;
-    }
-  }
-  return "a";  // default to analysis
-}
-
-// Strip flags that aren't single-letter mode selectors.
-std::string non_mode_flags(const std::string& flags) {
-  std::string out;
-  for (char c : flags) {
-    switch (c) {
-      case 'a': case 'g': case 'b': case 'p':
-      case 's': case 't': case 'e':
-        break;  // mode selector; don't forward as a "flag"
-      default:
-        out.push_back(c);
-        break;
-    }
-  }
-  return out;
 }
 
 // apertium-transfer/-interchunk/-postchunk take the rules XML and the .bin
@@ -299,20 +397,15 @@ std::string strip_dependency_tags(const std::string& s) {
 
 // ---------- stage dispatch ----------
 
-ApertiumResult run_stage(const std::vector<std::string>& stage,
-                         const std::string& in,
-                         const char* tmp_dir) {
-  if (stage.empty()) {
-    ApertiumResult r{aix::dup_cstr(in), nullptr};
-    return r;
-  }
-  const std::string& tool = stage[0];
-  Argv a = classify_argv(stage);
-
+ApertiumResult dispatch_stage(const std::string& tool, Argv& a,
+                              const std::string& in, const char* tmp_dir) {
   if (tool == "lt-proc") {
-    std::string mode = lt_proc_mode(a.flags);
+    int analyses       = take_count(a, 'N');
+    int weight_classes = take_count(a, 'L');
+    int compound_max   = take_count(a, 'M');
     std::string bin = take_file(a);
-    return apertium_lt_proc(in.c_str(), bin.c_str(), mode.c_str(), tmp_dir);
+    return apertium_lt_proc(in.c_str(), bin.c_str(), a.flags.c_str(),
+                            analyses, weight_classes, compound_max, tmp_dir);
   }
   if (tool == "lt-merge") {
     return apertium_lt_merge(in.c_str(), a.flags.c_str(), tmp_dir);
@@ -354,8 +447,6 @@ ApertiumResult run_stage(const std::vector<std::string>& stage,
                               a.flags.c_str(), tmp_dir);
   }
   if (tool == "lrx-proc") {
-    // The CLI's -m flag is a backwards-compat no-op; the wrapper treats
-    // it as such. Strip non-mode-like flags as-is.
     std::string bin = take_file(a);
     return apertium_lrx_proc(in.c_str(), bin.c_str(), a.flags.c_str(), tmp_dir);
   }
@@ -368,6 +459,10 @@ ApertiumResult run_stage(const std::vector<std::string>& stage,
     return apertium_rtx_proc(in.c_str(), rtx.c_str(), a.flags.c_str(), tmp_dir);
   }
   if (tool == "cg-proc") {
+    // -f 1 is the Apertium stream format, the only one the wrapper speaks.
+    auto f = a.values.find('f');
+    if (f != a.values.end() && std::atoi(f->second.c_str()) != 1)
+      throw std::runtime_error("cg-proc -f " + f->second + " is not supported on iOS");
     std::string grammar = take_file(a);
     ApertiumResult r = apertium_cg_proc(in.c_str(), grammar.c_str(),
                                         a.flags.c_str(), tmp_dir);
@@ -386,18 +481,36 @@ ApertiumResult run_stage(const std::vector<std::string>& stage,
     return apertium_anaphora(in.c_str(), arx.c_str(), a.flags.c_str(), tmp_dir);
   }
   if (tool == "hfst-proc" || tool == "hfst-apertium-proc") {
+    int analyses       = take_count(a, 'N');
+    int weight_classes = take_count(a, 'l');
     std::string bin = take_file(a);
-    // --weight-classes N sets hfst-proc's global before the wrapper runs.
-    auto it = a.long_opts_with_arg.find("--weight-classes");
-    if (it != a.long_opts_with_arg.end()) {
-      try { maxWeightClasses = std::stoi(it->second); } catch (...) {}
-    } else {
-      maxWeightClasses = INT32_MAX;
-    }
-    return apertium_hfst_proc(in.c_str(), bin.c_str(), a.flags.c_str(), tmp_dir);
+    return apertium_hfst_proc(in.c_str(), bin.c_str(), a.flags.c_str(),
+                              analyses, weight_classes, tmp_dir);
   }
   ApertiumResult r{nullptr, aix::dup_cstr("unknown tool: " + tool)};
   return r;
+}
+
+ApertiumResult run_stage(const std::vector<std::string>& stage,
+                         const std::string& in,
+                         const char* tmp_dir) {
+  if (stage.empty()) {
+    ApertiumResult r{aix::dup_cstr(in), nullptr};
+    return r;
+  }
+  const std::string& tool = stage[0];
+  auto spec = tool_options().find(tool);
+  if (spec == tool_options().end()) {
+    ApertiumResult r{nullptr, aix::dup_cstr("unknown tool: " + tool)};
+    return r;
+  }
+  try {
+    Argv a = parse_argv(stage, spec->second);
+    return dispatch_stage(tool, a, in, tmp_dir);
+  } catch (const std::exception& e) {
+    ApertiumResult r{nullptr, aix::dup_cstr(e.what())};
+    return r;
+  }
 }
 
 // Read the first non-empty, non-comment line from the mode file.

@@ -32,13 +32,17 @@ void apertium_result_free(ApertiumResult r);
 
 // --- lttoolbox -------------------------------------------------------------
 
-// lt-proc. `flag` is a single-letter mode selector matching the CLI:
-//   "a" analysis, "g" generation, "b" bilingual, "p" post-gen,
-//   "s" SAO, "t" transliteration, "e" decompose-nouns;
-//   or "bg" for bilingual generation (lt-proc -b -g).
+// lt-proc. `flags` holds the CLI's options without a value as letters
+// ("wg" for `-w -g`); the mode and settings follow from them as in
+// lt_proc.cc (-b with -g is bilingual generation). Letters: a b c d e g l
+// m n o O p x s t z w C I W. max_analyses (-N), max_weight_classes (-L) and
+// compound_max_elements (-M) are 0 when not given.
 ApertiumResult apertium_lt_proc(const char* input,
                                 const char* bin_path,
-                                const char* flag,
+                                const char* flags,
+                                int max_analyses,
+                                int max_weight_classes,
+                                int compound_max_elements,
                                 const char* tmp_dir);
 
 // lt-merge. Flags: "u" (--unmerge), "z" (null-flush; always on).
@@ -84,7 +88,7 @@ ApertiumResult apertium_postchunk(const char* input,
                                   const char* tmp_dir);
 
 // apertium-tagger (apply / -g mode). Additional flags passed through:
-// f m p z d e.
+// b d e f m p w x z.
 ApertiumResult apertium_tagger_apply(const char* input,
                                      const char* prob_file,
                                      const char* flags,
@@ -126,19 +130,25 @@ ApertiumResult apertium_anaphora(const char* input,
 
 // --- hfst (HFST) -----------------------------------------------------------
 
-// hfst-apertium-proc. `flags` accepts:
+// hfst-apertium-proc. `flags` accepts, as in hfst-proc.cc:
 //   a (analysis, default) / g / n / d / t (generation/tokenization)
+//   p (Apertium output format, the default; -C/-x/-j aren't supported)
+//   k (keep compound analyses) / e (do compounds) / W / r / q / s
+//   c (case-sensitive) / w (dictionary-case) / X (raw)
 //   z (null-flush)
-//   c (case-sensitive) / w (dictionary-case)
+// max_analyses (-N) and max_weight_classes (-l, --weight-classes) are 0
+// when not given.
 ApertiumResult apertium_hfst_proc(const char* input,
                                   const char* bin_path,
                                   const char* flags,
+                                  int max_analyses,
+                                  int max_weight_classes,
                                   const char* tmp_dir);
 
 // cg-proc. Flags: t (trace), w (wordform case), n (no word forms),
-// g (generation), 1 (first reading only), z (null-flush). d, r, s and f
-// are accepted and ignored (Apertium stream format only); any other
-// letter is an error.
+// g (generation: surface readings, printed without tags), 1 (first reading
+// only), z (null-flush), d (disambiguation, the default); any other letter
+// is an error. The grammar's embedded CMDARGS apply as in cg-proc.
 ApertiumResult apertium_cg_proc(const char* input,
                                 const char* grammar_file,
                                 const char* flags,

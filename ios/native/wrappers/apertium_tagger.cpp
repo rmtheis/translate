@@ -60,11 +60,12 @@ extern "C" ApertiumResult apertium_tagger_apply(const char* input,
     argv.push("apertium-tagger");
     argv.push("-g");
     for (const char* p = flags ? flags : ""; *p; ++p) {
-      // Accept a small set of known single-letter flag passthroughs.
-      // Unknown flags are rejected up front rather than letting getopt
-      // throw an opaque InvalidOption from deep inside the class.
+      // Pass the CLI's options without a value through to the class's own
+      // getopt. Unknown flags are rejected up front rather than letting
+      // getopt throw an opaque InvalidOption from deep inside the class.
       switch (*p) {
-        case 'f': case 'm': case 'p': case 'z': case 'd': case 'e':
+        case 'b': case 'd': case 'e': case 'f': case 'm': case 'p':
+        case 'w': case 'x': case 'z':
           argv.push(std::string("-") + *p);
           break;
         default:

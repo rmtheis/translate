@@ -11,7 +11,10 @@ and nob-nno (lt-merge) did through 1.0.12.
 iOS (--ios): same walk over the directions ios/Translate/PairCatalog.swift offers,
 checking each stage's tool against the names run_stage() in
 ios/native/wrappers/apertium_core.cpp dispatches. Any other tool fails at runtime with
-"unknown tool: <name>", as nob-nno (lt-merge) did through iOS 1.0.6.
+"unknown tool: <name>", as nob-nno (lt-merge) did through iOS 1.0.6. It also parses each
+stage's options against tool_options() there (the upstream CLIs' option tables) the way
+parse_argv() does: an option the tool doesn't define, or one marked on_ios = false
+(lt-proc -i, hfst-proc -C, ...), fails that direction at runtime.
 
 Usage: check-pair-tools.py <pair-jars-dir> <jnilibs-dir>
        check-pair-tools.py --ios <pair-jars-dir>
@@ -21,6 +24,7 @@ release-ios.yml's pairs job once the JARs are fetched.
 from __future__ import annotations
 
 import re
+import shlex
 import sys
 import zipfile
 from pathlib import Path
@@ -50,19 +54,88 @@ def ios_tools() -> set[str]:
     return set(re.findall(r'tool == "([^"]+)"', APERTIUM_CORE.read_text()))
 
 
-def mode_tools(jar: zipfile.ZipFile, mode: str) -> list[str] | None:
-    """Tool name of each stage in <mode>.mode, or None if the JAR has no such mode."""
+def ios_options() -> dict[str, dict]:
+    """tool_options() in apertium_core.cpp → {tool: {"short": {c: (has_arg, on_ios)},
+    "long": {name: c}}}."""
+    src = APERTIUM_CORE.read_text()
+    body = src[src.index("tool_options() {"):src.index("return t;")]
+    entry = re.compile(r"\{'(.)', (?:\"([^\"]+)\"|nullptr), (true|false)(?:, (true|false))?\}")
+
+    def spec(text: str) -> dict:
+        found = entry.findall(text)
+        return {"short": {c: (arg == "true", on_ios != "false") for c, _, arg, on_ios in found},
+                "long": {name: c for c, name, _, _ in found if name}}
+
+    shared = {m[1]: spec(m[2]) for m in
+              re.finditer(r"static const std::vector<OptSpec> (\w+)\{(.*?)\n  \};", body, re.S)}
+    tools = {m[1]: shared[m[2]] for m in re.finditer(r'\{"([a-z-]+)", (\w+)\}', body)}
+    tools.update({m[1]: spec(m[2]) for m in re.finditer(r'\{"([a-z-]+)", \{(.*?\})\}', body, re.S)})
+    return tools
+
+
+def option_problems(stage: list[str], spec: dict) -> list[str]:
+    """parse_argv()'s and dispatch_stage()'s complaints about one stage's options."""
+    tool, args, problems = stage[0], stage[1:], []
+
+    def use(c: str, value: str | None = None) -> None:
+        has_arg, on_ios = spec["short"][c]
+        if not on_ios:
+            problems.append(f"{tool}: option -{c} is not supported on iOS")
+        elif has_arg and value is None:
+            problems.append(f"{tool}: option -{c} needs a value")
+        elif tool == "cg-proc" and c == "f" and value != "1":
+            problems.append(f"{tool}: -f {value} is not supported on iOS")
+        elif c in {"lt-proc": "NLM", "hfst-proc": "Nl", "hfst-apertium-proc": "Nl"}.get(tool, ""):
+            if not re.match(r"\s*[+-]?0*[1-9]", value or ""):  # atoi(value) >= 1
+                problems.append(f"{tool}: invalid count for -{c}: {value}")
+
+    i = 0
+    while i < len(args):
+        t = args[i]
+        if t == "--":
+            break
+        if t.startswith("--") and len(t) > 2:
+            name, eq, value = t[2:].partition("=")
+            names = [n for n in spec["long"] if n == name] or \
+                    [n for n in spec["long"] if n.startswith(name)]
+            if len(names) != 1:
+                problems.append(f"{tool}: unknown option --{name}")
+            else:
+                c = spec["long"][names[0]]
+                if spec["short"][c][0] and not eq:
+                    i += 1
+                    value = args[i] if i < len(args) else None
+                use(c, value if spec["short"][c][0] else None)
+        elif t.startswith("-") and len(t) > 1:
+            for j, c in enumerate(t[1:], 1):
+                if c not in spec["short"]:
+                    problems.append(f"{tool}: unknown option -{c}")
+                    break
+                if spec["short"][c][0]:
+                    value = t[j + 1:]
+                    if not value:
+                        i += 1
+                        value = args[i] if i < len(args) else None
+                    use(c, value)
+                    break
+                use(c)
+        i += 1
+    return problems
+
+
+def mode_stages(jar: zipfile.ZipFile, mode: str) -> list[list[str]] | None:
+    """Argument list of each stage in <mode>.mode, or None if the JAR has no such mode."""
     names = [n for n in jar.namelist() if n.rsplit("/", 1)[-1] == f"{mode}.mode"]
     if not names:
         return None
     lines = [l.strip() for l in jar.read(names[0]).decode().splitlines()]
     line = next((l for l in lines if l and not l.startswith("#")), "")
-    return [stage.split()[0] for stage in line.split("|") if stage.strip()]
+    return [shlex.split(stage) for stage in line.split("|") if stage.strip()]
 
 
 def check_directions(pairs_dir: Path, catalog: dict[str, dict],
-                     tool_problems) -> tuple[list[str], int]:
-    """Problems from tool_problems(mode, tool) for each offered direction's tools."""
+                     stage_problems) -> tuple[list[str], int]:
+    """Problems from stage_problems(mode, argv) for each offered direction's stages."""
     problems, checked = [], 0
     for jar_path in sorted(pairs_dir.glob("apertium-*.jar")):
         entry = catalog.get(jar_path.stem)
@@ -70,14 +143,14 @@ def check_directions(pairs_dir: Path, catalog: dict[str, dict],
             continue
         with zipfile.ZipFile(jar_path) as jar:
             for mode in filter(None, (entry["forward"], entry["backward"])):
-                tools = mode_tools(jar, mode)
-                if tools is None:
+                stages = mode_stages(jar, mode)
+                if stages is None:
                     problems.append(f"{jar_path.stem}: no {mode}.mode in the JAR")
                     continue
                 checked += 1
-                for tool in dict.fromkeys(tools):
-                    problems += tool_problems(mode, tool)
-    return problems, checked
+                for stage in stages:
+                    problems += stage_problems(mode, stage)
+    return list(dict.fromkeys(problems)), checked
 
 
 def report(problems: list[str], summary: str) -> int:
@@ -94,7 +167,8 @@ def main_android(pairs_dir: Path, jnilibs: Path) -> int:
         print(f"no ABI dirs under {jnilibs}")
         return 1
 
-    def tool_problems(mode: str, tool: str) -> list[str]:
+    def tool_problems(mode: str, stage: list[str]) -> list[str]:
+        tool = stage[0]
         lib = libs.get(tool)
         if lib is None:
             return [f"{mode}: {tool} has no NativePipeline.TOOL_LIBS mapping"]
@@ -106,15 +180,18 @@ def main_android(pairs_dir: Path, jnilibs: Path) -> int:
 
 
 def main_ios(pairs_dir: Path) -> int:
-    tools = ios_tools()
+    tools, options = ios_tools(), ios_options()
 
-    def tool_problems(mode: str, tool: str) -> list[str]:
-        if tool in tools:
-            return []
-        return [f"{mode}: {tool} has no run_stage() case in ios/native/wrappers/apertium_core.cpp"]
+    def tool_problems(mode: str, stage: list[str]) -> list[str]:
+        tool = stage[0]
+        if tool not in tools or tool not in options:
+            return [f"{mode}: {tool} has no run_stage() case in ios/native/wrappers/apertium_core.cpp"]
+        # $1/$2 as apertium(1) and apertium_core.cpp's rewrite_stage() substitute them.
+        argv = [tool] + ["-g" if t == "$1" else t for t in stage[1:] if t != "$2"]
+        return [f"{mode}: {p}" for p in option_problems(argv, options[tool])]
 
     problems, checked = check_directions(pairs_dir, ios_catalog(), tool_problems)
-    return report(problems, f"checked {checked} iOS directions")
+    return report(problems, f"checked {checked} iOS directions (tools and options)")
 
 
 if __name__ == "__main__":

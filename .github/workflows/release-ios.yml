@@ -167,9 +167,11 @@ jobs:
 
       # Every tool an offered direction's .mode runs needs a run_stage() case
       # in ios/native/wrappers/apertium_core.cpp ("unknown tool: lt-merge"
-      # broke nob→nno through 1.0.6). Source-level check, so it runs here
-      # rather than after the natives build.
-      - name: Check offered directions' tools are wrapped
+      # broke nob→nno through 1.0.6), and every option it passes must be one
+      # tool_options() there knows and supports, or the direction fails at
+      # runtime. Source-level check, so it runs here rather than after the
+      # natives build.
+      - name: Check offered directions' tools and options are wrapped
         run: python3 scripts/check-pair-tools.py --ios pair-jars
 
       - name: Compute pair inventory
