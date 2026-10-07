@@ -12,10 +12,19 @@ android {
         targetSdk = 37
     }
 
+    testOptions {
+        // NativePipelineTest runs runPipeline, which logs: android.util.Log's stubs return
+        // 0 instead of throwing.
+        unitTests.returnDefaultValues = true
+    }
+
     lint {
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found:
-        abortOnError = false
+        // NewApi is fatal: a call above minSdk 21 without an SDK_INT check throws
+        // NoSuchMethodError on older devices. Every release build runs lintVitalRelease,
+        // which checks only fatal issues and fails the build on one only when abortOnError
+        // is on. A full :app:lintRelease fails on plain errors too.
+        abortOnError = true
+        fatal += 'NewApi'
     }
 
     // CI populates app/upload.keystore from a base64 secret; local dev falls back to the

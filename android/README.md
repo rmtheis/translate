@@ -50,6 +50,16 @@ monthly cron and on manual dispatch. Don't upload by hand.
   Kotlin); R8 strips what isn't used.
 - AGP 9 only creates unit-test tasks for the tested build type: CI's
   `:app:testDebugUnitTest` exists, `testReleaseUnitTest` doesn't.
+- **Lint `NewApi` is fatal and fails the release build** (`app/build.gradle`): every
+  `bundleRelease` runs `lintVitalRelease`, which checks only fatal issues. That needs
+  `abortOnError = true` as well: with it off (as it was until 2026-10-07), lintVital prints
+  the errors and the build still succeeds. A full `:app:lintRelease` now also fails on plain
+  errors (none at the moment). Java 8+ library calls need an `SDK_INT` check or an
+  API-21 equivalent: D8 doesn't backport `Map.computeIfAbsent`, `Comparator.comparing`,
+  `File.toPath` or `Process.isAlive`, and R8's API outlining adds no version check, so on
+  an older device they throw `NoSuchMethodError` / `NoClassDefFoundError`. Core library
+  desugaring would cover some of them, at a cost in APK size and R8 time; the app doesn't
+  use it.
 
 ## R8 and resources (checked for 1.0.12, the first AGP-9 / target-37 release)
 
@@ -152,7 +162,21 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
   `am start -n com.qvyshift.translate/.TranslatorActivity -a android.intent.action.SEND -t text/plain --es android.intent.extra.TEXT '<text>' --es mode '<dropdown title>'`
   (e.g. `Northern Sami → Norwegian Bokmål`), then tap Translate. The pair must already
   be downloaded. uiautomator can't see the pair dropdown's popup list, so pick pairs to
-  download by screenshot coordinates.
+  download by screenshot coordinates, or download them all: tap Settings (`id/manage`),
+  then `id/downloadAllButton` (about 10 s with local testing; give the AVD
+  `disk.dataPartition.size=16G` first).
+- The AVDs on this Mac have `disk.dataPartition.path=<temp>` (avdmanager writes it for new
+  ones too): `/data` is wiped at every boot, so install and download the pairs again.
+- Old Android: AVDs `Translate_API23` and `Translate_API25` (Medium Phone profile, 16G data)
+  use `system-images;android-23;default;arm64-v8a` and `…android-25;default;arm64-v8a`. The
+  `google_apis` arm64 images for 23–25 reportedly freeze after boot on Apple Silicon. API 23
+  covers 21–23 (libcore's `ProcessManager`, no `java.util.function`), API 25 covers 24–25
+  (OpenJDK's `UNIXProcess`, still no `Process.isAlive`). Driver gotchas there: uiautomator
+  reports an EditText's text, and the pair dropdown's, as `<text>, <hint>`
+  (`"El gat dorm.\n, Catalan"`); API 23 can't `uiautomator dump /dev/tty` via `exec-out`
+  (dump to a file and `cat` it); `pm clear` also deletes the local-testing packs under
+  `/sdcard/Android/data/`, after which pair downloads hang (uninstall and `install-apks`
+  again instead).
 
 ## Known issues
 
@@ -161,6 +185,19 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
   dan.", "L'ostal es grand."; apertium-transfer exits with 139, a segfault). The fixes ship
   with the next release (see the release log and "Pair-data workarounds in
   `NativePipeline`").
+- 1.0.12 and earlier don't work on Android 5.0–7.1 (API 21–25), although minSdk is 21. On
+  API 21–23 the app crashes at every launch (`NoClassDefFoundError` for the
+  `Map.computeIfAbsent` lambda in `PairListAdapter`: its class implements
+  `java.util.function.Function`, API 24). On API 24–25 every translation fails with
+  "error: java.lang.NoSuchMethodError: No virtual method isAlive()Z" (`NativePipeline`), and
+  once a pair is downloaded every launch crashes in `App.onCreate` (`File.toPath` in
+  `PairDownloadManager.readMarker`, API 26). Play's install export has no API 21–25 installs
+  through September 2026 and Play reports no crashes. Fixed in the next release, and lint
+  now fails the release build on such calls (see "Toolchain").
+- In 1.0.12 and earlier, text over about 64 KiB never translates: the button stays on
+  "Translating…" (and disabled) until the app is killed. Stage 0's
+  stdin was written on the translation thread before stage 1 was started, so nothing drained
+  stage 0's stdout and both pipes filled. Fixed in the next release.
 - Occitan → Catalan is the 2022 Debian nightly's data: its analyzer misses common words, so
   "L'ostal es grand." comes out as "El *ostal *es *grand.", the same as on iOS.
 
@@ -208,6 +245,30 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
   "Macedonian → hbs (SR)" saved and English → Spanish also installed, the upgraded app reopens
   on "Macedonian → Serbo-Croatian (SR)"; `--es mode 'hbs → Macedonian'` opens
   "Serbo-Croatian → Macedonian".
+- **Next release, continued** (2026-10-07): the app works on Android 5.0–7.1 (API 21–25)
+  again, and long text translates instead of hanging (both in "Known issues"). App code
+  only; pair JARs and natives unchanged.
+  - `NativePipeline` checks `SDK_INT` before `Process.isAlive`/`destroyForcibly` (`destroy()`
+    below 26) and writes stage 0's stdin on its own thread; `PairDownloadManager.readMarker`
+    reads with a `FileInputStream`; `PairListAdapter` no longer uses `computeIfAbsent` or
+    `Comparator.comparing`. The unused `App.isOnline()` is gone (its `MissingPermission` was
+    lint's only other error). `NewApi` now fails the release build (see "Toolchain").
+  - QA 2026-10-07 with the release-android.yml run 37552230291 (1.0.12) arm64 natives and
+    pair JARs, minified QA builds of `5302c06` without and with the change. Unit tests 31/31
+    (3 new run `runPipeline` with `cat`/`true`/`false` as stages; the 1 MiB one times out
+    on the old code). `:app:lintRelease` has no errors, and `bundleRelease` fails at
+    `lintVitalRelease` with the old `PairListAdapter` put back. In the dex, the old build
+    calls all six API-24/26 methods unguarded; the new one only `isAlive`/`destroyForcibly`,
+    behind `SDK_INT >= 26`.
+  - API 36 (two Medium Phone AVDs on the same image): 49 directions, 220 sentences (the iOS
+    corpus plus the hbs/oci stress sets) byte-identical before and after. A 40-line input
+    is identical in eng→spa, eng→cat and spa→eng. A 100 KB eng→spa paste: before, still
+    "Translating…" after 240 s with only stage 0 running; after, done in 7 s.
+  - `Translate_API23` and `Translate_API25`: the old build crashes at launch on 23; on 25
+    a translation gives the `isAlive` error and the next launch, with a pair downloaded,
+    crashes. The new build downloads all 27 pairs and translates on both: the 220-sentence
+    run (a cold start per sentence) is byte-identical to API 36, with no crash, and the
+    100 KB paste takes 6 s.
 - **1.0.12** (versionCode = the CI run's `yyyymmddHH`; prepared 2026-10-06): AGP 9.4.1,
   Gradle 9.6.1, target 37, first R8-optimized build, first 5% staged release. QA on the
   minified, debug-signed QA build: 18/18 unit tests, lintVital clean, smoke PASS on

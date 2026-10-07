@@ -3,6 +3,7 @@ package com.qvyshift.translate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,6 +12,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -357,5 +359,63 @@ public class NativePipelineTest {
     assertSame(plain, NativePipeline.stripDependencyTags(plain));
     byte[] empty = new byte[0];
     assertSame(empty, NativePipeline.stripDependencyTags(empty));
+  }
+
+  // runPipeline with host tools standing in for the Apertium binaries: TOOL_LIBS maps the
+  // mode-file name to a lib*.so, here a symlink to cat, true or false. Build.VERSION.SDK_INT
+  // is 0 in these tests, so the stages are cleaned up the pre-API-26 way, with destroy().
+
+  /** 1 MiB: far more than a pipe holds (64 KiB on Linux, 16–64 KiB on macOS). */
+  private static String bigInput() {
+    String line = "Bona nit, \u00e7a va? \u0414\u043e\u0431\u0430\u0440 \u0434\u0430\u043d.\n";
+    StringBuilder sb = new StringBuilder();
+    while (sb.length() < 1 << 20) sb.append(line);
+    return sb.toString();
+  }
+
+  private NativePipeline pipelineWith(String... toolAndTarget) throws IOException {
+    File libDir = tmp.newFolder("lib");
+    for (int i = 0; i < toolAndTarget.length; i += 2) {
+      Files.createSymbolicLink(new File(libDir, toolAndTarget[i]).toPath(),
+          new File(toolAndTarget[i + 1]).toPath());
+    }
+    return new NativePipeline(libDir.getAbsolutePath());
+  }
+
+  private static List<List<String>> stages(String... tools) {
+    List<List<String>> out = new ArrayList<>();
+    for (String t : tools) out.add(Arrays.asList(t));
+    return out;
+  }
+
+  @Test(timeout = 60_000)
+  public void inputLargerThanThePipeBuffersDoesNotDeadlock() throws IOException {
+    // Stage 0's stdin used to be written on the calling thread before stage 1 started, so
+    // nothing drained stage 0's stdout and the write blocked forever.
+    NativePipeline np = pipelineWith("liblt_proc.so", "/bin/cat");
+    String in = bigInput();
+    assertEquals(in, np.runPipeline(stages("lt-proc", "lt-proc", "lt-proc"), in));
+    assertEquals("x\n", np.runPipeline(stages("lt-proc", "lt-proc"), "x"));
+  }
+
+  @Test(timeout = 60_000)
+  public void stage0ThatExitsWithoutReadingItsInputFailsTheTranslation() throws IOException {
+    NativePipeline np = pipelineWith("liblt_proc.so", "/usr/bin/true");
+    try {
+      np.runPipeline(stages("lt-proc"), bigInput());
+      fail("expected the broken pipe to fail the translation");
+    } catch (IOException expected) {
+    }
+  }
+
+  @Test(timeout = 60_000)
+  public void stage0FailureIsReportedOverTheBrokenPipe() throws IOException {
+    NativePipeline np = pipelineWith("liblt_proc.so", "/usr/bin/false", "liblt_merge.so", "/bin/cat");
+    try {
+      np.runPipeline(stages("lt-proc", "lt-merge"), bigInput());
+      fail("expected stage 1 to fail");
+    } catch (IOException e) {
+      assertEquals("Apertium stage 1 (lt-proc) failed with exit code 1", e.getMessage());
+    }
   }
 }

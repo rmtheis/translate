@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +75,12 @@ public class PairListAdapter extends ArrayAdapter<PairListAdapter.Item> {
   public void setInstalledTitles(Set<String> installedTitles) {
     Map<PairCatalog.Tier, List<Item>> byTier = new EnumMap<>(PairCatalog.Tier.class);
     for (PairCatalog.Pair p : PairCatalog.ENABLED) {
-      List<Item> bucket = byTier.computeIfAbsent(p.tier, k -> new ArrayList<>());
+      // Not computeIfAbsent or Comparator.comparing (below): both are API 24, minSdk is 21.
+      List<Item> bucket = byTier.get(p.tier);
+      if (bucket == null) {
+        bucket = new ArrayList<>();
+        byTier.put(p.tier, bucket);
+      }
       addDirection(bucket, p, p.forwardMode, installedTitles);
       if (p.backwardMode != null) {
         addDirection(bucket, p, p.backwardMode, installedTitles);
@@ -87,7 +91,7 @@ public class PairListAdapter extends ArrayAdapter<PairListAdapter.Item> {
     for (PairCatalog.Tier tier : PairCatalog.Tier.values()) {
       List<Item> bucket = byTier.get(tier);
       if (bucket == null || bucket.isEmpty()) continue;
-      Collections.sort(bucket, Comparator.comparing(i -> i.text));
+      Collections.sort(bucket, (a, b) -> a.text.compareTo(b.text));
       combined.add(Item.header(getContext().getString(tier.labelRes)));
       combined.addAll(bucket);
     }

@@ -1,6 +1,7 @@
 package com.qvyshift.translate;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -70,7 +71,12 @@ public class NativePipeline {
   private final String nativeLibraryDir;
 
   public NativePipeline(Context ctx) {
-    this.nativeLibraryDir = ctx.getApplicationInfo().nativeLibraryDir;
+    this(ctx.getApplicationInfo().nativeLibraryDir);
+  }
+
+  /** For tests: runs the {@code lib*.so} files in {@code nativeLibraryDir}. */
+  NativePipeline(String nativeLibraryDir) {
+    this.nativeLibraryDir = nativeLibraryDir;
   }
 
   /** Resolve the .mode file for a mode id under the pair's base dir. */
@@ -389,11 +395,13 @@ public class NativePipeline {
     return out;
   }
 
-  private String runPipeline(List<List<String>> stages, String input) throws IOException {
+  String runPipeline(List<List<String>> stages, String input) throws IOException {
     if (stages.isEmpty()) return input;
 
     List<Process> running = new ArrayList<>(stages.size());
     List<StderrCapture> stderrs = new ArrayList<>(stages.size());
+    Thread stdinFeeder = null;
+    final IOException[] stdinError = new IOException[1];
     try {
       Process prev = null;
       for (int i = 0; i < stages.size(); i++) {
@@ -424,15 +432,23 @@ public class NativePipeline {
         final Process source = prev;
         final Process dest = p;
         if (source == null) {
-          // Feed the user's input to the first stage's stdin. The trailing newline is
+          // Feed the user's input to the first stage's stdin on its own thread: nothing reads
+          // stage 0's stdout until stage 1's pipe thread starts, so writing it here would
+          // deadlock on input larger than the pipe buffers (~64 KiB). The trailing newline is
           // load-bearing: without it lt-proc emits U+FFFF as an end-of-stream sentinel,
           // which renders as a "tofu" box in the output TextInputEditText.
-          try (OutputStream os = dest.getOutputStream()) {
-            os.write(input.getBytes(StandardCharsets.UTF_8));
-            if (input.isEmpty() || input.charAt(input.length() - 1) != '\n') {
-              os.write('\n');
+          stdinFeeder = new Thread(() -> {
+            try (OutputStream os = dest.getOutputStream()) {
+              os.write(input.getBytes(StandardCharsets.UTF_8));
+              if (input.isEmpty() || input.charAt(input.length() - 1) != '\n') {
+                os.write('\n');
+              }
+            } catch (IOException e) {
+              stdinError[0] = e;
             }
-          }
+          }, "apertium-stdin");
+          stdinFeeder.setDaemon(true);
+          stdinFeeder.start();
         } else {
           // Pipe previous stage's stdout to this stage's stdin on a background thread.
           // cg-proc's output is read whole and filtered first (see stripDependencyTags), so a
@@ -465,20 +481,33 @@ public class NativePipeline {
         output = readFully(in);
       }
       if (isCgProc(stages.get(stages.size() - 1))) output = stripDependencyTags(output);
-      for (Process p : running) {
-        try {
-          p.waitFor();
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-          throw new InterruptedIOException("interrupted while waiting for the Apertium pipeline");
-        }
+      try {
+        for (Process p : running) p.waitFor();
+        // Every stage has exited, so the write has finished or failed with a broken pipe.
+        stdinFeeder.join();
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new InterruptedIOException("interrupted while waiting for the Apertium pipeline");
       }
       checkStages(stages, running, stderrs);
+      // A stage 0 that stopped reading early has usually failed checkStages; this catches one
+      // that exited 0 anyway.
+      if (stdinError[0] != null) throw stdinError[0];
       return new String(output, StandardCharsets.UTF_8);
     } finally {
-      for (Process p : running) {
-        if (p.isAlive()) p.destroyForcibly();
-      }
+      for (Process p : running) destroyIfRunning(p);
+    }
+  }
+
+  /** Kills a stage that hasn't exited, e.g. when a later stage failed to start. */
+  private static void destroyIfRunning(Process p) {
+    // Process#isAlive and #destroyForcibly are API 26: on API 21–25 they throw NoSuchMethodError.
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      if (p.isAlive()) p.destroyForcibly();
+    } else {
+      // Before 26, destroy() only signals a process whose exit value isn't set yet (none after
+      // waitFor()), then closes its streams.
+      p.destroy();
     }
   }
 

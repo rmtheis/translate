@@ -13,11 +13,13 @@ import com.google.android.play.core.assetpacks.AssetPackState;
 import com.google.android.play.core.assetpacks.AssetPackStateUpdateListener;
 import com.google.android.play.core.assetpacks.model.AssetPackStatus;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -148,8 +150,11 @@ public class PairDownloadManager {
   private int readMarker(PairCatalog.Pair p) {
     File f = markerFile(p);
     if (!f.isFile()) return -1;
-    try {
-      String s = new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8).trim();
+    // Not Files.readAllBytes(f.toPath()): both are API 26, and this runs at every app start.
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    try (InputStream in = new FileInputStream(f)) {
+      FileUtils.copyStream(in, bytes);
+      String s = new String(bytes.toByteArray(), StandardCharsets.UTF_8).trim();
       return Integer.parseInt(s);
     } catch (IOException | NumberFormatException e) {
       return -1;

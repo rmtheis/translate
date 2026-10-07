@@ -1,10 +1,7 @@
 package com.qvyshift.translate;
 
 import android.app.*;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -65,12 +62,5 @@ public class App extends Application {
         Toast.makeText(instance, txt, Toast.LENGTH_LONG).show();
       }
     });
-  }
-
-  /* Version fra http://developer.android.com/training/basics/network-ops/managing.html */
-  public static boolean isOnline() {
-    ConnectivityManager connMgr = (ConnectivityManager) instance.getSystemService(Context.CONNECTIVITY_SERVICE);
-    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-    return (networkInfo != null && networkInfo.isConnected());
   }
 }
