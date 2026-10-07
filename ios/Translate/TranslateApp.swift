@@ -38,6 +38,7 @@ struct TranslateApp: App {
         WindowGroup {
             TranslatorView()
                 .reviewPrompt()
+                .tint(Theme.accent)
         }
     }
 }

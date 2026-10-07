@@ -292,9 +292,19 @@ pattern maps to a `Picker` or custom `List` with section headers.
 Material About/Settings dialog → `Sheet` with a `Form`. Download
 progress → modal sheet with `ProgressView`.
 
-iPad size classes work out of the box with SwiftUI. Dark mode and
-Dynamic Type are on by default. Accessibility labels mirror the
-Android `contentDescription` set.
+iPad size classes work out of the box with SwiftUI. Dynamic Type is on
+by default. Accessibility labels mirror the Android
+`contentDescription` set.
+
+Colors follow the Android translator screen (`Translate/Theme.swift`,
+since 2026-10-07): pale_brown `#FFECC0` background, nav bar included,
+and dark_red `#CC0000` as the accent. The accent covers the Translate
+button, the focused source field's outline and label, toggles and links;
+the `AccentColor` asset carries the same red for UIKit-presented alerts
+and menus. The pair picker, gear and icons stay black, as on Android.
+The app is light-only (`UIUserInterfaceStyle: Light` in `project.yml`),
+like Android's `Theme.MaterialComponents.Light` with no night resources:
+dark mode's white text would be unreadable on the pale brown.
 
 App-level structure matches Android 1:1:
 ```swift
@@ -320,8 +330,7 @@ App-level structure matches Android 1:1:
 - **End-to-end parity test**: a curated sentence set is translated via
   `ApertiumCore` on the iOS simulator AND via `adb shell` on a
   connected Android build; byte-for-byte match required.
-- **UI snapshot tests**: `TranslatorView` across light/dark,
-  iPhone/iPad.
+- **UI snapshot tests**: `TranslatorView` on iPhone/iPad (light only).
 - **ODR smoke**: fresh simulator state → pick a non-bundled pair →
   confirm download dialog → success → translate.
 
@@ -422,6 +431,40 @@ Pull these verbatim, minimal adaptation:
   as `APP_STORE_CONNECT_API_KEY_P8`, `APP_STORE_CONNECT_API_KEY_ID`,
   `APP_STORE_CONNECT_ISSUER_ID` in GitHub secrets.
 
+### App Store screenshots
+
+- `scripts/screenshots-ios.sh` (`KIND=iphone`, the default, or
+  `KIND=ipad`) writes `screenshots/appstore-iphone-69/` (iPhone 16 Pro
+  Max, 1320×2868) and `screenshots/appstore-ipad-13/` (iPad Pro 13-inch
+  (M4), 2064×2752). Run it from a worktree: it rewrites
+  `ios/PairResources/` and needs `ios/native/ApertiumCore.xcframework`.
+  Use the CI artifacts (`apertium-core-xcframework`, `ios-pairs` →
+  `scripts/stage-pair-odrs.sh`), not stale local copies. It temporarily
+  strips the ODR tags from `project.yml` and restores them on exit.
+- It erases a simulator of its own, "Translate screenshots (<device
+  type>)", created on the newest iOS runtime. Never pass it a shared
+  device: other sessions use the same simulator set.
+- Xcode 27 workarounds in the script: no Simulator.app (it captures
+  headless); `status_bar --time` takes only ISO 8601 with fractional
+  seconds; `--batteryState charged` draws a green bolt, so it uses
+  `discharging` at 100%; the Dynamic Island is missing from default and
+  `--mask=ignored` captures, so it's pasted in from a `--mask=black`
+  capture (needs ImageMagick).
+- iPadOS 26/27 simulators start in Windowed Apps mode: a resize grabber
+  in the bottom-right corner and, on 27, the app name in the status bar.
+  The mode isn't a defaults key (SpringBoard's MultitaskingModeManager
+  switches it), so the script can't change it. The iPad status-bar date
+  can show the wrong weekday: Wed Oct 7, 2026 came out as "Sat Oct 7"
+  in the app, the weekday of Oct 7, 2000.
+- CI never uploads screenshots. ASC copies the previous version's
+  screenshots into a new version, so new ones go up through the API to
+  the editable version before it's submitted. The release workflow's
+  deploy job creates the version and submits it in one run, so pre-create
+  the version with `scripts/asc_create_version.py` (the workflow reuses an
+  editable one), upload, then dispatch. There's no uploader in this repo
+  yet; `~/Documents/fireguard/store-screenshots/upload_asc_screenshots.py`
+  is the nearest template.
+
 ## Known issues
 
 - 1.0.6 and earlier crash the app (SIGSEGV in `apertium-transfer`) on
@@ -482,6 +525,11 @@ Pull these verbatim, minimal adaptation:
     running; an unsigned Release device build links.
   - `nm -u` required-reason APIs are unchanged (`_stat` only; the new
     `access()` call isn't one).
+- **Next release, continued** (committed 2026-10-07): Android's colors
+  (see "UI — SwiftUI"), light-only. App code only. Screenshots retaken
+  with the new colors (8 iPhone 6.9", 8 iPad 13"; same scenes and
+  translations, CI 1.0.6 natives + run 36962949842 pair JARs, iOS 27.0
+  simulators); not yet uploaded to ASC (see "App Store screenshots").
 - **1.0.6** (released 2026-09-29): natives from the 2026-09-29 CI build.
 
 ## First-session plan (new session picks up here)

@@ -78,6 +78,8 @@ struct TranslatorView: View {
             }
             .padding(.horizontal, 12)
             .padding(.top, 4)
+            // Android's pale_brown window + toolbar background (Theme.swift).
+            .background(Theme.background.ignoresSafeArea())
             .navigationTitle("Apertium Translation Models")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -85,6 +87,7 @@ struct TranslatorView: View {
                     Button { showAbout = true } label: {
                         Image(systemName: "gearshape")
                     }
+                    .tint(.primary)  // black, as on Android; toolbar items ignore foregroundStyle
                     .accessibilityLabel("Settings")
                 }
                 // "Done" button above the keyboard so users can dismiss
@@ -142,9 +145,11 @@ struct TranslatorView: View {
             .padding(.vertical, 14)
             .background(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(Color.secondary.opacity(0.4), lineWidth: 1)
+                    .stroke(Theme.outline, lineWidth: 1)
             )
         }
+        // Black pair title like Android's dropdown, not the accent red.
+        .tint(.primary)
     }
 
     private func pairMenuItem(_ pair: LanguagePair) -> some View {
@@ -170,14 +175,18 @@ struct TranslatorView: View {
                            label: String,
                            text: Binding<String>,
                            readOnly: Bool) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
+        // Focused source field: red label + 2pt red outline, like Android's
+        // focused OutlinedBox; otherwise the 38%-black outline.
+        let focused = isSource && inputFocused
+        return VStack(alignment: .leading, spacing: 2) {
             Text(label)
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(focused ? Theme.accent : .secondary)
                 .padding(.horizontal, 4)
             ZStack(alignment: .bottomTrailing) {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(Color.secondary.opacity(0.4), lineWidth: 1)
+                    .stroke(focused ? Theme.accent : Theme.outline,
+                            lineWidth: focused ? 2 : 1)
                 sourceAwareEditor(text: text, isSource: isSource)
                     .disabled(readOnly)
                     .scrollContentBackground(.hidden)
@@ -222,7 +231,7 @@ struct TranslatorView: View {
         Button(action: action) {
             Image(systemName: systemName)
                 .font(.system(size: 18, weight: .regular))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)  // black, as on Android
                 .frame(width: 36, height: 36)
                 .contentShape(Rectangle())
         }

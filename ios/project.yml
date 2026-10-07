@@ -179,6 +179,10 @@ targets:
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         UILaunchScreen: {}
+        # Light-only, like the Android app (Theme.MaterialComponents.Light,
+        # no night resources): the pale-brown background (Theme.swift)
+        # would put dark mode's white text on a light background.
+        UIUserInterfaceStyle: Light
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationPortraitUpsideDown
@@ -196,6 +200,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.qvyshift.translate
         SWIFT_OBJC_BRIDGING_HEADER: "Translate/Bridging-Header.h"
+        # Android's dark_red accent (AccentColor asset, see Theme.swift).
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         HEADER_SEARCH_PATHS:
           - "$(inherited)"
           - "$(SRCROOT)/native/wrappers"
