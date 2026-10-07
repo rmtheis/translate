@@ -275,6 +275,19 @@ update there.
   code 139 under `adb shell`) fails only that translation there:
   `NativePipeline.checkStages` reports the apertium-transfer stage as
   failed.
+- Every stage runs inside the app's one long-lived process, so anything a
+  CLI leaves for `exit()` to clean up adds up. apertium's
+  `TransferBase::read()` opens the compiled rules (`X.t1x.bin`, ...) and
+  never closes them. Through 1.0.6 every apertium-transfer, -interchunk
+  and -postchunk stage leaked a file descriptor, until the app aborted
+  with "Cannot open file '…/apertium_…_out_…' for writing". In a
+  simulator test process that took 137 translations (eng→spa runs three
+  such stages per translation). `build_apertium` in `native/build.sh` now
+  patches an `fclose` into `read()`, and stops the build if upstream
+  changes that function. After a natives change, check for leaks by
+  running many directions in one process and counting open descriptors
+  (`fcntl(fd, F_GETFD)`) around each `run_stage()`. Android starts a
+  fresh process per stage and isn't affected.
 
 ### HFST / OpenFST
 
@@ -594,6 +607,16 @@ Pull these verbatim, minimal adaptation:
     "enno/ennå<v:…>"), cg-proc `-g` drops reading tags, and hfst-proc
     `-e`/`-k`/`-N`/`-W`. All match the CLIs.
   - `nm -u` required-reason APIs are unchanged (`_stat` only).
+- **Next release, continued** (committed 2026-10-07): fixes a file
+  descriptor leak in apertium-transfer, -interchunk and -postchunk (see
+  "Threading, safety, and crash recovery"). It aborted the app after
+  enough translations in one session, in every iOS release so far.
+  `native/build.sh` changes, so this needs the natives rebuild too. QA
+  2026-10-07, same simulator, JARs and upstream commits as the previous
+  item: all 426 translations (49 directions) run in one process, with no
+  descriptor left open by any of the 14 tools over about 5,800 stage
+  runs. Before, that process died after 137 translations. Output is
+  byte-identical to the same code without the patch.
 - **1.0.6** (released 2026-09-29): natives from the 2026-09-29 CI build.
 
 ## First-session plan (new session picks up here)

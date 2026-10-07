@@ -298,6 +298,27 @@ build_apertium() {
   banner "apertium (autotools)"
   local src="$SCRIPT_DIR/apertium"
   [ -d "$src" ] || git clone --depth 1 https://github.com/apertium/apertium.git "$src"
+  # TransferBase::read() fopen()s the compiled rules (.t1x.bin/.t2x.bin/
+  # .t3x.bin) and never closes them. The CLIs exit right after, but the app
+  # runs apertium-transfer, -interchunk and -postchunk in-process, so each of
+  # those stages leaked a descriptor per translation until open() failed and
+  # the app exited ("Cannot open file ... for writing", ~200 stages in). Close
+  # the file at the end of read(). Idempotent; fails the build if upstream
+  # reshapes the function, so the leak can't come back unnoticed.
+  python3 - "$src/apertium/transfer_base.cc" <<'PY'
+import sys
+p = sys.argv[1]
+s = open(p).read()
+start = s.index("TransferBase::read(")
+end = s.index("\nvoid\nTransferBase::collectRules", start)
+if "fclose(in);" not in s[start:end]:
+    tail = "\n}\n"
+    if not s[start:end].endswith(tail) or 'FILE* in = fopen(datafile, "rb");' not in s[start:end]:
+        sys.exit("transfer_base.cc: TransferBase::read() changed upstream; re-check the fclose patch in build_apertium")
+    s = s[:end - len(tail)] + "\n  fclose(in);" + tail + s[end:]
+    open(p, "w").write(s)
+    print("patched:", p)
+PY
   if [ ! -f "$src/configure" ]; then
     pushd "$src" >/dev/null
     autoreconf -fi
