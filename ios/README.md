@@ -508,11 +508,22 @@ Pull these verbatim, minimal adaptation:
 - CI never uploads screenshots. ASC copies the previous version's
   screenshots into a new version, so new ones go up through the API to
   the editable version before it's submitted. The release workflow's
-  deploy job creates the version and submits it in one run, so pre-create
-  the version with `scripts/asc_create_version.py` (the workflow reuses an
-  editable one), upload, then dispatch. There's no uploader in this repo
-  yet; `~/Documents/fireguard/store-screenshots/upload_asc_screenshots.py`
-  is the nearest template.
+  deploy job creates the version and submits it in one run, so:
+  1. `ASC_VERSION_STRING=<next> python3 scripts/asc_create_version.py`.
+     `<next>` is the patch bump of `CFBundleShortVersionString` in
+     `project.yml`, which is what the workflow will build and look up.
+  2. `python3 scripts/asc_upload_screenshots.py --version <next>`
+     (`--dry-run` first). It replaces the 6.9" and 13" sets of every
+     localization that has one (today only en-US), in filename order, and
+     waits until ASC reports each file COMPLETE. It refuses a version that
+     isn't editable.
+  3. Dispatch the release. The workflow reuses the editable version.
+
+  Both scripts read `ASC_KEY_ID`, `ASC_ISSUER_ID` and `ASC_P8` (the .p8
+  contents; locally the App Manager key in
+  `~/.appstoreconnect/private_keys/`).
+- Through 1.0.6 the sets were in a scrambled order (iPhone led with
+  02_cat_srd, iPad with 06_sme_nob). From 1.0.7 they are 01–08.
 
 ## Known issues
 
@@ -578,7 +589,12 @@ Pull these verbatim, minimal adaptation:
   (see "UI — SwiftUI"), light-only. App code only. Screenshots retaken
   with the new colors (8 iPhone 6.9", 8 iPad 13"; same scenes and
   translations, CI 1.0.6 natives + run 36962949842 pair JARs, iOS 27.0
-  simulators); not yet uploaded to ASC (see "App Store screenshots").
+  simulators). 2026-10-07: version 1.0.7 created in ASC
+  (PREPARE_FOR_SUBMISSION, AFTER_APPROVAL) and all 16 uploaded with
+  `asc_upload_screenshots.py`; the served files are pixel-identical to
+  `screenshots/`. The 8 scene sentences translate byte-identically with
+  master's natives (through `0b7e0c3`, upstream as on 2026-10-06), so the
+  shots match what 1.0.7 will show.
 - **Next release, continued** (committed 2026-10-07): every mode-file
   option now reaches the wrappers and works as in the upstream CLI (see
   "Mode-file tools and flags"). That covers lt-proc `-w`/`-c`/`-N1`,
