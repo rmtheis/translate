@@ -713,6 +713,11 @@ Pull these verbatim, minimal adaptation:
     installed app, sme→nob shows "Translation error … HFST
     TransducerHasWrongTypeException" and the app keeps running. An
     unsigned Release device build links.
+  - Follow-up (same day): rtx-proc's input FILE was closed twice (the
+    wrapper's owner, then RTXProcessor's own `InputFile`, which
+    `process()` wraps it in); the wrapper now hands ownership over. 49
+    directions byte-identical; 300 nob→swe runs in one process: no
+    errors, descriptors 5 → 5.
   - `patch_close_on_throw` applied on fresh clones, did nothing on patched
     ones, and stopped the build on simulated upstream changes (an extra
     fclose on one path, the old end-of-`read()` fclose, a reshaped

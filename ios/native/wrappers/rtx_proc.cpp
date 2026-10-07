@@ -53,7 +53,9 @@ extern "C" ApertiumResult apertium_rtx_proc(const char* input,
     {
       aix::FilePtr in(openInBinFile(in_tmp.path()));
       aix::UFilePtr out(openOutTextFile(out_tmp.path()));
-      p.process(in.get(), out.get());
+      // process() wraps `in` in RTXProcessor's own InputFile, which closes
+      // it when `p` is destroyed: hand over ownership, or it's closed twice.
+      p.process(in.release(), out.get());
     }
     return aix::slurp(out_tmp.path());
   });
