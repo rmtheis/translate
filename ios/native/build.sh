@@ -294,31 +294,102 @@ PY
     -DBoost_INCLUDE_DIR="$boost_inc"
   "${BUILDER[@]}" -C "$BUILD/lttoolbox" install
 }
+# Every stage runs inside the app's one long-lived process, so a file an
+# upstream reader leaves open stays open for the rest of the session, until
+# open() fails and lttoolbox exits the app ("Cannot open file ... for
+# writing"). The CLIs exit right after, so upstream never notices. Patched:
+#   - apertium TransferBase::read() fopen()s the compiled rules (.t1x.bin/
+#     .t2x.bin/.t3x.bin) and never closes them, so every apertium-transfer,
+#     -interchunk and -postchunk stage leaked a descriptor (~200 stages and
+#     the app was gone).
+#   - apertium Transfer::readBil() (the bilingual .bin of `apertium-transfer
+#     X.t1x X.t1x.bin X.autobil.bin`) and apertium-recursive
+#     RTXProcessor::read() close theirs at the end, but not when a truncated
+#     .bin makes them throw part way.
+# Each gets a scope guard right after its fopen() check that closes the file
+# however the function ends, and loses its own trailing fclose. RTXProcessor
+# also gets `mx = nullptr`: ~RTXProcessor() deletes mx, which read() assigns
+# late, so a throw before that freed a garbage pointer and crashed the app.
+# Every edit is matched exactly, as upstream has it or as patched, and a
+# patched function may hold no other fclose. Anything else fails the build,
+# so an upstream change can't silently drop or double the close.
+# Usage: patch_close_on_throw <clone dir> apertium|apertium-recursive
+patch_close_on_throw() {
+  python3 - "$1" "$2" <<'PY'
+import sys
+root, repo = sys.argv[1], sys.argv[2]
+guard = ("  // apertium-ios (patch_close_on_throw in ios/native/build.sh): close the\n"
+         "  // file however this function ends, a throw included.\n"
+         "  struct CloseIn { FILE* f; ~CloseIn() { fclose(f); } } close_in{in};\n")
+open_rules = ('  FILE* in = fopen(datafile, "rb");\n'
+              '  if (!in) {\n'
+              '    cerr << "Error: Could not open file \'" << datafile << "\' for reading." << endl;\n'
+              '    exit(EXIT_FAILURE);\n'
+              '  }\n')
+open_bil = ('  FILE *in = fopen(fstfile.c_str(), "rb");\n'
+            '  if(!in)\n'
+            '  {\n'
+            '    cerr << "Error: Could not open file \'" << fstfile << "\'." << endl;\n'
+            '    exit(EXIT_FAILURE);\n'
+            '  }\n')
+open_rtx = ('  FILE *in = fopen(filename.c_str(), "rb");\n'
+            '  if(in == NULL)\n'
+            '  {\n'
+            '    cerr << "Unable to open file " << filename.c_str() << endl;\n'
+            '    exit(EXIT_FAILURE);\n'
+            '  }\n')
+rtx_tail = "    outRuleNames.push_back(Compression::string_read(in));\n  }\n"
+# (file, function or None for the whole file, [(as upstream, as patched), ...])
+sites = {
+    "apertium": [
+        ("apertium/transfer_base.cc", "TransferBase::read(",
+         [(open_rules, open_rules + guard)]),
+        ("apertium/transfer.cc", "Transfer::readBil(",
+         [(open_bil, open_bil + guard),
+          ("  fstp.initBiltrans();\n  fclose(in);\n}\n", "  fstp.initBiltrans();\n}\n")]),
+    ],
+    "apertium-recursive": [
+        ("src/rtx_processor.cc", "RTXProcessor::read(",
+         [(open_rtx, open_rtx + guard),
+          (rtx_tail + "\n  fclose(in);\n}\n", rtx_tail + "}\n")]),
+        ("src/rtx_processor.h", None,
+         [("  MatchExe2 *mx;\n",
+           "  MatchExe2 *mx = nullptr;  // apertium-ios: patch_close_on_throw in ios/native/build.sh\n")]),
+    ],
+}[repo]
+writes = []
+for name, func, edits in sites:
+    p = root + "/" + name
+    s = open(p).read()
+    where = name + (": " + func + ")" if func else "")
+    start, end = 0, len(s)
+    if func:
+        start = s.find("\n" + func)
+        end = s.find("\n}\n", start) + len("\n}\n")
+        if start < 0 or s.count("\n" + func) != 1 or end < start:
+            sys.exit(where + " changed upstream; re-check patch_close_on_throw in ios/native/build.sh")
+    region = s[start:end]
+    def matches(texts):
+        if any(region.count(t) != 1 for t in texts):
+            return False
+        return not func or region.count("fclose") == sum(t.count("fclose") for t in texts)
+    if matches([new for _, new in edits]):
+        continue
+    if not matches([old for old, _ in edits]):
+        sys.exit(where + " changed upstream; re-check patch_close_on_throw in ios/native/build.sh")
+    for old, new in edits:
+        region = region.replace(old, new, 1)
+    writes.append((p, s[:start] + region + s[end:]))
+for p, s in writes:
+    open(p, "w").write(s)
+    print("patched:", p)
+PY
+}
 build_apertium() {
   banner "apertium (autotools)"
   local src="$SCRIPT_DIR/apertium"
   [ -d "$src" ] || git clone --depth 1 https://github.com/apertium/apertium.git "$src"
-  # TransferBase::read() fopen()s the compiled rules (.t1x.bin/.t2x.bin/
-  # .t3x.bin) and never closes them. The CLIs exit right after, but the app
-  # runs apertium-transfer, -interchunk and -postchunk in-process, so each of
-  # those stages leaked a descriptor per translation until open() failed and
-  # the app exited ("Cannot open file ... for writing", ~200 stages in). Close
-  # the file at the end of read(). Idempotent; fails the build if upstream
-  # reshapes the function, so the leak can't come back unnoticed.
-  python3 - "$src/apertium/transfer_base.cc" <<'PY'
-import sys
-p = sys.argv[1]
-s = open(p).read()
-start = s.index("TransferBase::read(")
-end = s.index("\nvoid\nTransferBase::collectRules", start)
-if "fclose(in);" not in s[start:end]:
-    tail = "\n}\n"
-    if not s[start:end].endswith(tail) or 'FILE* in = fopen(datafile, "rb");' not in s[start:end]:
-        sys.exit("transfer_base.cc: TransferBase::read() changed upstream; re-check the fclose patch in build_apertium")
-    s = s[:end - len(tail)] + "\n  fclose(in);" + tail + s[end:]
-    open(p, "w").write(s)
-    print("patched:", p)
-PY
+  patch_close_on_throw "$src" apertium
   if [ ! -f "$src/configure" ]; then
     pushd "$src" >/dev/null
     autoreconf -fi
@@ -415,6 +486,9 @@ _repack_static() {
 }
 
 build_recursive() {
+  local src="$SCRIPT_DIR/apertium-recursive"
+  [ -d "$src" ] || git clone --depth 1 https://github.com/apertium/apertium-recursive.git "$src"
+  patch_close_on_throw "$src" apertium-recursive
   _apertium_autotools_build "apertium-recursive" \
     "https://github.com/apertium/apertium-recursive.git"
   # rtx_proc.o and rtx_comp.o / rtx_decomp.o hold binary-specific main()s;

@@ -41,17 +41,15 @@ extern "C" ApertiumResult apertium_tagger_apply(const char* input,
                                                 const char* prob_file,
                                                 const char* flags,
                                                 const char* tmp_dir) {
-  ApertiumResult result{nullptr, nullptr};
-  std::string in_path, out_path;
-  try {
+  return aix::run_wrapper([&] {
     if (!prob_file) throw std::runtime_error("prob_file is NULL");
     if (!tmp_dir)   throw std::runtime_error("tmp_dir is NULL");
 
     LtLocale::tryToSetLocale();
     aix::ensure_exists(prob_file);
 
-    in_path  = aix::spit_tmp(tmp_dir, "tag_in", input);
-    out_path = aix::make_tmp_file(tmp_dir, "tag_out");
+    aix::TmpFile in_tmp = aix::spit_tmp(tmp_dir, "tag_in", input);
+    aix::TmpFile out_tmp(tmp_dir, "tag_out");
 
     // argv: [apertium-tagger, -g, <user flags>..., prob, input, output]
     // -g selects "apply tagger" mode; the class constructor dispatches
@@ -73,8 +71,8 @@ extern "C" ApertiumResult apertium_tagger_apply(const char* input,
       }
     }
     argv.push(prob_file);
-    argv.push(in_path);
-    argv.push(out_path);
+    argv.push(in_tmp.path());
+    argv.push(out_tmp.path());
     argv.terminate();
 
     int argc = argv.argc();
@@ -83,22 +81,6 @@ extern "C" ApertiumResult apertium_tagger_apply(const char* input,
       // Constructor does all the work; ~apertium_tagger() is trivial.
       Apertium::apertium_tagger(argc, argv_ptr);
     }
-
-    std::string out = aix::slurp(out_path);
-    aix::rm_quiet(in_path);
-    aix::rm_quiet(out_path);
-    result.output = aix::dup_cstr(out);
-    if (!result.output) throw std::runtime_error("dup_cstr failed");
-    return result;
-  } catch (const std::exception& e) {
-    aix::rm_quiet(in_path);
-    aix::rm_quiet(out_path);
-    result.error = aix::dup_cstr(e.what());
-    return result;
-  } catch (...) {
-    aix::rm_quiet(in_path);
-    aix::rm_quiet(out_path);
-    result.error = aix::dup_cstr("apertium-tagger threw a non-std::exception");
-    return result;
-  }
+    return aix::slurp(out_tmp.path());
+  });
 }

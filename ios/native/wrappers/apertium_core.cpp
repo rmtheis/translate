@@ -510,6 +510,11 @@ ApertiumResult run_stage(const std::vector<std::string>& stage,
   } catch (const std::exception& e) {
     ApertiumResult r{nullptr, aix::dup_cstr(e.what())};
     return r;
+  } catch (...) {
+    // The wrappers catch everything themselves (aix::run_wrapper); this is
+    // for the dispatch around them.
+    ApertiumResult r{nullptr, aix::dup_cstr("unknown exception (not a std::exception)")};
+    return r;
   }
 }
 
@@ -667,6 +672,11 @@ extern "C" ApertiumResult apertium_translate(const char* mode_file_path,
     return result;
   } catch (const std::exception& e) {
     result.error = aix::dup_cstr(e.what());
+    return result;
+  } catch (...) {
+    // Nothing may cross the extern "C" boundary into Swift: an exception
+    // escaping here terminates the app.
+    result.error = aix::dup_cstr("unknown exception (not a std::exception)");
     return result;
   }
 }

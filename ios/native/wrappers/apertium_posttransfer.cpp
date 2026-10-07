@@ -34,9 +34,7 @@ void posttransfer_stream(InputFile& in, UFILE* out, bool null_flush) {
 extern "C" ApertiumResult apertium_posttransfer(const char* input,
                                                 const char* flags,
                                                 const char* tmp_dir) {
-  ApertiumResult result{nullptr, nullptr};
-  std::string in_path, out_path;
-  try {
+  return aix::run_wrapper([&] {
     if (!tmp_dir) throw std::runtime_error("tmp_dir is NULL");
     LtLocale::tryToSetLocale();
 
@@ -49,25 +47,15 @@ extern "C" ApertiumResult apertium_posttransfer(const char* input,
       }
     }
 
-    in_path  = aix::spit_tmp(tmp_dir, "post_in", input);
-    out_path = aix::make_tmp_file(tmp_dir, "post_out");
+    aix::TmpFile in_tmp = aix::spit_tmp(tmp_dir, "post_in", input);
+    aix::TmpFile out_tmp(tmp_dir, "post_out");
 
     InputFile in_file;
-    in_file.open_or_exit(in_path.c_str());
-    UFILE* out_ufile = openOutTextFile(out_path);
-    posttransfer_stream(in_file, out_ufile, null_flush);
-    u_fclose(out_ufile);
-
-    std::string out = aix::slurp(out_path);
-    aix::rm_quiet(in_path);
-    aix::rm_quiet(out_path);
-    result.output = aix::dup_cstr(out);
-    if (!result.output) throw std::runtime_error("dup_cstr failed");
-    return result;
-  } catch (const std::exception& e) {
-    aix::rm_quiet(in_path);
-    aix::rm_quiet(out_path);
-    result.error = aix::dup_cstr(e.what());
-    return result;
-  }
+    in_file.open_or_exit(in_tmp.c_str());
+    {
+      aix::UFilePtr out(openOutTextFile(out_tmp.path()));
+      posttransfer_stream(in_file, out.get(), null_flush);
+    }
+    return aix::slurp(out_tmp.path());
+  });
 }

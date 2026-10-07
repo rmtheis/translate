@@ -7,16 +7,22 @@
 #ifndef APERTIUM_IOS_WRAPPER_COMMON_H
 #define APERTIUM_IOS_WRAPPER_COMMON_H
 
+#include "apertium_core.h"
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <utility>
 #include <vector>
+
+#include <unicode/ustdio.h>
 
 namespace aix {
 
@@ -44,19 +50,6 @@ inline std::string make_tmp_file(const std::string& tmp_dir, const char* tag) {
   return std::string(buf.data());
 }
 
-// Write `input` (with a trailing newline if missing — Apertium's tools
-// use newline as an end-of-stream sentinel downstream) to a fresh tmp
-// file and return its path.
-inline std::string spit_tmp(const std::string& tmp_dir,
-                            const char* tag,
-                            const char* input) {
-  std::string path = make_tmp_file(tmp_dir, tag);
-  std::string buf(input ? input : "");
-  if (buf.empty() || buf.back() != '\n') buf.push_back('\n');
-  spit(path, buf);
-  return path;
-}
-
 inline char* dup_cstr(const std::string& s) {
   char* p = static_cast<char*>(std::malloc(s.size() + 1));
   if (!p) return nullptr;
@@ -74,6 +67,80 @@ inline void ensure_exists(const std::string& path) {
 
 inline void rm_quiet(const std::string& path) {
   if (!path.empty()) std::remove(path.c_str());
+}
+
+// --- Stage resources ---------------------------------------------------------
+// Every stage runs in the app's one long-lived process, and upstream code
+// throws with files still open (lttoolbox's "Malformed input stream", a
+// truncated .bin, HFST's header checks). Whatever a failed stage leaves open
+// stays open for the rest of the session, until open() fails and lttoolbox
+// exits the app ("Cannot open file ... for writing"). So a wrapper holds every
+// file it opens in one of these owners, or in lttoolbox's InputFile, which
+// closes itself, and lets the stack release them on success and failure
+// alike. Declare the tmp files before the streams on them, so the streams
+// close first.
+
+struct FileCloser {
+  void operator()(FILE* f) const {
+    if (f != stdin) std::fclose(f);  // openInBinFile("-") returns stdin
+  }
+};
+using FilePtr = std::unique_ptr<FILE, FileCloser>;
+
+struct UFileCloser {
+  void operator()(UFILE* f) const { u_fclose(f); }
+};
+using UFilePtr = std::unique_ptr<UFILE, UFileCloser>;
+
+// A tmp file under tmp_dir, deleted when it goes out of scope.
+class TmpFile {
+ public:
+  TmpFile(const std::string& tmp_dir, const char* tag)
+      : path_(make_tmp_file(tmp_dir, tag)) {}
+  TmpFile(TmpFile&& other) noexcept : path_(std::move(other.path_)) {
+    other.path_.clear();
+  }
+  TmpFile(const TmpFile&) = delete;
+  TmpFile& operator=(const TmpFile&) = delete;
+  TmpFile& operator=(TmpFile&&) = delete;
+  ~TmpFile() { rm_quiet(path_); }
+
+  const std::string& path() const { return path_; }
+  const char* c_str() const { return path_.c_str(); }
+
+ private:
+  std::string path_;
+};
+
+// Write `input` (with a trailing newline if missing — Apertium's tools
+// use newline as an end-of-stream sentinel downstream) to a fresh tmp
+// file.
+inline TmpFile spit_tmp(const std::string& tmp_dir,
+                        const char* tag,
+                        const char* input) {
+  TmpFile file(tmp_dir, tag);
+  std::string buf(input ? input : "");
+  if (buf.empty() || buf.back() != '\n') buf.push_back('\n');
+  spit(file.path(), buf);
+  return file;
+}
+
+// Run a wrapper's body, which returns the stage's output, and package the
+// outcome. Every exception becomes the error string: one that isn't a
+// std::exception (HFST's HfstException isn't) would otherwise cross the
+// extern "C" boundary and terminate the app.
+template <typename Body>
+ApertiumResult run_wrapper(Body&& body) {
+  ApertiumResult result{nullptr, nullptr};
+  try {
+    result.output = dup_cstr(body());
+    if (!result.output) result.error = dup_cstr("dup_cstr failed");
+  } catch (const std::exception& e) {
+    result.error = dup_cstr(e.what());
+  } catch (...) {
+    result.error = dup_cstr("unknown exception (not a std::exception)");
+  }
+  return result;
 }
 
 }  // namespace aix

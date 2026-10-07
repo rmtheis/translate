@@ -19,11 +19,10 @@ extern "C" ApertiumResult apertium_lt_proc(const char* input,
                                            int max_weight_classes,
                                            int compound_max_elements,
                                            const char* tmp_dir) {
-  ApertiumResult result{nullptr, nullptr};
-  std::string in_path, out_path;
-  try {
+  return aix::run_wrapper([&] {
     if (!bin_path) throw std::runtime_error("bin_path is NULL");
     if (!tmp_dir)  throw std::runtime_error("tmp_dir is NULL");
+    aix::ensure_exists(bin_path);  // openInBinFile exits the app on a missing file
 
     LtLocale::tryToSetLocale();
 
@@ -95,9 +94,10 @@ extern "C" ApertiumResult apertium_lt_proc(const char* input,
     if (max_weight_classes > 0)    fstp.setMaxWeightClassesValue(max_weight_classes);  // -L
     if (compound_max_elements > 0) fstp.setCompoundMaxElements(compound_max_elements); // -M
 
-    FILE* bin_fp = openInBinFile(bin_path);
-    fstp.load(bin_fp);
-    std::fclose(bin_fp);
+    {
+      aix::FilePtr bin(openInBinFile(bin_path));
+      fstp.load(bin.get());
+    }
 
     switch (cmd) {
       case 'g': fstp.initGeneration(); break;
@@ -108,34 +108,23 @@ extern "C" ApertiumResult apertium_lt_proc(const char* input,
     }
     if (!fstp.valid()) throw std::runtime_error("FSTProcessor invalid after init");
 
-    in_path  = aix::spit_tmp(tmp_dir, "lt_in", input);
-    out_path = aix::make_tmp_file(tmp_dir, "lt_out");
+    aix::TmpFile in_tmp = aix::spit_tmp(tmp_dir, "lt_in", input);
+    aix::TmpFile out_tmp(tmp_dir, "lt_out");
     InputFile in_file;
-    in_file.open_or_exit(in_path.c_str());
-    UFILE* out_ufile = openOutTextFile(out_path);
-
-    switch (cmd) {
-      case 'g': fstp.generation(in_file, out_ufile, bilmode); break;
-      case 'p': fstp.postgeneration(in_file, out_ufile); break;
-      case 's': fstp.SAO(in_file, out_ufile); break;
-      case 't': fstp.transliteration(in_file, out_ufile); break;
-      case 'b': fstp.bilingual(in_file, out_ufile, bilmode); break;
-      case 'e': case 'a': default: fstp.analysis(in_file, out_ufile); break;
+    in_file.open_or_exit(in_tmp.c_str());
+    {
+      aix::UFilePtr out(openOutTextFile(out_tmp.path()));
+      switch (cmd) {
+        case 'g': fstp.generation(in_file, out.get(), bilmode); break;
+        case 'p': fstp.postgeneration(in_file, out.get()); break;
+        case 's': fstp.SAO(in_file, out.get()); break;
+        case 't': fstp.transliteration(in_file, out.get()); break;
+        case 'b': fstp.bilingual(in_file, out.get(), bilmode); break;
+        case 'e': case 'a': default: fstp.analysis(in_file, out.get()); break;
+      }
     }
-    u_fclose(out_ufile);
-
-    std::string out = aix::slurp(out_path);
-    aix::rm_quiet(in_path);
-    aix::rm_quiet(out_path);
-    result.output = aix::dup_cstr(out);
-    if (!result.output) throw std::runtime_error("dup_cstr failed");
-    return result;
-  } catch (const std::exception& e) {
-    aix::rm_quiet(in_path);
-    aix::rm_quiet(out_path);
-    result.error = aix::dup_cstr(e.what());
-    return result;
-  }
+    return aix::slurp(out_tmp.path());
+  });
 }
 
 extern "C" void apertium_result_free(ApertiumResult r) {

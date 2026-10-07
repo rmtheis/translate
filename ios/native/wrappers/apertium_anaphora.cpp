@@ -98,9 +98,7 @@ extern "C" ApertiumResult apertium_anaphora(const char* input,
                                             const char* arx_file_path,
                                             const char* flags,
                                             const char* tmp_dir) {
-  ApertiumResult result{nullptr, nullptr};
-  std::string in_path, out_path;
-  try {
+  return aix::run_wrapper([&] {
     if (!arx_file_path) throw std::runtime_error("arx_file is NULL");
     if (!tmp_dir)       throw std::runtime_error("tmp_dir is NULL");
 
@@ -125,26 +123,16 @@ extern "C" ApertiumResult apertium_anaphora(const char* input,
                                + arx_file_path);
     }
 
-    in_path  = aix::spit_tmp(tmp_dir, "anaphora_in", input);
-    out_path = aix::make_tmp_file(tmp_dir, "anaphora_out");
+    aix::TmpFile in_tmp = aix::spit_tmp(tmp_dir, "anaphora_in", input);
+    aix::TmpFile out_tmp(tmp_dir, "anaphora_out");
 
     InputFile in_file;
-    in_file.open_or_exit(in_path.c_str());
-    UFILE* out_ufile = u_fopen(out_path.c_str(), "w", nullptr, nullptr);
-    if (!out_ufile) throw std::runtime_error("u_fopen failed for " + out_path);
-    run_anaphora(in_file, out_ufile, arx, null_flush, debug_flag);
-    u_fclose(out_ufile);
-
-    std::string out = aix::slurp(out_path);
-    aix::rm_quiet(in_path);
-    aix::rm_quiet(out_path);
-    result.output = aix::dup_cstr(out);
-    if (!result.output) throw std::runtime_error("dup_cstr failed");
-    return result;
-  } catch (const std::exception& e) {
-    aix::rm_quiet(in_path);
-    aix::rm_quiet(out_path);
-    result.error = aix::dup_cstr(e.what());
-    return result;
-  }
+    in_file.open_or_exit(in_tmp.c_str());
+    {
+      aix::UFilePtr out(u_fopen(out_tmp.c_str(), "w", nullptr, nullptr));
+      if (!out) throw std::runtime_error("u_fopen failed for " + out_tmp.path());
+      run_anaphora(in_file, out.get(), arx, null_flush, debug_flag);
+    }
+    return aix::slurp(out_tmp.path());
+  });
 }

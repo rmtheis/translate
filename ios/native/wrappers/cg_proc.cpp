@@ -25,9 +25,7 @@ extern "C" ApertiumResult apertium_cg_proc(const char* input,
                                            const char* grammar_file,
                                            const char* flags,
                                            const char* tmp_dir) {
-  ApertiumResult result{nullptr, nullptr};
-  std::string in_path, out_path;
-  try {
+  return aix::run_wrapper([&] {
     if (!grammar_file) throw std::runtime_error("grammar_file is NULL");
     if (!tmp_dir)      throw std::runtime_error("tmp_dir is NULL");
     aix::ensure_exists(grammar_file);
@@ -122,24 +120,13 @@ extern "C" ApertiumResult apertium_cg_proc(const char* input,
     (void)null_flush;  // ApertiumApplicator doesn't expose a null-flush
                        // setter in this revision of cg3; drop silently.
 
-    in_path  = aix::spit_tmp(tmp_dir, "cg_in", input);
-    out_path = aix::make_tmp_file(tmp_dir, "cg_out");
+    aix::TmpFile in_tmp = aix::spit_tmp(tmp_dir, "cg_in", input);
+    aix::TmpFile out_tmp(tmp_dir, "cg_out");
     {
-      std::ifstream is(in_path, std::ios::binary);
-      std::ofstream os(out_path, std::ios::binary);
+      std::ifstream is(in_tmp.path(), std::ios::binary);
+      std::ofstream os(out_tmp.path(), std::ios::binary);
       app.runGrammarOnText(is, os);
     }
-
-    std::string out = aix::slurp(out_path);
-    aix::rm_quiet(in_path);
-    aix::rm_quiet(out_path);
-    result.output = aix::dup_cstr(out);
-    if (!result.output) throw std::runtime_error("dup_cstr failed");
-    return result;
-  } catch (const std::exception& e) {
-    aix::rm_quiet(in_path);
-    aix::rm_quiet(out_path);
-    result.error = aix::dup_cstr(e.what());
-    return result;
-  }
+    return aix::slurp(out_tmp.path());
+  });
 }

@@ -60,9 +60,10 @@ argv parsing and `cin`/`cout` with parameters and `istringstream`/
   `exit(EXIT_FAILURE)` on malformed input — on iOS that kills the
   whole app. Patch at build time (`sed` pass across the upstream
   sources) to replace `exit(EXIT_FAILURE)` with
-  `throw std::runtime_error(...)`. Wrap every stage in
-  `try { ... } catch (const std::exception&)` at the C API boundary
-  and surface as an error string.
+  `throw std::runtime_error(...)`. Catch every exception at the C API
+  boundary and surface it as an error string. (The sed pass was never
+  done; the catch is `aix::run_wrapper`. See "Threading, safety, and
+  crash recovery".)
 - **`cerr`/`cout` must be captured.** Swap `std::cerr`/`std::cout`
   `rdbuf` for an `ostringstream` for the duration of each call;
   restore on exit. Errors go back to Swift alongside the error code.
@@ -240,7 +241,11 @@ update there.
 - Upstream `exit()` calls are not patched to throw (the plan under "The
   core iOS blocker" was never carried out), so an lttoolbox exit such as
   "Unexpected trailing backslash" still ends the app. Input escaping keeps
-  user text away from the known ones.
+  user text away from the known ones. Fed malformed streams directly,
+  which no stage of an offered direction produces, apertium-pretransfer
+  exits on an unterminated `^…` LU, cg-proc exits on an unescaped `$`, and
+  apertium-interchunk and -postchunk loop forever, allocating memory, on
+  an unterminated `[` superblank (found 2026-10-07).
 - Reference output: the native build tree also has every upstream CLI
   built for the simulator (`out/ios-arm64-sim/bin/lt-proc`,
   `apertium/apertium/apertium-transfer`,
@@ -260,10 +265,24 @@ update there.
 - Translation calls are serialized on a dedicated serial
   `DispatchQueue` in `ApertiumCore.swift`. Apertium globals make
   concurrent calls unsafe.
-- C++ exceptions caught at the stage boundary; converted to an error
-  string returned via `ApertiumResult`.
-- `.bin` files have magic-byte headers — wrapper validates before
-  invoking the stage to catch obviously-corrupt pair data early.
+- Every wrapper runs its stage inside `aix::run_wrapper`
+  (`native/wrappers/wrapper_common.h`), which turns any exception into
+  the `ApertiumResult` error string, `std::exception` or not, and
+  `run_stage()` and `apertium_translate()` end in `catch (...)`. Nothing
+  may cross the extern "C" API into Swift: an exception there terminates
+  the app. HFST's `HfstException` doesn't derive from `std::exception`,
+  and through 1.0.6 a corrupt `.hfst` (sme→nob) threw
+  `TransducerHasWrongTypeException` past every catch and ended the app.
+  `hfst_proc.cpp` now names it in the error ("HFST
+  TransducerHasWrongTypeException (transducer.h:148)"), and its header
+  check refuses a transducer that isn't in optimized-lookup format
+  (HFST_OL, HFST_OLW), as `hfst-proc.cc` does.
+- Wrappers check only that their data files exist (`ensure_exists()`;
+  lttoolbox's `openInBinFile` exits the app on a missing file, and
+  lt-proc, lrx-proc and lsx-proc skipped the check through 1.0.6). Most
+  truncated or corrupt files make the upstream reader throw ("Failed to
+  read uint64_t") and fail just that translation. Some don't; see the
+  next item.
 - **A corrupt pair can still crash the app** via segfault inside
   Apertium's C++. We do NOT try to catch `SIGSEGV` in-process on iOS
   (it fights CrashReporter and Apple discourages it). Mitigation for
@@ -277,19 +296,40 @@ update there.
   failed. That is how hbs→mkd and oci→cat failed on Android through
   1.0.12; `NativePipeline` now has the same two workarounds
   (`android/README.md`, "Pair-data workarounds in `NativePipeline`").
-- Every stage runs inside the app's one long-lived process, so anything a
-  CLI leaves for `exit()` to clean up adds up. apertium's
-  `TransferBase::read()` opens the compiled rules (`X.t1x.bin`, ...) and
-  never closes them. Through 1.0.6 every apertium-transfer, -interchunk
-  and -postchunk stage leaked a file descriptor, until the app aborted
-  with "Cannot open file '…/apertium_…_out_…' for writing". In a
-  simulator test process that took 137 translations (eng→spa runs three
-  such stages per translation). `build_apertium` in `native/build.sh` now
-  patches an `fclose` into `read()`, and stops the build if upstream
-  changes that function. After a natives change, check for leaks by
-  running many directions in one process and counting open descriptors
-  (`fcntl(fd, F_GETFD)`) around each `run_stage()`. Android starts a
-  fresh process per stage and isn't affected.
+  Forced on purpose (2026-10-07): an `X.autolex.bin` cut to 6 bytes
+  (lrx-proc) and an `X.prob` cut to 10 bytes (apertium-tagger) segfault
+  in the upstream readers.
+- Every stage runs inside the app's one long-lived process, so a file a
+  stage leaves open stays open for the rest of the session. Once open()
+  fails, lttoolbox's `openOutTextFile` exits the app with "Cannot open
+  file '…/apertium_…_out_…' for writing" (a simulator process tops out at
+  256 descriptors). Two sources, both fixed for the next release:
+  - Upstream readers. apertium's `TransferBase::read()` opens the
+    compiled rules (`X.t1x.bin`, ...) and never closes them: through 1.0.6
+    every apertium-transfer, -interchunk and -postchunk stage leaked a
+    descriptor, and a simulator test process died after 137 translations
+    (eng→spa runs three such stages per translation).
+    `Transfer::readBil()` and apertium-recursive's `RTXProcessor::read()`
+    close theirs only if nothing throws. `patch_close_on_throw` in
+    `native/build.sh` gives all three a scope guard that closes the file
+    however the function ends. It also initializes `RTXProcessor::mx`,
+    which `~RTXProcessor()` deleted uninitialized when `read()` threw, so
+    a truncated `.rtx.bin` crashed the app. It matches each edit exactly,
+    as upstream has it or as patched, and stops the build when upstream
+    changes one of these functions (the clones are unpinned).
+  - Failed stages. Through 1.0.6 a wrapper closed its files and deleted
+    its tmp files only on success. A stage that threw (malformed stream,
+    truncated `.bin`) left a `FILE*` or `UFILE*` open, so about 250 failed
+    translations in one session brought the exit back. The wrappers now
+    hold their files in `aix::FilePtr`, `aix::UFilePtr` or lttoolbox's
+    `InputFile`, and their tmp files in `aix::TmpFile`, which release them
+    on success and failure alike. A new wrapper should do the same.
+
+  After a natives change, check for leaks: run many directions in one
+  process and count open descriptors (`fcntl(fd, F_GETFD)`) around each
+  `apertium_translate()` call, and force the failure paths (the
+  2026-10-07 release-log entry lists the set). Android starts a fresh
+  process per stage and isn't affected.
 
 ### HFST / OpenFST
 
@@ -635,6 +675,49 @@ Pull these verbatim, minimal adaptation:
   descriptor left open by any of the 14 tools over about 5,800 stage
   runs. Before, that process died after 137 translations. Output is
   byte-identical to the same code without the patch.
+- **Next release, continued** (committed 2026-10-07): failure paths,
+  from a review of 8beea8d..0b7e0c3 (see "Threading, safety, and crash
+  recovery"). A stage that threw left its files open, so about 250 failed
+  translations brought back the "Cannot open file … for writing" exit; a
+  corrupt `.hfst` ended the app through an uncaught `HfstException`; the
+  build.sh fclose patch counted any `fclose(in);` in `read()` as already
+  applied. Under `ios/native/` (wrappers and `build.sh`), so this needs the
+  natives rebuild too. QA 2026-10-07 on an iPhone 17 / iOS 27.0
+  simulator, with the pair JARs from release-ios.yml run 36962949842 and a
+  clean `build.sh` run of both slices plus `xcframework` at upstream HEAD
+  (lttoolbox ed9b682, apertium c0a91d8, apertium-recursive f48e2f3, cg3
+  7b7ff6d, hfst d1128ce; hfst is newer than in the entries above):
+  - 49 directions, 426 translations through `apertium_translate()` in one
+    process: byte-identical to the same build with master's wrappers and
+    fclose patch. Three passes (1,278 translations) leave 4 open
+    descriptors, as at the start, and no tmp files.
+  - 22 forced failures, 300 runs each in one process: truncated `.bin`s
+    for lt-proc, apertium-transfer (rules and bilingual), -interchunk,
+    -postchunk, lrx-proc, lsx-proc and rtx-proc; a truncated `.rlx.bin`;
+    missing `.bin`s; a broken `.arx`; four corrupt copies of sme-nob's
+    `.hfst` (payload, truncated, wrong type, bad header); eng→spa with its
+    `t1x.bin` truncated (fails at stage 7); malformed streams into lt-proc
+    and hfst-proc. 20 return an error string every time, with descriptors
+    at 4 → 4 and no tmp files left. With master's code, descriptors
+    climbed to the 256 limit in 7 cases and 3 ended in "Cannot open file …
+    for writing", the missing `.bin`s exited, three corrupt `.hfst`s
+    terminated on the uncaught exception, and the truncated `.rtx.bin`
+    crashed in `~RTXProcessor()`.
+  - The other 2 crash as on master: an `X.autolex.bin` cut to 6 bytes and
+    an `X.prob` cut to 10 bytes segfault in the upstream readers.
+  - Changed on purpose: an `.hfst` whose header names a type other than
+    HFST_OL/HFST_OLW now fails (hfst-proc refuses it too); master read it
+    anyway. The shipped sme-nob transducers are HFST_OLW.
+  - The real app (ODR tags stripped) translates sme→nob, eng→spa and
+    nob→nno. With a corrupt `sme-nob.automorf.hfst` planted in the
+    installed app, sme→nob shows "Translation error … HFST
+    TransducerHasWrongTypeException" and the app keeps running. An
+    unsigned Release device build links.
+  - `patch_close_on_throw` applied on fresh clones, did nothing on patched
+    ones, and stopped the build on simulated upstream changes (an extra
+    fclose on one path, the old end-of-`read()` fclose, a reshaped
+    `readBil()`, `mx` initialized upstream).
+  - `nm -u` required-reason APIs are unchanged (`_stat` only).
 - **1.0.6** (released 2026-09-29): natives from the 2026-09-29 CI build.
 
 ## First-session plan (new session picks up here)

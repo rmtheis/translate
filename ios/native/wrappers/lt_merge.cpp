@@ -18,9 +18,7 @@
 extern "C" ApertiumResult apertium_lt_merge(const char* input,
                                             const char* flags,
                                             const char* tmp_dir) {
-  ApertiumResult result{nullptr, nullptr};
-  std::string in_path, out_path;
-  try {
+  return aix::run_wrapper([&] {
     if (!tmp_dir) throw std::runtime_error("tmp_dir is NULL");
 
     LtLocale::tryToSetLocale();
@@ -35,8 +33,8 @@ extern "C" ApertiumResult apertium_lt_merge(const char* input,
       }
     }
 
-    in_path  = aix::spit_tmp(tmp_dir, "ltm_in", input);
-    out_path = aix::make_tmp_file(tmp_dir, "ltm_out");
+    aix::TmpFile in_tmp = aix::spit_tmp(tmp_dir, "ltm_in", input);
+    aix::TmpFile out_tmp(tmp_dir, "ltm_out");
 
     // Same setup as lt_merge.cc's main(): no dictionary is loaded;
     // quoteMerge/quoteUnmerge only use FSTProcessor's stream reader.
@@ -45,22 +43,12 @@ extern "C" ApertiumResult apertium_lt_merge(const char* input,
     fstp.initBiltrans();
 
     InputFile in_file;
-    in_file.open_or_exit(in_path.c_str());
-    UFILE* out_ufile = openOutTextFile(out_path);
-    if (unmerge) fstp.quoteUnmerge(in_file, out_ufile);
-    else         fstp.quoteMerge(in_file, out_ufile);
-    u_fclose(out_ufile);
-
-    std::string out = aix::slurp(out_path);
-    aix::rm_quiet(in_path);
-    aix::rm_quiet(out_path);
-    result.output = aix::dup_cstr(out);
-    if (!result.output) throw std::runtime_error("dup_cstr failed");
-    return result;
-  } catch (const std::exception& e) {
-    aix::rm_quiet(in_path);
-    aix::rm_quiet(out_path);
-    result.error = aix::dup_cstr(e.what());
-    return result;
-  }
+    in_file.open_or_exit(in_tmp.c_str());
+    {
+      aix::UFilePtr out(openOutTextFile(out_tmp.path()));
+      if (unmerge) fstp.quoteUnmerge(in_file, out.get());
+      else         fstp.quoteMerge(in_file, out.get());
+    }
+    return aix::slurp(out_tmp.path());
+  });
 }
