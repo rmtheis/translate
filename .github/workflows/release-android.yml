@@ -189,6 +189,12 @@ jobs:
           ./scripts/install-natives-android.sh arm64-v8a natives/arm64-v8a
           ./scripts/install-natives-android.sh armeabi-v7a natives/armeabi-v7a
 
+      - name: Check every offered pair direction has its native tools
+        # Fails if a forward/backward mode in PairCatalog runs a tool that has no
+        # NativePipeline.TOOL_LIBS mapping or isn't in jniLibs (sme-nob shipped
+        # without hfst-proc, and nob-nno without lt-merge, through 1.0.12).
+        run: python3 scripts/check-pair-tools.py pair-jars android/app/src/main/jniLibs
+
       - name: Stage pair JARs into per-pair asset-pack modules
         # The repo's pair_<code>/src/main/assets/ dirs are populated in the working
         # tree, but CI always overwrites them with the freshly-prepped JARs from the

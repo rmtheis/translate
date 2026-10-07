@@ -42,6 +42,7 @@ public class NativePipeline {
   private static final Map<String, String> TOOL_LIBS = new HashMap<>();
   static {
     TOOL_LIBS.put("lt-proc",                  "liblt_proc.so");
+    TOOL_LIBS.put("lt-merge",                 "liblt_merge.so");
     TOOL_LIBS.put("lt-comp",                  "liblt_comp.so");
     TOOL_LIBS.put("lt-expand",                "liblt_expand.so");
     TOOL_LIBS.put("lt-paradigm",              "liblt_paradigm.so");

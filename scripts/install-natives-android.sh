@@ -54,13 +54,19 @@ done
 cp "$NDK/toolchains/llvm/prebuilt/$(uname | tr 'A-Z' 'a-z')-x86_64/sysroot/usr/lib/$NDK_ABI_DIR/libc++_shared.so" "$DST/libc++_shared.so"
 "$STRIP" -s "$DST/libc++_shared.so"
 
+# Every tool a shipped pair's .mode file can invoke, and NativePipeline.TOOL_LIBS
+# must map each one. lt-merge: nob-nno. hfst-proc: sme-nob.
+# scripts/check-pair-tools.py fails the CI build if a pair needs one that isn't here.
 TOOLS=(
-  lt-proc apertium-tagger apertium-pretransfer apertium-posttransfer
+  lt-proc lt-merge apertium-tagger apertium-pretransfer apertium-posttransfer
   apertium-transfer apertium-interchunk apertium-postchunk apertium-anaphora
-  lrx-proc lsx-proc rtx-proc cg-proc
+  lrx-proc lsx-proc rtx-proc cg-proc hfst-proc
 )
 for tool in "${TOOLS[@]}"; do
   src="$SRC/bin/$tool"
+  # HFST installs hfst-proc as a symlink to hfst-apertium-proc (the artifact zip
+  # dereferences it into a copy). Ship the real binary under the mode-file name.
+  [ "$tool" = hfst-proc ] && src="$SRC/bin/hfst-apertium-proc"
   dst="$DST/lib${tool//-/_}.so"
   [ -x "$src" ] || { echo "missing $src"; exit 1; }
   cp "$src" "$dst"

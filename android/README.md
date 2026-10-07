@@ -14,8 +14,8 @@ monthly cron and on manual dispatch. Don't upload by hand.
 - **natives** (cross-compile, cached by the `android/native/` tree SHA) → **pairs**
   (`scripts/list-enabled-pairs.sh` → `android/native/prep-pair.sh` per pair →
   `scripts/pair-inventory.py`) → **build** (`install-natives-android.sh`,
-  `stage-pair-packs.sh`, version bump, `./gradlew :app:testDebugUnitTest`, then
-  `./gradlew :app:bundleRelease`) → **deploy**.
+  `check-pair-tools.py`, `stage-pair-packs.sh`, version bump,
+  `./gradlew :app:testDebugUnitTest`, then `./gradlew :app:bundleRelease`) → **deploy**.
 - The deploy job publishes only when a pair changed since `.ci/prior-pair-inventory-android.json`,
   unless the run was dispatched with `force_publish=true`. `stock_notes=true` swaps the
   pair-diff notes for the stock "Behind-the-scenes changes…" line.
@@ -75,6 +75,19 @@ monthly cron and on manual dispatch. Don't upload by hand.
   installs, so AGP now re-strips the already-stripped libs (only `.shstrtab` and the
   section headers move) and stores `.sym` files under `BUNDLE-METADATA/` in the AAB.
   Users don't download them.
+- **Which tools ship**: the `TOOLS` list in `scripts/install-natives-android.sh`.
+  Each tool a pair's `.mode` file runs also needs a `TOOL_LIBS` entry in
+  `NativePipeline.java` (mode-file name → `lib*.so`). `scripts/check-pair-tools.py`
+  fails the CI build when a direction `PairCatalog` offers runs a tool missing from
+  either. In the 1.0.12 pair set, `hfst-proc` (sme-nob) and `lt-merge` (nob-nno) are
+  each used by one direction; `hfst-proc` ships as the real `hfst-apertium-proc` binary
+  (HFST installs `hfst-proc` as a symlink to it).
+- CI uses `scripts/install-natives-android.sh`; `android/native/install-to-app.sh` is
+  the older script for a local cross-compile. They drifted once already (the CI one
+  never shipped `hfst-proc`), and `install-to-app.sh` still lacks `lt-merge`. Fix that
+  with the next real `android/native/` change, not on its own: any edit under
+  `android/native/` changes the natives cache key, and the cache-miss rebuild (~1 h)
+  clones lttoolbox, apertium, cg3, HFST, ... at upstream HEAD, so every tool changes.
 
 ## Local builds and QA
 
@@ -89,6 +102,7 @@ gh run download $RUN -R rmtheis/translate -n pairs -D /tmp/pairs
 chmod +x /tmp/natives/*/bin/*
 ANDROID_NDK_HOME=~/Library/Android/sdk/ndk/28.2.13676358 ./scripts/install-natives-android.sh arm64-v8a /tmp/natives/arm64-v8a
 ANDROID_NDK_HOME=~/Library/Android/sdk/ndk/28.2.13676358 ./scripts/install-natives-android.sh armeabi-v7a /tmp/natives/armeabi-v7a
+python3 scripts/check-pair-tools.py /tmp/pairs/pair-jars android/app/src/main/jniLibs
 ./scripts/stage-pair-packs.sh /tmp/pairs/pair-jars   # rewrites the tracked pair JARs: use a worktree
 cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
 ```
@@ -108,17 +122,39 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
   relaunch, and the pairs re-extract at the new versionCode. Don't use "Download all"
   on the Medium Phone AVD: the extracted pairs fill `/data`, and the upgrade install
   then fails with "not enough space".
+- The upgrade install needs a higher versionCode than the live build, and the
+  checked-in `1031` is lower (`INSTALL_FAILED_VERSION_DOWNGRADE`). In the QA worktree,
+  apply CI's bump before `bundleRelease`: versionCode `$(date -u +%Y%m%d%H)`,
+  versionName +1 patch. Never commit that.
+- Driving translations from adb: `adb shell input text` can't type non-ASCII (Sami,
+  Nordic letters), so cold-start the activity with the text and pair instead:
+  `am start -n com.qvyshift.translate/.TranslatorActivity -a android.intent.action.SEND -t text/plain --es android.intent.extra.TEXT '<text>' --es mode '<dropdown title>'`
+  (e.g. `Northern Sami → Norwegian Bokmål`), then tap Translate. The pair must already
+  be downloaded. uiautomator can't see the pair dropdown's popup list, so pick pairs to
+  download by screenshot coordinates.
 
 ## Known issues
 
-- **Northern Sami → Norwegian Bokmål doesn't work** (live since at least 1.0.11):
-  `sme-nob.mode` starts with `hfst-proc`, but `scripts/install-natives-android.sh`
-  doesn't install it, so translation fails with "native binary not executable: …/libhfst_proc.so".
-  The natives artifact does build `hfst-proc`; the fix is to package it as
-  `libhfst_proc.so` (and test sme-nob), or drop the pair from `PairCatalog`.
+- None open on master. In 1.0.12 and earlier, Northern Sami → Norwegian Bokmål and
+  Norwegian Bokmål → Nynorsk fail; the fix ships with the next release (see the release
+  log).
 
 ## Release log
 
+- **Next release** (on master, not yet released): ships `libhfst_proc.so` and
+  `liblt_merge.so` for both ABIs, plus the `lt-merge` mapping in `NativePipeline`. Fixes
+  sme→nob ("native binary not executable: …/libhfst_proc.so") and nob→nno ("no native
+  binary mapping for tool 'lt-merge'"). sme→nob was broken since at least 1.0.11; nob→nno
+  at least since the April 2026 pair JARs, whose mode already ran `lt-merge`. CI now runs
+  `check-pair-tools.py`. Natives unchanged: the build reuses the cached 1.0.12 natives
+  (same `android/native/` SHA) as long as the cache is still there. GitHub evicts caches
+  unused for 7 days, and the 1.0.12 run last used it 2026-10-07 00:29 UTC.
+  QA 2026-10-06 on Medium_Phone_API_37: 18/18 unit tests, CI 1.0.12 natives + pairs.
+  On-device upgrade from the live 1.0.12 AAB: before the upgrade, all 8 sme→nob and
+  4 nob→nno test sentences failed; after it, all translate (escaped `/` and `@`
+  included). eng→spa, spa→eng and nno→nob are byte-identical to 1.0.12 (11/11). The
+  new arm64 libs have `p_align` 0x4000/0x10000. armeabi-v7a is checked only statically
+  (ELF + `DT_NEEDED`); there's no arm32 emulator.
 - **1.0.12** (versionCode = the CI run's `yyyymmddHH`; prepared 2026-10-06): AGP 9.4.1,
   Gradle 9.6.1, target 37, first R8-optimized build, first 5% staged release. QA on the
   minified, debug-signed QA build: 18/18 unit tests, lintVital clean, smoke PASS on
