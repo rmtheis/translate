@@ -207,6 +207,12 @@ and the About dialog names the repo (github.com/rmtheis/translate, `sardu/`).
   declarations (privacy policy, ads = none, sign-in = none, IARC = all ages, target
   age 18+, data safety = no collection, no government/financial/health features,
   advertising ID = not used) and category (Tools) were done in the console UI.
+- Feature graphic: `play/feature-graphic.png` (one image for en-US and it-IT).
+  The red "Sardu ⇄ Italianu" design had no source in the repo; the live image
+  was refitted on 2026-10-13 (content scaled 0.93 into the Play safe zone,
+  x 100..924 — Play web crops cards to 16:9 and clipped "Italianu"/"Comuna").
+  Rule + tools: `~/Documents/app-store-optimization/tools/feature-graphic/`. Push with
+  `upload_feature_graphics.py --package com.qvyshift.sardu --image sardu/play/feature-graphic.png --locales all --commit`.
 - Privacy policy: https://www.qvyshift.com/privacy-policy-sardu.html (in the
   `qvyshift-website` repo, `public/`; deploys on push to master).
 - Play "automatic protection" (installer check) was turned OFF at app creation:

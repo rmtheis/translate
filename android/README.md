@@ -275,3 +275,11 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
   6 directions (eng↔spa, spa→cat, nno→nob, rus→ukr, cat→ita), upgrade from 1.0.11 keeps
   the chosen pair, the marks setting and the downloaded pairs.
 - **1.0.11** (2026092911): input-escaping fix, 100% on production.
+
+## Play listing graphics
+
+`play/feature_graphic.png` (com.qvyshift.translate, en-US) and `play/icon_512.png`.
+The "Offline Translation" feature graphic was refitted on 2026-10-13 (content
+scaled 0.96 into the Play safe zone, x 100..924: Play web crops cards to 16:9
+and clipped the "O"). Rule + tools: `~/Documents/app-store-optimization/tools/feature-graphic/`. Push with
+`upload_feature_graphics.py --package com.qvyshift.translate --image android/play/feature_graphic.png --locales all --commit`.
