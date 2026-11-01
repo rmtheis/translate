@@ -437,9 +437,12 @@ jobs:
         if: steps.gate.outputs.changed == 'true'
         # release-notes.py takes (prior, current) — same convention as
         # the Android workflow's whatsnew step. stock_notes=true swaps in the
-        # house stock line instead; asc_release_notes.py writes the file to
-        # every ASC localization, and en-US is currently the only one — add
-        # per-locale stock translations here before adding a localization.
+        # house stock line instead. This file is the ENGLISH notes:
+        # asc_release_notes.py posts it to the English localizations (en-US,
+        # en-GB, en-AU, en-CA) and gives every other localization its own
+        # stock line from ios/appstore/listings/<locale>.json, in both modes.
+        # The pair diff is never translated, and English never lands in a
+        # non-English locale.
         env:
           STOCK_NOTES: ${{ inputs.stock_notes }}
         run: |
@@ -462,7 +465,11 @@ jobs:
         # The whatsNew PATCH can only succeed after altool has fully
         # processed the upload and ASC has a version row for it. The
         # script queries the latest version and retries implicitly via
-        # its find_app_id → latest_version_id lookup.
+        # its find_app_id → latest_version_id lookup. One PATCH per
+        # localization: the English notes for en-*, the listing's stock
+        # line for the rest; a non-English locale with no listing JSON is
+        # skipped with a warning annotation, and one whose whatsNew already
+        # matches is left alone.
         run: python3 scripts/asc_release_notes.py /tmp/release-notes.txt
 
       - name: Refresh App Store description pair list
@@ -472,10 +479,13 @@ jobs:
           ASC_ISSUER_ID:  ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           ASC_P8:         ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
           ASC_BUNDLE_ID:  ${{ env.PACKAGE_NAME }}
-        # Splices a fresh "Language pairs:" list into the app's App
-        # Store description. Mirrors the Android store-description
-        # splice, but uses a single human-readable anchor line instead
-        # of HTML-comment START/END markers.
+        # Splices a fresh pair list into every localization's description
+        # after its anchor line: "Language pairs:" in en-US (English names),
+        # the listing's pairsHeading in the ios/appstore/listings/ locales
+        # (CLDR names from scripts/language-names.json). Preambles are never
+        # touched; a localization without its anchor is skipped with a
+        # warning. Mirrors the Android store-description splice, with a
+        # human-readable anchor line instead of HTML-comment START/END markers.
         run: python3 scripts/update-appstore-description.py pair-inventory.json
 
       - name: Submit version for App Store review (auto-release)

@@ -331,8 +331,10 @@ jobs:
         # NO .txt extension (it reads them as bytes). Naming them *.txt triggers
         # "Unrecognized language code: en-US.txt." because the parser treats the
         # whole filename after "whatsnew-" as the locale.
-        # stock_notes=true swaps in the house stock line (en-US is the only Play
-        # listing language), for app-code releases that shouldn't get pair notes.
+        # stock_notes=true swaps in the house stock line, for app-code releases
+        # that shouldn't get pair notes. whatsnew-en-US is the only notes file:
+        # Play shows the default language's notes to the 18 other listing
+        # languages (android/play/listings/), which have no whatsnew file.
         env:
           STOCK_NOTES: ${{ inputs.stock_notes }}
         run: |
@@ -362,12 +364,16 @@ jobs:
           whatsNewDirectory: whatsnew
 
       # The Play Console full-description isn't updated by r0adkll/upload-google-play;
-      # we call the Developer API directly with the generated Languages section.
+      # we call the Developer API directly. In one edit, en-US gets the generated
+      # Languages section and every other listing language (android/play/listings/
+      # <lang>.json) gets its own pair list, rendered from pair-inventory.json by
+      # scripts/_listing_i18n.py between the same markers; a language without a
+      # listing JSON or without markers is skipped with a warning annotation.
       - name: Splice Languages section into full description
         if: steps.gate.outputs.changed == 'true'
         env:
           SA_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-        run: python3 scripts/update-store-description.py listing-languages.txt
+        run: python3 scripts/update-store-description.py listing-languages.txt pair-inventory.json
 
       - name: Commit versionName bump + inventory snapshot
         if: steps.gate.outputs.changed == 'true'
