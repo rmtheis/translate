@@ -338,5 +338,5 @@ and clipped the "O"). Rule + tools: `~/Documents/app-store-optimization/tools/fe
   is a dry run (stages the listings, runs Play's validation, deletes the edit); add
   `--commit` to publish, `--languages ca,da-DK` to limit it, `--render-dir DIR` to read
   the composed texts. Only texts are written; Play serves the en-US graphics to languages
-  without their own. Re-run it after a pair change: CI refreshes en-US only. Drafted
-  2026-11-01, not yet uploaded.
+  without their own. Re-run it after a pair change: CI refreshes en-US only. The 18 languages
+  went live on 2026-11-01 (Robert's go in the localization session).
