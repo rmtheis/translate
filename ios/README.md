@@ -544,7 +544,9 @@ Pull these verbatim, minimal adaptation:
 - Manual runs (`gh workflow run release-ios.yml -f force_publish=true`)
   ship app-code-only changes; add `-f stock_notes=true` to post the stock
   "Behind-the-scenes changes…" line instead of the pair-inventory diff.
-  `release-android.yml` takes the same two inputs.
+  Either way the non-English localizations get their own stock line
+  (see "App Store listing text"). `release-android.yml` takes the same
+  two inputs.
 - Per project CLAUDE.md: "Always use the App Store Connect API directly
   (via PyJWT + requests) for any ASC operations." Never Fastlane.
 - ASC credentials: check `~/Documents/keystore/` for an existing API
@@ -600,9 +602,32 @@ Pull these verbatim, minimal adaptation:
 
 ### App Store listing text
 
-- en-US is the only localization CI maintains: `scripts/update-appstore-description.py`
-  splices the pair list after the `Language pairs:` anchor of the editable version's
-  description, and `scripts/asc_release_notes.py` writes the release notes.
+- CI maintains every localization of the editable version at each release (the deploy
+  job of `release-ios.yml`):
+  - `scripts/asc_release_notes.py <notes.txt>` posts the release notes per locale. The
+    file holds the English notes — the pair-inventory diff, or the stock
+    "Behind-the-scenes changes…" line with `stock_notes=true` — and goes to the English
+    locales (en-US, en-GB, en-AU, en-CA). Every other locale gets its own stock line,
+    the `whatsNew` of `appstore/listings/<locale>.json`, in both modes: the pair diff
+    is never translated (that would be release-note wording nobody approved). A
+    non-English locale without a listing JSON is skipped with a warning annotation,
+    never given English text; a locale whose whatsNew already matches is left alone.
+    The 409 STATE_ERROR handling (first-version submissions) is unchanged.
+  - `scripts/update-appstore-description.py pair-inventory.json` refreshes the pair list
+    of every localization after its anchor line — `Language pairs:` in en-US (English
+    names from `scripts/_pair_catalog.py`, the Android listing's), the listing's
+    `pairsHeading` in the drafted locales (CLDR names from `scripts/language-names.json`,
+    the `pairsSummary` line) — and leaves the preamble alone. en-US's preamble lives in
+    App Store Connect; the drafted locales' preambles live in the JSONs and only
+    `asc_upload_listings.py` writes them. A localization without its anchor is skipped
+    with a warning (upload the listing first). The size comes from the inventory's
+    `bytes`: 1.0.7's live description says "27 pairs, 0 MB on demand" because the script
+    summed a `sizeKb` field the inventory doesn't have; the next release writes "169 MB".
+  - Both take `--dry-run` (read-only, no wait for an editable version) and `--render-dir
+    DIR` (the composed text of every locale). `python3 scripts/test-listing-i18n.py`
+    checks offline, against the real listings and inventory, that no non-English locale
+    gets English notes or the English pair list, that the per-release splice equals what
+    `asc_upload_listings.py` composes, and the pair-list collation.
 - 18 more locales are drafted in `appstore/listings/<locale>.json`: name, subtitle,
   keywords, description preamble, pairs heading and summary, support / marketing /
   privacy URLs and a stock "behind-the-scenes" `whatsNew` line (ca, da, en-GB, en-AU,
@@ -621,16 +646,14 @@ Pull these verbatim, minimal adaptation:
      Existing localizations are PATCHed, missing ones POSTed, nothing deleted; name,
      subtitle and privacy URL go to the editable appInfo, the rest to the version.
   Both read `ASC_KEY_ID`, `ASC_ISSUER_ID` and `ASC_P8` like the screenshot scripts.
-- Before the first release after that upload the pipeline needs two changes (the comment
-  on the workflow's "Generate inventory-diff release notes" step already asks for the
-  first): `asc_release_notes.py` writes one notes file to every localization, so the
-  English notes or stock line would land in the 18 new locales — the `whatsNew` lines in
-  `appstore/listings/*.json` are the stock line's translations. And
-  `update-appstore-description.py` splices only descriptions containing
-  `Language pairs:\n` (the new ones carry their own `pairsHeading`), so after a pair
-  change re-run `asc_upload_listings.py --commit` on the editable version to refresh
-  them; it also sums `sizeKb` from an inventory whose field is `bytes` and so prints
-  "0 MB" (`_listing_i18n.inventory_mb()` reads both).
+- Pair-list order: `_listing_i18n.sorted_for()` sorts with its own collation key — case
+  and accents ignored, the letters a language's alphabet sorts on their own (Croatian Š,
+  Ukrainian І, Nordic Å, …) placed by `_TAILORING`, the arrows ignored — so the Mac, the
+  macos-15 runner (this workflow) and the ubuntu runner (Android's) agree. It replaced
+  `locale.strxfrm` on 2026-11-01: ubuntu runners have no `fr_FR.UTF-8`-style locales
+  (the fallback put Ukrainian "І" before "А"), and macOS sorts Croatian Š between O and
+  P. For every drafted locale but hr the order is the one the Mac produced; English
+  locales keep the plain case-insensitive order of the live en-US list.
 
 ## Known issues
 

@@ -1,15 +1,28 @@
 #!/usr/bin/env python3
 """
-Refresh the App Store description's language-pair list on the latest
-app version, leaving the human-written preamble alone.
+Refresh the pair list in the App Store description of every localization of
+the editable app version, leaving the human-written preamble alone.
 
-The description is expected to contain a single anchor line
+Each description ends with an anchor line followed by a newline:
 
-    Language pairs:
+    Language pairs:              en-US (the live description, kept in App Store Connect)
+    <pairsHeading>               the locales drafted in ios/appstore/listings/<locale>.json
 
-followed by a newline. Everything after that newline is considered
-auto-generated and gets replaced with fresh content derived from the
-current pair-inventory.json.
+Everything after that newline is auto-generated and is replaced with a block
+rendered from pair-inventory.json:
+
+  * en-US: the English block — "<n> pairs, <mb> MB on demand" and one
+    "• Catalan ↔ Italian" line per pair, with the names scripts/_pair_catalog.py
+    gives the Android listing.
+  * a drafted locale: the block scripts/_listing_i18n.py renders from the
+    listing's `pairsSummary` and the CLDR names in scripts/language-names.json,
+    so the Catalan description lists "Català ↔ Espanyol". The English block
+    never goes into a non-English locale.
+
+The preambles of the drafted locales live in their JSONs and go up with
+scripts/asc_upload_listings.py; this script never rewrites them. A localization
+whose description has no anchor is skipped with a warning (upload the listing
+first), and so is a non-English localization that has no listing JSON.
 
 Environment (same keys as scripts/asc_release_notes.py):
   ASC_KEY_ID     — App Store Connect API key ID
@@ -19,10 +32,17 @@ Environment (same keys as scripts/asc_release_notes.py):
 
 Usage:
   python3 scripts/update-appstore-description.py pair-inventory.json
+      [--render-dir DIR] [--dry-run]
+
+--render-dir writes the composed text of every locale (<locale>.txt; for en-US
+the anchor plus block, since its preamble isn't in the repo) before anything is
+fetched. --dry-run lists the version's localizations with the planned PATCH of
+each and writes nothing (and doesn't wait for an editable version).
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import pathlib
@@ -41,11 +61,16 @@ except ImportError:
 # in ad-hoc local invocations (`python3 scripts/update-…`) it isn't, so
 # prepend explicitly.
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from _pair_catalog import load as load_catalog, pair_label  # type: ignore
+from _listing_i18n import (appstore_description, appstore_pair_block,  # noqa: E402
+                           english_locale, inventory_mb, load_listings, load_names)
+from _pair_catalog import load as load_catalog, pair_label  # noqa: E402
 
 ASC_BASE = "https://api.appstoreconnect.apple.com/v1"
 MAX_DESC = 4000  # App Store description character cap.
-ANCHOR = "Language pairs:\n"
+REPO = pathlib.Path(__file__).resolve().parent.parent
+LISTINGS = REPO / "ios/appstore/listings"
+ANCHOR_EN = "Language pairs:\n"   # the en-US description's own heading
+SUMMARY_EN = "{n} pairs, {mb} MB on demand"
 
 
 # --- helpers -----------------------------------------------------------------
@@ -55,6 +80,12 @@ def _env(name: str, default: str | None = None) -> str:
     if not val:
         sys.exit(f"ERROR: ${name} not set")
     return val
+
+
+def warn(msg: str) -> None:
+    """A GitHub Actions annotation on the runner, a plain WARNING elsewhere."""
+    prefix = "::warning::" if os.environ.get("GITHUB_ACTIONS") else "WARNING: "
+    print(prefix + msg, flush=True)
 
 
 def mint_jwt(key_id: str, issuer_id: str, pem: str) -> str:
@@ -125,37 +156,48 @@ def _is_attribute_locked_error(body: str, attribute: str) -> bool:
 
 # --- pair list formatting ----------------------------------------------------
 
-def format_pair_list(inventory_path: pathlib.Path) -> str:
-    """Return the block that replaces everything after the anchor.
-
-    Mirrors the Android store-listing.py output but tailored for the
-    iOS description (no redundant "Included language pairs" header —
-    the anchor "Language pairs:" already serves that role).
-    """
-    inventory = json.loads(inventory_path.read_text())
-    total_kb = sum(e.get("sizeKb", 0) for e in inventory)
-    total_mb = round(total_kb / 1024)
-    catalog = load_catalog()
+def english_block(inventory: list[dict], catalog: dict | None = None) -> str:
+    """The block after the en-US anchor: a blank line, the summary, a blank
+    line, one bullet per pair. English names from _pair_catalog (the same
+    names the Android listing uses); size from "bytes" (older inventories
+    had "sizeKb" — the source of the "0 MB" the live description showed)."""
+    catalog = catalog if catalog is not None else load_catalog()
     labels = sorted({pair_label(e["pair"], catalog) for e in inventory})
-    lines = [
-        "",  # blank line after the anchor
-        f"{len(labels)} pairs, {total_mb} MB on demand",
-        "",
-    ]
-    lines.extend(f"• {label}" for label in labels)
-    return "\n".join(lines)
+    summary = SUMMARY_EN.format(n=len(labels), mb=inventory_mb(inventory))
+    return f"\n{summary}\n\n" + "\n".join(f"• {label}" for label in labels)
 
 
-def splice(description: str, new_list: str) -> str:
-    idx = description.rfind(ANCHOR)
+def anchor_and_block(locale: str, by_locale: dict[str, dict], inventory: list[dict],
+                     names, catalog) -> tuple[str, str] | None:
+    """(anchor including its newline, replacement block) for a localization,
+    or None when the locale is neither English nor drafted in
+    ios/appstore/listings/ — then nothing may be written to it."""
+    listing = by_locale.get(locale)
+    if listing:
+        return listing["pairsHeading"] + "\n", appstore_pair_block(listing, inventory, names, catalog)
+    if english_locale(locale):
+        return ANCHOR_EN, english_block(inventory, catalog)
+    return None
+
+
+def splice(description: str, anchor: str, block: str) -> str | None:
+    """Replace everything after the last `anchor` with `block`; None when
+    the description has no anchor to splice against."""
+    idx = description.rfind(anchor)
     if idx < 0:
-        sys.exit(
-            "ERROR: anchor 'Language pairs:\\n' not found in the current "
-            "App Store description. Set the description manually in ASC first "
-            "so this script has a seam to splice against."
-        )
-    head = description[: idx + len(ANCHOR)]
-    return head + new_list
+        return None
+    return description[: idx + len(anchor)] + block
+
+
+def render(render_dir: pathlib.Path, listings: list[dict], inventory: list[dict],
+           names, catalog) -> None:
+    render_dir.mkdir(parents=True, exist_ok=True)
+    (render_dir / "en-US.txt").write_text(ANCHOR_EN + english_block(inventory, catalog) + "\n",
+                                          encoding="utf-8")
+    for listing in listings:
+        (render_dir / f"{listing['locale']}.txt").write_text(
+            appstore_description(listing, inventory, names, catalog) + "\n", encoding="utf-8")
+    print(f"rendered en-US and {len(listings)} drafted locale(s) to {render_dir}")
 
 
 # --- ASC traversal -----------------------------------------------------------
@@ -180,13 +222,15 @@ _EDITABLE_STATES = {
 }
 
 
-def latest_editable_version_id(token: str, app_id: str) -> str | None:
+def latest_editable_version_id(token: str, app_id: str, wait: bool = True) -> str | None:
     """Pick the newest version whose state still accepts metadata
     edits, retrying in case the build we just uploaded hasn't yet
     materialized as an ASC version row. Returns None if ASC has no
-    editable version — the caller warns and exits cleanly."""
-    delays = [0, 15, 30, 45, 60, 90, 120, 120, 120, 120]
+    editable version — the caller warns and exits cleanly. wait=False
+    (dry runs) looks once and settles for the newest version."""
+    delays = [0, 15, 30, 45, 60, 90, 120, 120, 120, 120] if wait else [0]
     last_states: list[tuple[str, str]] = []
+    rows: list[dict] = []
     for delay in delays:
         if delay:
             print(f"  no editable version yet, waiting {delay}s...", flush=True)
@@ -208,6 +252,13 @@ def latest_editable_version_id(token: str, app_id: str) -> str | None:
             st = picked["attributes"].get("appStoreState")
             print(f"  targeting version {vs} ({st}, id={picked['id']})", flush=True)
             return picked["id"]
+    if not wait and rows:
+        picked = rows[0]
+        vs = picked["attributes"].get("versionString")
+        st = picked["attributes"].get("appStoreState")
+        print(f"  no editable version; dry run against the newest one, {vs} ({st}, "
+              f"id={picked['id']})", flush=True)
+        return picked["id"]
     print(
         f"WARNING: no editable App Store version appeared within ~10 min.\n"
         f"  Versions seen (id, state): {last_states}\n"
@@ -254,38 +305,68 @@ def patch_description(token: str, localization_id: str, text: str) -> bool:
 # --- main --------------------------------------------------------------------
 
 def main() -> None:
-    if len(sys.argv) != 2:
-        sys.exit("usage: update-appstore-description.py <pair-inventory.json>")
-    inv = pathlib.Path(sys.argv[1])
-    if not inv.is_file():
-        sys.exit(f"ERROR: inventory not found: {inv}")
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("inventory", type=pathlib.Path, help="pair-inventory.json of this build")
+    ap.add_argument("--render-dir", type=pathlib.Path,
+                    help="write the composed description of every locale here")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="show the planned PATCHes; write nothing to App Store Connect")
+    args = ap.parse_args()
+    if not args.inventory.is_file():
+        sys.exit(f"ERROR: inventory not found: {args.inventory}")
 
-    new_list = format_pair_list(inv)
+    inventory = json.loads(args.inventory.read_text())
+    names, catalog = load_names(), load_catalog()
+    listings = load_listings(LISTINGS, "locale", required=False)
+    by_locale = {l["locale"]: l for l in listings}
+    # Render every drafted locale up front: a missing language name in
+    # language-names.json fails here, before anything is fetched.
+    for listing in listings:
+        appstore_pair_block(listing, inventory, names, catalog)
+    print(f"{len(inventory)} pairs, {inventory_mb(inventory)} MB; en-US plus "
+          f"{len(listings)} drafted locale(s)")
+    if args.render_dir:
+        render(args.render_dir, listings, inventory, names, catalog)
 
     token = mint_jwt(_env("ASC_KEY_ID"), _env("ASC_ISSUER_ID"), _env("ASC_P8"))
     bundle_id = _env("ASC_BUNDLE_ID", default="com.qvyshift.translate")
     app_id = find_app_id(token, bundle_id)
-    vid    = latest_editable_version_id(token, app_id)
+    vid    = latest_editable_version_id(token, app_id, wait=not args.dry_run)
     if vid is None:
         return  # warning already printed; let the workflow continue
     locs   = version_localizations(token, vid)
     if not locs:
         sys.exit(f"ERROR: app version {vid} has no localizations")
 
-    updated = 0
-    for loc in locs:
+    updated = unchanged = skipped = 0
+    for loc in sorted(locs, key=lambda l: l.get("attributes", {}).get("locale", "")):
         attrs = loc.get("attributes", {})
         locale = attrs.get("locale", "?")
         current = attrs.get("description") or ""
-        if ANCHOR not in current:
-            print(f"  skip {locale}: no 'Language pairs:' anchor in description")
+        pick = anchor_and_block(locale, by_locale, inventory, names, catalog)
+        if pick is None:
+            warn(f"{locale}: not English and no {LISTINGS.name}/{locale}.json — the English "
+                 f"pair list never goes to a non-English locale; description left as is")
+            skipped += 1
             continue
-        new_desc = splice(current, new_list)
+        anchor, block = pick
+        new_desc = splice(current, anchor, block)
+        if new_desc is None:
+            warn(f"{locale}: anchor {anchor.rstrip()!r} not in the description — upload the "
+                 f"listing with asc_upload_listings.py first; description left as is")
+            skipped += 1
+            continue
         if len(new_desc) > MAX_DESC:
             sys.exit(f"ERROR: new description is {len(new_desc)} chars "
                      f"(> ASC cap {MAX_DESC}) for locale {locale}")
         if new_desc == current:
-            print(f"  {locale}: pair list unchanged — skipping PATCH")
+            print(f"  {locale}: pair list unchanged")
+            unchanged += 1
+            continue
+        if args.dry_run:
+            print(f"  {locale}: would PATCH description ({len(current)} → {len(new_desc)} chars)")
+            updated += 1
             continue
         if not patch_description(token, loc["id"], new_desc):
             # Same per-version lockout pattern as whatsNew: every
@@ -302,7 +383,11 @@ def main() -> None:
             return
         print(f"  updated description for {locale} ({len(new_desc)} chars)")
         updated += 1
-    print(f"updated description on {updated} localization(s)")
+    verb = "would update" if args.dry_run else "updated"
+    print(f"{verb} description on {updated} localization(s); "
+          f"{unchanged} unchanged, {skipped} skipped")
+    if args.dry_run:
+        print("dry run — nothing written.")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,7 @@
 """Localized store-listing text shared by asc_upload_listings.py and
-play_upload_listings.py.
+play_upload_listings.py (the one-off uploads) and by asc_release_notes.py,
+update-appstore-description.py and update-store-description.py (the release
+workflows' per-release refresh).
 
 A listing file (ios/appstore/listings/<locale>.json, android/play/listings/<lang>.json)
 holds the human-written parts of one localization. The pair list is never written
@@ -7,22 +9,27 @@ by hand: it is rendered here from the pair inventory, with the language names
 from scripts/language-names.json (CLDR, via gen-language-names.py), so a Catalan
 description lists "Català ↔ Espanyol", not the English names.
 
-Description layout, App Store (mirrors the en-US description that
-update-appstore-description.py maintains):
+Description layout, App Store (mirrors the en-US description, whose preamble
+lives in App Store Connect and whose anchor is "Language pairs:"):
 
-    <description>\n\n<pairsHeading>\n\n<pairsSummary>\n\n• A ↔ B\n• ...
+    <description>\n\n<pairsHeading>\n<appstore_pair_block()>
+    where appstore_pair_block() = \n<pairsSummary>\n\n• A ↔ B\n• ...
 
-Play (mirrors the en-US full description that update-store-description.py maintains;
-the markers are what that script splices between):
+update-appstore-description.py keeps everything after "<pairsHeading>\n" fresh
+after a pair change; it never touches the preamble.
 
-    <fullDescription>\n\n<!-- AUTO-GENERATED LANGUAGES START -->\n<pairsHeader>\n\n• A ↔ B\n• ...\n<!-- AUTO-GENERATED LANGUAGES END -->
+Play (mirrors the en-US full description; the markers are what
+update-store-description.py splices between at every release):
+
+    <fullDescription>\n\n<!-- AUTO-GENERATED LANGUAGES START -->\n<play_pair_block()>\n<!-- AUTO-GENERATED LANGUAGES END -->
+    where play_pair_block() = <pairsHeader>\n\n• A ↔ B\n• ...
 """
 from __future__ import annotations
 
 import json
-import locale as _locale
 import pathlib
 import sys
+import unicodedata
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -35,6 +42,13 @@ PLAY_END = "<!-- AUTO-GENERATED LANGUAGES END -->"
 
 def load_names() -> dict[str, dict[str, str]]:
     return json.loads(NAMES_PATH.read_text())["names"]
+
+
+def english_locale(tag: str) -> bool:
+    """en-US, en-GB, en-AU, en-CA, ...: the store locales whose text is English.
+    The release scripts post English release notes and the English pair list
+    to these only; every other locale gets its own listing's text or nothing."""
+    return tag.split("-")[0].split("_")[0].lower() == "en"
 
 
 def language_name(iso3: str, locale: str, names: dict[str, dict[str, str]]) -> str:
@@ -68,60 +82,106 @@ def pair_lines(inventory: list[dict], locale: str, names: dict[str, dict[str, st
     return [f"• {label}" for label in sorted_for(locale, labels)]
 
 
-# Listing locale → POSIX locale for collation. Cyrillic "І" sorts before "А" in
-# code-point order, so Ukrainian needs real collation; the others are close.
-_COLLATE = {"ca": "ca_ES", "da": "da_DK", "da-DK": "da_DK", "fr-FR": "fr_FR", "fr-CA": "fr_CA",
-            "hr": "hr_HR", "it": "it_IT", "it-IT": "it_IT", "no": "nb_NO", "no-NO": "nb_NO",
-            "pt-BR": "pt_BR", "pt-PT": "pt_PT", "ro": "ro_RO", "ru": "ru_RU", "ru-RU": "ru_RU",
-            "es-ES": "es_ES", "es-MX": "es_MX", "es-419": "es_MX", "sv": "sv_SE", "sv-SE": "sv_SE",
-            "uk": "uk_UA"}
+# Collation of the pair lists. Platform-independent on purpose: the release
+# workflows render the lists on ubuntu (Play) and macOS (App Store) runners and
+# the upload scripts on a Mac, and locale.strxfrm gave each OS its own order —
+# ubuntu runners have no fr_FR.UTF-8-style locales (code-point fallback: Ukrainian
+# "І" before "А"), and macOS sorts Croatian Š between O and P. Letters compare
+# case-insensitively with accents stripped, except the letters a language's
+# alphabet treats as letters of their own, which _TAILORING places after the base
+# letter they follow (and in order among themselves); the arrows are ignored.
+# Checked 2026-11-01 against the Mac's order for every drafted locale: identical
+# except hr, whose Š now follows S as Croatian sorts it. English locales keep the
+# plain case-insensitive order of the live en-US list.
+_AFTER = "\uffff"  # sorts after every letter
+_TAILORING = {
+    "uk": {"ґ": "г" + _AFTER, "є": "е" + _AFTER, "і": "и" + _AFTER, "ї": "и" + _AFTER * 2},
+    "ru": {"ё": "е" + _AFTER},
+    "hr": {"č": "c" + _AFTER, "ć": "c" + _AFTER * 2, "đ": "d" + _AFTER,
+           "š": "s" + _AFTER, "ž": "z" + _AFTER},
+    "ro": {"ă": "a" + _AFTER, "â": "a" + _AFTER * 2, "î": "i" + _AFTER,
+           "ș": "s" + _AFTER, "ş": "s" + _AFTER, "ț": "t" + _AFTER, "ţ": "t" + _AFTER},
+    "es": {"ñ": "n" + _AFTER},
+    "da": {"æ": "z" + _AFTER, "ø": "z" + _AFTER * 2, "å": "z" + _AFTER * 3},
+    "no": {"æ": "z" + _AFTER, "ø": "z" + _AFTER * 2, "å": "z" + _AFTER * 3},
+    "sv": {"å": "z" + _AFTER, "ä": "z" + _AFTER * 2, "ö": "z" + _AFTER * 3},
+}
+_IGNORED = set("↔→•")
+
+
+def collation_key(listing_locale: str):
+    """Sort key for one label ("Català ↔ Italià") in the language of `listing_locale`."""
+    tailoring = _TAILORING.get(listing_locale.split("-")[0].split("_")[0].lower(), {})
+
+    def key(label: str) -> tuple[str, str]:
+        out = []
+        for ch in label.casefold():
+            if ch in _IGNORED:
+                continue
+            if ch in tailoring:
+                out.append(tailoring[ch])
+                continue
+            out.append("".join(c for c in unicodedata.normalize("NFD", ch)
+                               if unicodedata.category(c) != "Mn"))
+        return " ".join("".join(out).split()), label
+
+    return key
 
 
 def sorted_for(listing_locale: str, labels) -> list[str]:
-    """Sort with the locale's collation when the OS has it, else case-insensitively."""
-    posix = _COLLATE.get(listing_locale)
-    if posix:
-        old = _locale.setlocale(_locale.LC_COLLATE)
-        try:
-            _locale.setlocale(_locale.LC_COLLATE, posix + ".UTF-8")
-            return sorted(labels, key=_locale.strxfrm)
-        except _locale.Error:
-            pass
-        finally:
-            _locale.setlocale(_locale.LC_COLLATE, old)
-    return sorted(labels, key=str.casefold)
+    """Sort pair labels the way the locale's readers expect, the same on every OS."""
+    if english_locale(listing_locale):
+        return sorted(labels, key=str.casefold)
+    return sorted(labels, key=collation_key(listing_locale))
 
 
 def inventory_mb(inventory: list[dict]) -> int:
-    # Android inventories carry "bytes"; the iOS pair-inventory.py output has
-    # "bytes" too (the live en-US description's "0 MB" comes from a "sizeKb"
-    # lookup in update-appstore-description.py).
+    # Both platforms' pair-inventory.py output carries "bytes". "sizeKb" is
+    # what update-appstore-description.py summed until 2026-11-01 — the field
+    # never existed, hence the "27 pairs, 0 MB on demand" in 1.0.7's live
+    # en-US description.
     total = sum(e.get("bytes") or e.get("sizeKb", 0) * 1024 for e in inventory)
     return round(total / (1024 * 1024))
 
 
-def appstore_description(listing: dict, inventory: list[dict], names, catalog=None) -> str:
+def appstore_pair_block(listing: dict, inventory: list[dict], names, catalog=None) -> str:
+    """Everything after the "<pairsHeading>\\n" anchor of an App Store description:
+    a blank line, the localized summary, a blank line, the pair lines."""
     lines = pair_lines(inventory, listing["locale"], names, catalog)
     summary = listing["pairsSummary"].format(n=len(lines), mb=inventory_mb(inventory))
-    return (f"{listing['description'].rstrip()}\n\n{listing['pairsHeading']}\n\n"
-            f"{summary}\n\n" + "\n".join(lines))
+    return f"\n{summary}\n\n" + "\n".join(lines)
+
+
+def appstore_description(listing: dict, inventory: list[dict], names, catalog=None) -> str:
+    return (f"{listing['description'].rstrip()}\n\n{listing['pairsHeading']}\n"
+            + appstore_pair_block(listing, inventory, names, catalog))
+
+
+def play_pair_block(listing: dict, inventory: list[dict], names, catalog=None) -> str:
+    """What sits between the Play markers: the localized header, a blank line,
+    the pair lines."""
+    lines = pair_lines(inventory, listing["language"], names, catalog)
+    header = listing["pairsHeader"].format(n=len(lines), mb=inventory_mb(inventory))
+    return f"{header}\n\n" + "\n".join(lines)
 
 
 def play_full_description(listing: dict, inventory: list[dict], names, catalog=None) -> str:
-    lines = pair_lines(inventory, listing["language"], names, catalog)
-    header = listing["pairsHeader"].format(n=len(lines), mb=inventory_mb(inventory))
-    block = f"{header}\n\n" + "\n".join(lines)
+    block = play_pair_block(listing, inventory, names, catalog)
     return f"{listing['fullDescription'].rstrip()}\n\n{PLAY_START}\n{block}\n{PLAY_END}"
 
 
-def load_listings(directory: pathlib.Path, key: str) -> list[dict]:
+def load_listings(directory: pathlib.Path, key: str, required: bool = True) -> list[dict]:
+    """Every <locale>.json in `directory`, each checked to name its own locale.
+    The upload scripts need listings (required=True); the release scripts take
+    an empty or missing directory as "no drafted locales" and then only serve
+    the English localizations."""
     out = []
-    for path in sorted(directory.glob("*.json")):
+    for path in sorted(directory.glob("*.json")) if directory.is_dir() else []:
         data = json.loads(path.read_text())
         if data.get(key) != path.stem:
             sys.exit(f"ERROR: {path} has {key}={data.get(key)!r}, expected {path.stem!r}")
         out.append(data)
-    if not out:
+    if not out and required:
         sys.exit(f"ERROR: no listings in {directory}")
     return out
 

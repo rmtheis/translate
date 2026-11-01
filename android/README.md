@@ -338,10 +338,26 @@ and clipped the "O"). Rule + tools: `~/Documents/app-store-optimization/tools/fe
 
 ## Play listing text
 
-- en-US is the only listing language CI maintains: `scripts/update-store-description.py`
-  refreshes the pair list between the `<!-- AUTO-GENERATED LANGUAGES -->` markers of the
-  en-US full description after a pair change, and the release workflow writes
-  `whatsnew-en-US` only (Play shows the default language's notes to the others).
+- CI maintains the pair list of every listing language: after a pair change the deploy
+  job of `release-android.yml` runs
+  `scripts/update-store-description.py listing-languages.txt pair-inventory.json`, which
+  in one edit replaces the text between the `<!-- AUTO-GENERATED LANGUAGES -->` markers of
+  every listing — en-US with the block `scripts/store-listing.py` rendered (English
+  names), each other language with the block `scripts/_listing_i18n.py` renders from the
+  `pairsHeader` of `play/listings/<language>.json` and the CLDR names in
+  `scripts/language-names.json` — and commits once. Titles, short descriptions and the
+  text before the markers are not touched; a language without a listing JSON or without
+  markers is skipped with a warning annotation, and the English block never goes into
+  another language. `--dry-run` opens and deletes the edit instead of committing,
+  `--render-dir DIR` writes the composed texts, `SA_JSON_FILE=<path>` stands in for
+  `SA_JSON` locally. Release notes stay `whatsnew-en-US` only: Play shows the default
+  language's notes to the other languages. `python3 scripts/test-listing-i18n.py` checks
+  all of this offline against the real listings and inventory.
+- Pair-list order: since 2026-11-01 `_listing_i18n.sorted_for()` uses its own collation
+  key (`_TAILORING`), identical on macOS and on the ubuntu runner. Before, it used the OS
+  collation, which the ubuntu runner lacks and which macOS gets wrong for Croatian (Š
+  between O and P): the hr listing uploaded on 2026-11-01 has that order, and the next
+  release re-sorts it (12 lines move). Every other language's order is unchanged.
 - 18 more languages are drafted in `play/listings/<language>.json` (title, short
   description, full-description preamble, pair-list header): ca, da-DK, en-GB, en-AU,
   en-CA, fr-FR, fr-CA, hr, it-IT, no-NO, pt-BR, pt-PT, ro, ru-RU, es-ES, es-419, sv-SE, uk
@@ -355,5 +371,6 @@ and clipped the "O"). Rule + tools: `~/Documents/app-store-optimization/tools/fe
   is a dry run (stages the listings, runs Play's validation, deletes the edit); add
   `--commit` to publish, `--languages ca,da-DK` to limit it, `--render-dir DIR` to read
   the composed texts. Only texts are written; Play serves the en-US graphics to languages
-  without their own. Re-run it after a pair change: CI refreshes en-US only. The 18 languages
-  went live on 2026-11-01 (Robert's go in the localization session).
+  without their own. Re-run it after editing a JSON's title, short description or preamble;
+  CI keeps the pair lists fresh. The 18 languages went live on 2026-11-01 (Robert's go in
+  the localization session).
