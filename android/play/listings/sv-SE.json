@@ -1,0 +1,7 @@
+{
+  "fullDescription": "För dig som vill testa maskinöversättning med Apertium-modeller.\n\nAppen uppdaterar sig själv automatiskt varje månad utifrån Apertiums GitHub-arkiv. Språkpar levereras vid behov som asset packs via Google Plays ”Play Asset Delivery”.\n\nAppen fungerar offline när språkmodellerna är installerade. Appen uppdaterar sina språkparsmodeller varje månad om en wifi-anslutning finns tillgänglig.\n\nSpråkpar av kvaliteten ”Release” och ”Staging” stöds. Språklistan nedan uppdateras automatiskt varje månad.",
+  "language": "sv-SE",
+  "pairsHeader": "Inkluderade språkpar ({n} par, {mb} MB offline):",
+  "shortDescription": "Demoapp för Apertiums översättningsmodeller",
+  "title": "Översätt (experimentell)"
+}

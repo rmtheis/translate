@@ -1,0 +1,7 @@
+{
+  "fullDescription": "Pentru cei care vor să testeze traducerea automată cu modelele Apertium.\n\nAplicația se actualizează automat în fiecare lună pe baza depozitului GitHub al Apertium. Perechile de limbi sunt livrate la cerere ca pachete de resurse prin „Play Asset Delivery” de la Google Play.\n\nAplicația funcționează offline după instalarea modelelor de limbă și își actualizează modelele perechilor de limbi în fiecare lună dacă este disponibilă o conexiune Wi-Fi.\n\nSunt acceptate perechile de limbi de calitate „Release” și „Staging”. Lista de limbi de mai jos se actualizează automat în fiecare lună.",
+  "language": "ro",
+  "pairsHeader": "Perechi de limbi incluse ({n} perechi, {mb} MB offline):",
+  "shortDescription": "Aplicație demonstrativă pentru modelele de traducere Apertium",
+  "title": "Traducere (experimental)"
+}

@@ -1,0 +1,8 @@
+{
+  "_note": "Play's Latin American Spanish listing; the App Store equivalent is es-MX.",
+  "fullDescription": "Para quienes quieren probar la traducción automática con los modelos de Apertium.\n\nLa app se actualiza automáticamente cada mes a partir del repositorio de Apertium en GitHub. Los pares de idiomas se entregan bajo demanda como paquetes de recursos mediante “Play Asset Delivery” de Google Play.\n\nLa app funciona sin conexión una vez que los modelos de idioma están instalados, y actualiza los modelos de los pares de idiomas cada mes si hay una conexión wifi disponible.\n\nSe admiten los pares de idiomas de calidad “Release” y “Staging”. La lista de idiomas que aparece abajo se actualiza automáticamente cada mes.",
+  "language": "es-419",
+  "pairsHeader": "Pares de idiomas incluidos ({n} pares, {mb} MB sin conexión):",
+  "shortDescription": "App de demostración de los modelos de traducción de Apertium",
+  "title": "Traducir (experimental)"
+}

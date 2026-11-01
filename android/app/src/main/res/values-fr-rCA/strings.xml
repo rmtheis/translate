@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Traduire</string>
+    <string name="demo_tagline">Démo des modèles de langue Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Publié</string>
+    <string name="tier_staging">Préversion</string>
+    <string name="tier_nursery">Pépinière</string>
+    <string name="tier_incubator">Incubateur</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;de&gt;</string>
+    <string name="to">&lt;vers&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Traduire</string>
+    <string name="translating">Traduction en cours…</string>
+    <string name="copy">Copier</string>
+    <string name="paste">Coller</string>
+    <string name="swap_languages">Inverser les langues</string>
+    <string name="one_way_only">Traduction dans un seul sens seulement</string>
+    <string name="choose_languages">Choisir les langues</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">OK</string>
+    <string name="cancel">Annuler</string>
+    <string name="hide">Masquer</string>
+    <string name="download">Télécharger</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Cette paire n\'a pas été téléchargée</string>
+    <string name="download_pair_prompt">Cette paire de langues n\'est pas encore sur votre appareil. La télécharger maintenant (%1$s)?</string>
+    <string name="download_progress_format">%1$s sur %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">Téléchargement de %1$d paires de langues</string>
+    <string name="download_all_format">Télécharger toutes les paires de langues (%1$s)</string>
+    <string name="download_all_done">Toutes les paires de langues ont été téléchargées</string>
+    <string name="download_complete">Téléchargement terminé</string>
+    <string name="download_failed">Échec du téléchargement (erreur %1$d)</string>
+    <string name="download_cancelled">Téléchargement annulé</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marquer les mots inconnus</string>
+    <string name="displayMarkDescription">Marquer les mots inconnus avec un *</string>
+</resources>

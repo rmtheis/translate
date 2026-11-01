@@ -1,0 +1,13 @@
+{
+  "description": "Pentru cei care vor să traducă folosind modelele Apertium.\n\nAplicația se actualizează automat în fiecare lună din depozitul GitHub al Apertium. Perechile de limbi sunt livrate la cerere ca resurse la cerere (ODR) din App Store: fiecare pereche se descarcă doar atunci când o alegeți.\n\nAplicația funcționează offline după instalarea perechilor de limbi.\n\nSunt acceptate categoriile de perechi „Trunk” și „Staging”. Lista perechilor de limbi de mai jos se actualizează automat în fiecare lună.",
+  "keywords": "apertium,occitană,catalană,galiciană,nynorsk,sami,traducător,offline,bazat pe reguli,open source",
+  "locale": "ro",
+  "marketingUrl": "https://www.qvyshift.com",
+  "name": "Traducător Apertium",
+  "pairsHeading": "Perechi de limbi:",
+  "pairsSummary": "{n} perechi, {mb} MB la cerere",
+  "privacyPolicyUrl": "https://www.qvyshift.com/privacy-policy-translate-ios.html",
+  "subtitle": "Traduceți cu modelele Apertium",
+  "supportUrl": "https://www.qvyshift.com",
+  "whatsNew": "Modificări în culise pentru ca totul să funcționeze în continuare fără probleme."
+}

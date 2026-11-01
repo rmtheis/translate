@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">Translate</string>
+    <string name="demo_tagline">Demonstração dos modelos de línguas do Apertium</string>
+
+    <!-- Tier headers in the pair picker -->
+    <string name="tier_trunk">Publicado</string>
+    <string name="tier_staging">Em preparação</string>
+    <string name="tier_nursery">Em desenvolvimento</string>
+    <string name="tier_incubator">Em incubação</string>
+
+    <!-- Pair picker direction placeholders -->
+    <string name="from">&lt;de&gt;</string>
+    <string name="to">&lt;para&gt;</string>
+
+    <!-- Primary actions -->
+    <string name="translate">Traduzir</string>
+    <string name="translating">A traduzir…</string>
+    <string name="copy">Copiar</string>
+    <string name="paste">Colar</string>
+    <string name="swap_languages">Trocar as línguas</string>
+    <string name="one_way_only">Tradução apenas num sentido</string>
+    <string name="choose_languages">Escolher as línguas</string>
+
+    <!-- Generic dialog buttons -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancelar</string>
+    <string name="hide">Ocultar</string>
+    <string name="download">Transferir</string>
+
+    <!-- Per-pair download flow -->
+    <string name="pair_not_installed">Este par de línguas ainda não foi transferido</string>
+    <string name="download_pair_prompt">Este par de línguas ainda não está no seu dispositivo. Transferir agora (%1$s)?</string>
+    <string name="download_progress_format">%1$s de %2$s</string>
+
+    <!-- Bulk download flow -->
+    <string name="downloading_all">A transferir %1$d pares de línguas</string>
+    <string name="download_all_format">Transferir todos os pares de línguas (%1$s)</string>
+    <string name="download_all_done">Todos os pares de línguas foram transferidos</string>
+    <string name="download_complete">Transferência concluída</string>
+    <string name="download_failed">Falha na transferência (erro %1$d)</string>
+    <string name="download_cancelled">Transferência cancelada</string>
+
+    <!-- About + Settings dialog -->
+    <string name="displayMark">Marcar palavras desconhecidas</string>
+    <string name="displayMarkDescription">Marcar palavras desconhecidas com *</string>
+</resources>

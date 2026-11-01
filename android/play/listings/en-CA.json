@@ -1,0 +1,8 @@
+{
+  "_note": "Same text as the en-US listing.",
+  "fullDescription": "For people interested in testing language translation using Apertium models.\n\nThe app automatically updates itself monthly based on the Apertium Github repository. Language pairs are delivered on demand as asset packs using Google Play's \"Play Asset Delivery.\"\n\nThe app functions offline once language models are installed. The app updates its language pair models monthly if a wifi connection is available.\n\nThe \"Release\" and \"Staging\" quality language pairs are supported. The language list below is automatically updated monthly.",
+  "language": "en-CA",
+  "pairsHeader": "Included language pairs ({n} pairs, {mb} MB offline):",
+  "shortDescription": "Demo App for the Apertium Translation Models",
+  "title": "Translate (Experimental)"
+}
