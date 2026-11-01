@@ -74,14 +74,24 @@ def _env(name: str, default: str | None = None) -> str:
 
 class Asc:
     def __init__(self, key_id: str, issuer_id: str, pem: str):
+        self._key_id, self._issuer_id, self._pem = key_id, issuer_id, pem
+        self._token_exp = 0.0
+        self._refresh()
+
+    def _refresh(self) -> None:
+        # ASC tokens live at most 20 minutes; a full run over 18 localizations
+        # takes longer, so mint a new one when the current is about to expire.
         now = int(time.time())
         self.token = jwt.encode(
-            {"iss": issuer_id, "iat": now, "exp": now + 20 * 60,
+            {"iss": self._issuer_id, "iat": now, "exp": now + 20 * 60,
              "aud": "appstoreconnect-v1"},
-            pem, algorithm="ES256", headers={"kid": key_id, "typ": "JWT"})
+            self._pem, algorithm="ES256", headers={"kid": self._key_id, "typ": "JWT"})
+        self._token_exp = now + 20 * 60
 
     def call(self, method: str, path: str, params: dict | None = None,
              body: dict | None = None) -> dict:
+        if time.time() > self._token_exp - 120:
+            self._refresh()
         url = ASC_BASE + path
         if params:
             url += "?" + urllib.parse.urlencode(params, safe=",[]")
@@ -148,7 +158,9 @@ def upload(asc: Asc, set_id: str, path: Path) -> str:
     return shot["id"]
 
 
-def wait_complete(asc: Asc, shot_ids: list[str], timeout: int = 600) -> None:
+def wait_complete(asc: Asc, shot_ids: list[str], timeout: int = 600) -> set[str]:
+    """Poll until every screenshot is COMPLETE; return the ids still processing at
+    the deadline (ASC occasionally leaves one in UPLOAD_COMPLETE for good)."""
     pending = set(shot_ids)
     deadline = time.time() + timeout
     while pending:
@@ -164,9 +176,35 @@ def wait_complete(asc: Asc, shot_ids: list[str], timeout: int = 600) -> None:
                 sys.exit(f"ERROR: ASC rejected {attrs.get('fileName')}: {errors}")
         if pending:
             if time.time() > deadline:
-                sys.exit(f"ERROR: {len(pending)} screenshot(s) still processing "
-                         f"after {timeout}s")
+                return pending
             time.sleep(5)
+    return set()
+
+
+def upload_set(asc: Asc, set_id: str, paths: list[Path]) -> list[str]:
+    """Upload the files in order and wait for them. A file that ASC leaves stuck
+    in processing (seen 2026-11-01: UPLOAD_COMPLETE, 0x0, for over 10 minutes) is
+    deleted and uploaded once more, then the set is put back in filename order."""
+    ids = [upload(asc, set_id, p) for p in paths]
+    by_id = dict(zip(ids, paths))
+    stuck = wait_complete(asc, ids)
+    if stuck:
+        print(f"    {len(stuck)} file(s) stuck in processing, replacing: "
+              + ", ".join(by_id[s].name for s in sorted(stuck)))
+        replaced = []
+        for sid in sorted(stuck):
+            asc.call("DELETE", f"/appScreenshots/{sid}")
+            new = upload(asc, set_id, by_id[sid])
+            ids[ids.index(sid)] = new
+            by_id[new] = by_id.pop(sid)
+            replaced.append(new)
+        still = wait_complete(asc, replaced)
+        if still:
+            sys.exit(f"ERROR: {len(still)} screenshot(s) still processing after a "
+                     f"second upload: {', '.join(by_id[s].name for s in sorted(still))}")
+        asc.call("PATCH", f"/appScreenshotSets/{set_id}/relationships/appScreenshots",
+                 body={"data": [{"type": "appScreenshots", "id": i} for i in ids]})
+    return ids
 
 
 def main() -> None:
@@ -242,8 +280,7 @@ def main() -> None:
                                  "id": loc["id"]}}}}})["data"]
             for sid in old:
                 asc.call("DELETE", f"/appScreenshots/{sid}")
-            new_ids = [upload(asc, st["id"], p) for p in paths]
-            wait_complete(asc, new_ids)
+            new_ids = upload_set(asc, st["id"], paths)
             order = [r["id"] for r in asc.call(
                 "GET", f"/appScreenshotSets/{st['id']}/relationships/appScreenshots",
                 {"limit": "50"})["data"]]

@@ -614,7 +614,10 @@ Pull these verbatim, minimal adaptation:
      (`--dry-run` first). It replaces the 6.9" and 13" sets of every
      localization that has one, in filename order, from that locale's
      folder (`screenshots/<set>/<locale>/`, else the en-US root for the
-     English locales), and waits until ASC reports each file COMPLETE.
+     English locales), and waits until ASC reports each file COMPLETE (a file
+     ASC leaves stuck in processing is deleted and uploaded once more; the
+     script re-mints its 20-minute API token as needed, since a full run
+     over every localization takes longer than that).
      `--locales all` also creates the sets of localizations that have none
      yet and leaves en-US alone; `--locales ca,da` limits the run. It
      refuses a version that isn't editable.
