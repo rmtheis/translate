@@ -1,0 +1,56 @@
+{
+ "ca": [
+  "play-assets/ca/phone-1.png",
+  "play-assets/ca/phone-2.png",
+  "play-assets/ca/phone-3.png",
+  "play-assets/ca/phone-4.png",
+  "play-assets/ca/phone-5.png",
+  "play-assets/ca/phone-6.png",
+  "play-assets/ca/feature.png"
+ ],
+ "es-419": [
+  "play-assets/es-419/phone-1.png",
+  "play-assets/es-419/phone-2.png",
+  "play-assets/es-419/phone-3.png",
+  "play-assets/es-419/phone-4.png",
+  "play-assets/es-419/phone-5.png",
+  "play-assets/es-419/phone-6.png",
+  "play-assets/es-419/feature.png"
+ ],
+ "fr-FR": [
+  "play-assets/fr-FR/phone-1.png",
+  "play-assets/fr-FR/phone-2.png",
+  "play-assets/fr-FR/phone-3.png",
+  "play-assets/fr-FR/phone-4.png",
+  "play-assets/fr-FR/phone-5.png",
+  "play-assets/fr-FR/phone-6.png",
+  "play-assets/fr-FR/feature.png"
+ ],
+ "pt-PT": [
+  "play-assets/pt-PT/phone-1.png",
+  "play-assets/pt-PT/phone-2.png",
+  "play-assets/pt-PT/phone-3.png",
+  "play-assets/pt-PT/phone-4.png",
+  "play-assets/pt-PT/phone-5.png",
+  "play-assets/pt-PT/phone-6.png",
+  "play-assets/pt-PT/feature.png"
+ ],
+ "ru-RU": [
+  "play-assets/ru-RU/phone-1.png",
+  "play-assets/ru-RU/phone-2.png",
+  "play-assets/ru-RU/phone-3.png",
+  "play-assets/ru-RU/phone-4.png",
+  "play-assets/ru-RU/phone-5.png",
+  "play-assets/ru-RU/phone-6.png",
+  "play-assets/ru-RU/feature.png"
+ ],
+ "uk": [
+  "play-assets/uk/phone-1.png",
+  "play-assets/uk/phone-2.png",
+  "play-assets/uk/phone-3.png",
+  "play-assets/uk/phone-4.png",
+  "play-assets/uk/phone-5.png",
+  "play-assets/uk/phone-6.png",
+  "play-assets/uk/feature.png"
+ ]
+}

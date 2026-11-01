@@ -1,0 +1,50 @@
+{
+ "ca": [
+  "asc-assets/ca/iphone-1.png",
+  "asc-assets/ca/iphone-2.png",
+  "asc-assets/ca/iphone-3.png",
+  "asc-assets/ca/iphone-4.png",
+  "asc-assets/ca/ipad-1.png",
+  "asc-assets/ca/ipad-2.png"
+ ],
+ "es-MX": [
+  "asc-assets/es-MX/ipad-1.png",
+  "asc-assets/es-MX/ipad-2.png",
+  "asc-assets/es-MX/iphone-1.png",
+  "asc-assets/es-MX/iphone-2.png",
+  "asc-assets/es-MX/iphone-3.png",
+  "asc-assets/es-MX/iphone-4.png"
+ ],
+ "fr-FR": [
+  "asc-assets/fr-FR/iphone-1.png",
+  "asc-assets/fr-FR/iphone-2.png",
+  "asc-assets/fr-FR/iphone-3.png",
+  "asc-assets/fr-FR/iphone-4.png",
+  "asc-assets/fr-FR/ipad-1.png",
+  "asc-assets/fr-FR/ipad-2.png"
+ ],
+ "pt-PT": [
+  "asc-assets/pt-PT/iphone-1.png",
+  "asc-assets/pt-PT/iphone-2.png",
+  "asc-assets/pt-PT/iphone-3.png",
+  "asc-assets/pt-PT/iphone-4.png",
+  "asc-assets/pt-PT/ipad-1.png",
+  "asc-assets/pt-PT/ipad-2.png"
+ ],
+ "ru": [
+  "asc-assets/ru/ipad-1.png",
+  "asc-assets/ru/ipad-2.png",
+  "asc-assets/ru/iphone-1.png",
+  "asc-assets/ru/iphone-2.png",
+  "asc-assets/ru/iphone-3.png",
+  "asc-assets/ru/iphone-4.png"
+ ],
+ "uk": [
+  "asc-assets/uk/iphone-1.png",
+  "asc-assets/uk/iphone-2.png",
+  "asc-assets/uk/iphone-3.png",
+  "asc-assets/uk/iphone-4.png",
+  "asc-assets/uk/ipad-1.png",
+  "asc-assets/uk/ipad-2.png"
+ ]
+}
