@@ -1,26 +1,48 @@
 #!/usr/bin/env python3
 """
-Update the "What's New" release-notes text on the latest App Store
-Connect app version via the REST API. Runs after asc_upload.py on the
-iOS release workflow.
+Post the "What's New" release notes to every localization of the editable App
+Store Connect version. Runs after asc_upload.py on the iOS release workflow.
+
+The notes file holds the ENGLISH notes: the pair-inventory diff from
+scripts/release-notes.py, or the stock "Behind-the-scenes changes to keep
+things running smoothly." line when the workflow was dispatched with
+stock_notes=true. Which localization gets what:
+
+  * English localizations (en-US, en-GB, en-AU, en-CA, any en-*): the notes
+    file, verbatim.
+  * Every other localization: its own stock line, the `whatsNew` field of
+    ios/appstore/listings/<locale>.json. The pair diff is never translated —
+    that would be release-note wording nobody approved — so a pair-change
+    release reads "Updated: Catalan ↔ Italian (…)" in English and the stock
+    line in Catalan.
+  * A non-English localization with no listing JSON, or whose JSON has no
+    whatsNew, is skipped with a warning. English text never goes into it.
+
+A localization whose whatsNew already equals the planned text is left alone.
+Apple's 409 STATE_ERROR ("Attribute 'whatsNew' cannot be edited at this
+time", first-version submissions) stops the run with a warning, not a failure.
 
 Environment:
   ASC_KEY_ID
   ASC_ISSUER_ID
-  ASC_P8
+  ASC_P8          — PEM contents of the .p8 private key
   ASC_BUNDLE_ID   — bundle id of the app whose version to update
                     (defaults to com.qvyshift.translate)
 
 Usage:
   python3 scripts/asc_release_notes.py <path-to-release-notes.txt>
+      [--render-dir DIR] [--dry-run]
 
-The release-notes file is read as UTF-8 and posted verbatim. App Store
-Connect caps the "What's New" field at 4000 characters; we fail loudly
-if the supplied notes exceed that.
+--render-dir writes the text each locale would get (<locale>.txt) before
+anything is fetched. --dry-run lists the version's localizations with the
+planned PATCH of each and writes nothing to App Store Connect (and doesn't
+wait for an editable version to appear). App Store Connect caps whatsNew at
+4000 characters; we fail loudly if any text exceeds that.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import pathlib
@@ -35,9 +57,13 @@ try:
 except ImportError:
     sys.exit("ERROR: PyJWT not installed. Run `pip install pyjwt cryptography`.")
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from _listing_i18n import english_locale, load_listings  # noqa: E402
 
 ASC_BASE = "https://api.appstoreconnect.apple.com/v1"
 MAX_NOTES = 4000  # ASC character cap on the whatsNew field.
+REPO = pathlib.Path(__file__).resolve().parent.parent
+LISTINGS = REPO / "ios/appstore/listings"
 
 
 def _env(name: str, default: str | None = None) -> str:
@@ -45,6 +71,12 @@ def _env(name: str, default: str | None = None) -> str:
     if not val:
         sys.exit(f"ERROR: ${name} not set")
     return val
+
+
+def warn(msg: str) -> None:
+    """A GitHub Actions annotation on the runner, a plain WARNING elsewhere."""
+    prefix = "::warning::" if os.environ.get("GITHUB_ACTIONS") else "WARNING: "
+    print(prefix + msg, flush=True)
 
 
 def mint_jwt(key_id: str, issuer_id: str, pem: str) -> str:
@@ -153,15 +185,18 @@ def _fetch_versions(token: str, app_id: str) -> list[dict]:
     return rows
 
 
-def latest_editable_version_id(token: str, app_id: str) -> str | None:
+def latest_editable_version_id(token: str, app_id: str, wait: bool = True) -> str | None:
     """Return the most recently-created version in a state that still
     accepts whatsNew edits, or None if no such version appears within
     ~10 minutes. altool's upload returns well before Apple creates the
     ASC version row, so we retry with backoff. A None return means
     "ASC is in a state where this script can't safely patch" — the
-    caller should warn and exit cleanly rather than fail the job."""
-    delays = [0, 15, 30, 45, 60, 90, 120, 120, 120, 120]
+    caller should warn and exit cleanly rather than fail the job.
+    wait=False (dry runs) looks once and, with no editable version,
+    settles for the newest one so the plan can still be shown."""
+    delays = [0, 15, 30, 45, 60, 90, 120, 120, 120, 120] if wait else [0]
     last_states: list[tuple[str, str]] = []
+    rows: list[dict] = []
     for delay in delays:
         if delay:
             print(f"  no editable version yet, waiting {delay}s...", flush=True)
@@ -177,6 +212,13 @@ def latest_editable_version_id(token: str, app_id: str) -> str | None:
             st = picked["attributes"].get("appStoreState")
             print(f"  targeting version {vs} ({st}, id={picked['id']})", flush=True)
             return picked["id"]
+    if not wait and rows:
+        picked = rows[0]
+        vs = picked["attributes"].get("versionString")
+        st = picked["attributes"].get("appStoreState")
+        print(f"  no editable version; dry run against the newest one, {vs} ({st}, "
+              f"id={picked['id']})", flush=True)
+        return picked["id"]
     print(
         f"WARNING: no editable App Store version appeared within ~10 min.\n"
         f"  Versions seen (id, state): {last_states}\n"
@@ -217,36 +259,113 @@ def patch_whats_new(token: str, localization_id: str, notes: str) -> bool:
         sys.exit(str(e))
 
 
+# --- which text goes where --------------------------------------------------
+
+def text_for_locale(locale: str, english: str, by_locale: dict[str, dict]) -> str | None:
+    """The notes a localization gets: the English notes for an English locale,
+    otherwise the stock line drafted in its listing JSON, or None (skip)."""
+    if english_locale(locale):
+        return english
+    listing = by_locale.get(locale) or {}
+    return (listing.get("whatsNew") or "").strip() or None
+
+
+def english_texts(english: str, listings: list[dict]) -> set[str]:
+    """Every text known to be English: the notes file and the English
+    listings' stock line. No non-English locale may receive one of these."""
+    texts = {english}
+    for listing in listings:
+        if english_locale(listing["locale"]) and listing.get("whatsNew"):
+            texts.add(listing["whatsNew"].strip())
+    return texts
+
+
+def check_text(locale: str, text: str, english: set[str]) -> None:
+    if not english_locale(locale) and text in english:
+        sys.exit(f"ERROR: {locale} would get English release notes ({text[:60]!r}). "
+                 f"Fix whatsNew in {LISTINGS / (locale + '.json')}.")
+    if len(text) > MAX_NOTES:
+        sys.exit(f"ERROR: {locale} notes are {len(text)} chars (> ASC cap {MAX_NOTES})")
+
+
+def plan_texts(english: str, listings: list[dict]) -> dict[str, str]:
+    """Locale → text for en-US and every drafted locale that has a whatsNew.
+    This is what --render-dir writes; the ASC loop decides per existing
+    localization with text_for_locale()."""
+    by_locale = {l["locale"]: l for l in listings}
+    plan = {"en-US": english}
+    for locale in by_locale:
+        text = text_for_locale(locale, english, by_locale)
+        if text:
+            plan[locale] = text
+    return plan
+
+
 def main() -> None:
-    if len(sys.argv) != 2:
-        sys.exit("usage: asc_release_notes.py <path-to-notes-file>")
-    notes_path = pathlib.Path(sys.argv[1])
-    if not notes_path.is_file():
-        sys.exit(f"ERROR: notes file not found: {notes_path}")
-    notes = notes_path.read_text(encoding="utf-8").rstrip()
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("notes", type=pathlib.Path, help="the English release notes")
+    ap.add_argument("--render-dir", type=pathlib.Path,
+                    help="write the text every locale would get here, as <locale>.txt")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="show the planned PATCHes; write nothing to App Store Connect")
+    args = ap.parse_args()
+
+    if not args.notes.is_file():
+        sys.exit(f"ERROR: notes file not found: {args.notes}")
+    notes = args.notes.read_text(encoding="utf-8").rstrip()
     if not notes:
         print("notes file is empty; nothing to update")
         return
-    if len(notes) > MAX_NOTES:
-        sys.exit(f"ERROR: notes are {len(notes)} chars (> ASC cap {MAX_NOTES})")
+
+    listings = load_listings(LISTINGS, "locale", required=False)
+    by_locale = {l["locale"]: l for l in listings}
+    english = english_texts(notes, listings)
+    plan = plan_texts(notes, listings)
+    for locale, text in plan.items():
+        check_text(locale, text, english)
+    for locale in sorted(set(by_locale) - set(plan)):
+        warn(f"{locale}: no whatsNew in {LISTINGS.name}/{locale}.json; that locale will be skipped")
+    if args.render_dir:
+        args.render_dir.mkdir(parents=True, exist_ok=True)
+        for locale, text in plan.items():
+            (args.render_dir / f"{locale}.txt").write_text(text + "\n", encoding="utf-8")
+        print(f"rendered {len(plan)} locale(s) to {args.render_dir}")
+    print(f"English notes ({len(notes)} chars) for en-* locales; "
+          f"{len(plan) - 1} drafted locale(s) get their own stock line")
 
     token = mint_jwt(_env("ASC_KEY_ID"), _env("ASC_ISSUER_ID"), _env("ASC_P8"))
     bundle_id = _env("ASC_BUNDLE_ID", default="com.qvyshift.translate")
     app_id    = find_app_id(token, bundle_id)
-    vid       = latest_editable_version_id(token, app_id)
+    vid       = latest_editable_version_id(token, app_id, wait=not args.dry_run)
     if vid is None:
         return  # warning already printed; let the workflow continue
     locs      = version_localizations(token, vid)
     if not locs:
         sys.exit(f"ERROR: app version {vid} has no localizations yet")
 
-    # Update every locale — keeps parity with the Android store-listing
-    # flow (which also pushes one block to every active locale).
-    updated = 0
-    for loc in locs:
+    updated = unchanged = skipped = 0
+    for loc in sorted(locs, key=lambda l: l.get("attributes", {}).get("locale", "")):
         attrs = loc.get("attributes", {})
         locale = attrs.get("locale", "?")
-        if not patch_whats_new(token, loc["id"], notes):
+        text = text_for_locale(locale, notes, by_locale)
+        if text is None:
+            warn(f"{locale}: no stock line in {LISTINGS.name}/{locale}.json — English notes "
+                 f"never go to a non-English locale; whatsNew left as is (set it in App Store "
+                 f"Connect, or draft the listing).")
+            skipped += 1
+            continue
+        check_text(locale, text, english)
+        current = (attrs.get("whatsNew") or "").rstrip()
+        if current == text:
+            print(f"  {locale}: whatsNew already set")
+            unchanged += 1
+            continue
+        if args.dry_run:
+            print(f"  {locale}: would PATCH whatsNew ({len(text)} chars): {text[:72]!r}")
+            updated += 1
+            continue
+        if not patch_whats_new(token, loc["id"], text):
             # Apple rejects whatsNew edits on first-version submissions
             # for the whole version row — every locale would fail with
             # the same STATE_ERROR. Stop early and let the workflow
@@ -261,9 +380,13 @@ def main() -> None:
                 flush=True,
             )
             return
-        print(f"  updated whatsNew for {locale}")
+        print(f"  updated whatsNew for {locale} ({len(text)} chars)")
         updated += 1
-    print(f"updated release notes on {updated} localization(s)")
+    verb = "would update" if args.dry_run else "updated"
+    print(f"{verb} release notes on {updated} localization(s); "
+          f"{unchanged} already set, {skipped} skipped")
+    if args.dry_run:
+        print("dry run — nothing written.")
 
 
 if __name__ == "__main__":
