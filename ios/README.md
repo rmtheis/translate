@@ -421,6 +421,11 @@ App-level structure matches Android 1:1:
   2026-11-01) so the in-app language matches the store listing's. The file is Xcode's
   JSON: add a locale under each key in place and keep the existing order — a re-sort is
   a 3000-line diff.
+- `Translate/InfoPlist.xcstrings` (added 2026-11-01) localizes `CFBundleDisplayName` and
+  `CFBundleName` in the same 56 locales, with the text of the "Apertium Translation
+  Models" title, so the home screen and the iPadOS 27 status bar don't show the English
+  name in a localized storefront's screenshots. xcodegen picks it up from the `Translate`
+  sources folder like `Localizable.xcstrings`.
 - Pair titles (`PairCatalog.languageName`): in an English UI the hard-coded `isoNames`
   table, so titles match Android and the store screenshots ("Northern Sami", where
   Foundation says "North Sámi"); in every other UI language
@@ -572,7 +577,15 @@ Pull these verbatim, minimal adaptation:
   (any App Store locales; default en-US) captures the same scenes with the
   app launched in each language (`-AppleLanguages`/`-AppleLocale`; `no` maps
   to the catalog's `nb`) and writes them to `screenshots/<set>/<locale>/`,
-  en-US staying at the folder root. Every store localization needs its own
+  en-US staying at the folder root. It also makes each locale the
+  simulator's system language (`defaults write "Apple Global Domain"
+  AppleLanguages/AppleLocale` + a reboot, about a minute per locale): the
+  status bar is system UI, so its date format and, on iPadOS 27, the app's
+  display name follow the system language, not `-AppleLanguages`. The
+  overridden status-bar date is still rendered in English on every system
+  language ("Wed 1 Nov" on a Danish iPad), so for non-English iPad sets the
+  script runs `scripts/strip-ipad-status-date.py`, which drops that second
+  text cluster and closes the gap ("12.00  Apertium oversættelsesmodeller"). Every store localization needs its own
   images: ASC shows en-US's to a localization without a set, and Robert does
   not want English screenshots in non-English storefronts (2026-11-01). The
   15 non-English locales were captured that day; en-GB/en-AU/en-CA reuse
@@ -584,7 +597,8 @@ Pull these verbatim, minimal adaptation:
   `--mask=ignored` captures, so it's pasted in from a `--mask=black`
   capture (needs ImageMagick).
 - iPadOS 26/27 simulators start in Windowed Apps mode: a resize grabber
-  in the bottom-right corner and, on 27, the app name in the status bar.
+  in the bottom-right corner and, on 27, the app name in the status bar
+  (localized by `InfoPlist.xcstrings` once the system language is set).
   The mode isn't a defaults key (SpringBoard's MultitaskingModeManager
   switches it), so the script can't change it. The iPad status-bar date
   can show the wrong weekday: Wed Oct 7, 2026 came out as "Sat Oct 7"

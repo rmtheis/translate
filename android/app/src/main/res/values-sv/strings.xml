@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- App identity -->
-    <string name="app_name">Translate</string>
+    <string name="app_name">Översätt</string>
     <string name="demo_tagline">Demo av Apertiums språkmodeller</string>
 
     <!-- Tier headers in the pair picker -->

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- App identity -->
-    <string name="app_name">Translate</string>
+    <string name="app_name">Traduzir</string>
     <string name="demo_tagline">Demonstração dos modelos de idioma do Apertium</string>
 
     <!-- Tier headers in the pair picker -->

@@ -54,13 +54,13 @@
 # read the real names off that image and fix the table row. A pair that is not installed
 # looks exactly like a miss, which is why the English preflight below runs first.
 #
-# One-time manual step per emulator /data: the three pairs are on-demand asset packs and must
-# be downloaded in the app once (with a --local-testing APK set they come from the device in
-# a few seconds). Launch the app, open the "Choose languages" dropdown, tap "Spanish → Catalan",
-# accept the "Download now" dialog; repeat for "Portuguese → Catalan" and "Swedish → Danish".
-# Do NOT use "Download all" (fills /data on the Medium Phone AVD; see android/README.md,
-# "Local builds and QA"). Before touching any language the script checks, in English, that
-# all three pairs are installed and stops with this instruction if one is missing.
+# One-time step per emulator /data: the three pairs are on-demand asset packs and must be
+# downloaded in the app once (with a --local-testing APK set they come from the device in a
+# few seconds): run scripts/android-download-all-pairs.sh <serial> after `bundletool
+# install-apks` (all 27 pairs fit the 6 GB /data of Screenshots_API_34; on a 2 GB AVD
+# download only the three by hand: dropdown → pair → "Download now"). Before touching any
+# language the script checks, in English, that all three pairs are installed and stops with
+# this instruction if one is missing.
 #
 # Status bar. Before EVERY capture the script runs scripts/emulator-screenshot-setup.sh and
 # re-broadcasts the wifi demo state, because Android 15+ drops demo mode after a few minutes.

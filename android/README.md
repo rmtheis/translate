@@ -199,6 +199,10 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
   "se descargaron") and `values-fr-rCA/` (no space before "?", app name "Traduire").
   en-GB / en-AU / en-CA resolve to `values/`. Keep the format placeholders (`%1$d`,
   `%1$s`) exactly as in English and never copy English into a non-English file.
+  `app_name` (launcher label and toolbar title) is translated in every Play listing
+  language and matches the listing title's first word (da "Oversæt", es "Traducir",
+  pt "Traduzir", ro "Traducere", sv "Översätt", uk "Переклад" were added 2026-11-01 so
+  the localized screenshots show no English); other languages still say "Translate".
 - Pair titles in the dropdown (`LanguageTitles`): Java's `Locale.getDisplayLanguage()` in
   the UI language, falling back to the English table. The fallback test compares against
   the English display name, not the code: in Catalan the name of Russian is "rus", which
@@ -353,8 +357,11 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
   `disk.dataPartition.path=<temp>`; if `system_server` crash-loops at boot
   with "There must be exactly one permissions manager; found []", start it
   once with `-wipe-data`, then `bundletool install-apks --apks qa.apks
-  --device-id emulator-NNNN` (pushes the local-testing packs) and download the
-  pairs in the app (Settings → Download all fits in its 6 GB `/data`).
+  --device-id emulator-NNNN` (pushes the local-testing packs) and
+  `scripts/android-download-all-pairs.sh emulator-NNNN`, which taps Settings →
+  Download all and waits on Play Core's logcat lines (all 27 pairs fit in its
+  6 GB `/data`; don't poll the progress dialog with `uiautomator dump` — it
+  fails while the bar animates and a Back/force-stop then kills the download).
 - Upload: `SA_JSON_FILE=<androidpublisher key> python3 scripts/play_upload_images.py`
   replaces the phone screenshots and the feature graphic of every language that
   has files (en-GB/en-AU/en-CA copy en-US's live screenshots) with

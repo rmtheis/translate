@@ -242,10 +242,31 @@ locale_args() {
   [ "$loc" = "no" ] && lang="nb"   # App Store "no" = the catalog's nb (Bokmål)
   printf -- '-AppleLanguages\n(%s)\n-AppleLocale\n%s\n' "$lang" "${lang//-/_}"
 }
+# The status bar is system UI: its date/time format and, on iPadOS 26+, the
+# app's display name (InfoPlist.xcstrings) follow the SIMULATOR's language,
+# which -AppleLanguages does not change. So every locale also becomes the
+# system language, which takes a reboot (the app stays installed; `erase`
+# above ran once, so a leading en-US needs nothing).
+set_system_language() {
+  local lang="$1" loc="${1//-/_}"
+  [ "$lang" = "no" ] && { lang="nb"; loc="nb_NO"; }
+  echo "[$1] system language → $lang / $loc (rebooting the simulator)…"
+  xcrun simctl spawn "$DEVICE" defaults write "Apple Global Domain" AppleLanguages -array "$lang" >/dev/null
+  xcrun simctl spawn "$DEVICE" defaults write "Apple Global Domain" AppleLocale -string "$loc" >/dev/null
+  xcrun simctl shutdown "$DEVICE"
+  xcrun simctl boot "$DEVICE"
+  xcrun simctl bootstatus "$DEVICE" -b >/dev/null
+  set_status_bar
+}
+SYSTEM_LANGUAGE_CHANGED=0
 TOTAL=0
 for LOCALE in "${LOCALE_LIST[@]}"; do
   if [ "$LOCALE" = "en-US" ]; then LOCALE_OUT="$OUT"; else LOCALE_OUT="$OUT/$LOCALE"; fi
   mkdir -p "$LOCALE_OUT"
+  if [ "$LOCALE" != "en-US" ] || [ "$SYSTEM_LANGUAGE_CHANGED" = 1 ]; then
+    set_system_language "$LOCALE"
+    SYSTEM_LANGUAGE_CHANGED=1
+  fi
   LAUNCH_ARGS=()
   while IFS= read -r arg; do LAUNCH_ARGS+=("$arg"); done < <(locale_args "$LOCALE")
   for scene in "${SCENES[@]}"; do
@@ -262,6 +283,12 @@ for LOCALE in "${LOCALE_LIST[@]}"; do
     xcrun simctl io "$DEVICE" screenshot --type=png --mask=ignored "$LOCALE_OUT/$name.png"
     xcrun simctl io "$DEVICE" screenshot --type=png --mask=black "$MASKED" >/dev/null 2>&1
     add_island "$LOCALE_OUT/$name.png" "$MASKED"
+    # iPadOS writes "<time>  <date>  <app name>" into the status bar, and the
+    # overridden date comes out in English whatever the system language is
+    # ("Wed 1 Nov" on a Danish iPad). Drop it from the non-English sets.
+    if [ "$KIND" = "ipad" ] && [ "$LOCALE" != "en-US" ]; then
+      /usr/local/bin/python3 "$ROOT/scripts/strip-ipad-status-date.py" "$LOCALE_OUT/$name.png" >/dev/null
+    fi
     TOTAL=$((TOTAL + 1))
   done
   echo "[$LOCALE] wrote $(ls "$LOCALE_OUT"/*.png | wc -l | tr -d ' ') PNGs to $LOCALE_OUT"
