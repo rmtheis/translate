@@ -90,24 +90,45 @@ class Asc:
 
     def call(self, method: str, path: str, params: dict | None = None,
              body: dict | None = None) -> dict:
-        if time.time() > self._token_exp - 120:
-            self._refresh()
         url = ASC_BASE + path
         if params:
             url += "?" + urllib.parse.urlencode(params, safe=",[]")
-        headers = {"Authorization": f"Bearer {self.token}"}
         data = None
         if body is not None:
             data = json.dumps(body).encode()
-            headers["Content-Type"] = "application/json"
-        req = urllib.request.Request(url, method=method, headers=headers, data=data)
-        try:
-            with urllib.request.urlopen(req, timeout=60) as r:
-                raw = r.read()
-                return json.loads(raw) if raw else {}
-        except urllib.error.HTTPError as e:
-            detail = e.read().decode("utf-8", errors="replace")
-            sys.exit(f"HTTP {e.code} {e.reason} on {method} {path}\n{detail}")
+        # ASC now and then answers 401 to a token it accepted a moment earlier,
+        # and 5xx under load; a 401 was never processed, so every method may
+        # be retried with a fresh token. 5xx/network retries stay on the
+        # methods that are safe to repeat.
+        for attempt in range(4):
+            if time.time() > self._token_exp - 120:
+                self._refresh()
+            headers = {"Authorization": f"Bearer {self.token}"}
+            if data is not None:
+                headers["Content-Type"] = "application/json"
+            req = urllib.request.Request(url, method=method, headers=headers, data=data)
+            try:
+                with urllib.request.urlopen(req, timeout=60) as r:
+                    raw = r.read()
+                    return json.loads(raw) if raw else {}
+            except urllib.error.HTTPError as e:
+                detail = e.read().decode("utf-8", errors="replace")
+                retry = e.code == 401 or (e.code >= 500 and method != "POST")
+                if retry and attempt < 3:
+                    wait = 5 * (attempt + 1)
+                    print(f"    HTTP {e.code} on {method} {path}; "
+                          f"retrying with a fresh token in {wait}s")
+                    time.sleep(wait)
+                    self._refresh()
+                    continue
+                sys.exit(f"HTTP {e.code} {e.reason} on {method} {path}\n{detail}")
+            except (urllib.error.URLError, TimeoutError) as e:
+                if method != "POST" and attempt < 3:
+                    wait = 5 * (attempt + 1)
+                    print(f"    {type(e).__name__} on {method} {path}: {e}; retrying in {wait}s")
+                    time.sleep(wait)
+                    continue
+                sys.exit(f"{type(e).__name__} on {method} {path}: {e}")
 
 
 def find_app(asc: Asc, bundle_id: str) -> dict:

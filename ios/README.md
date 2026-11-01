@@ -617,7 +617,10 @@ Pull these verbatim, minimal adaptation:
      English locales), and waits until ASC reports each file COMPLETE (a file
      ASC leaves stuck in processing is deleted and uploaded once more; the
      script re-mints its 20-minute API token as needed, since a full run
-     over every localization takes longer than that).
+     over every localization takes longer than that, and retries the
+     occasional 401 ASC returns to a token it accepted moments earlier).
+     A run that still dies part-way is safe to repeat for the remaining
+     locales: each set is replaced whole.
      `--locales all` also creates the sets of localizations that have none
      yet and leaves en-US alone; `--locales ca,da` limits the run. It
      refuses a version that isn't editable.
