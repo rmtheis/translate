@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Translate store pages</title>
+<style>
+:root{--bg:#fff;--fg:#1b1b1b;--muted:#5f6368;--line:#e3e3e3;--accent:#cc0000}
+@media (prefers-color-scheme:dark){:root{--bg:#121212;--fg:#eee;--muted:#aaa;--line:#333;--accent:#ff6b6b}}
+body{margin:0;padding:24px 16px 48px;background:var(--bg);color:var(--fg);font:15px/1.45 -apple-system,system-ui,Segoe UI,Roboto,sans-serif}
+h1{font-size:26px;margin:0 0 6px} h2{font-size:20px;margin:36px 0 12px;border-bottom:1px solid var(--line);padding-bottom:6px}
+p.lead{color:var(--muted);max-width:70ch;margin:0 0 8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg)}
+figure img{display:block;width:100%;height:auto;border-bottom:1px solid var(--line)}
+figcaption{padding:10px 12px;font-size:14px} figcaption span{color:var(--muted)} a{color:var(--accent)}
+</style></head><body>
+<h1>Translate (Experimental): store pages as rendered on 2026-11-01</h1>
+<p class="lead">Full-page snapshots at 1280 px width from headless Chrome, no sign-in. Click a snapshot to open it full size; "live page" opens the real store page.</p>
+<h2>Google Play, 8 of the 18 new listing languages</h2>
+<p class="lead">Title, short description and full description are the localized text published today. Screenshots and graphics are the en-US set. The "What's new" shown is the full-rollout release (1.0.13); 1.0.14 is at 5%.</p>
+<div class="grid">
+<figure><a href="play/ca.png" target="_blank" rel="noopener"><img loading="lazy" src="play/ca.png" alt="Catalan (ca)"></a>
+<figcaption><strong>Catalan (ca)</strong><br><span>Google Play listing, localized text live since 2026-11-01</span><br><a href="https://play.google.com/store/apps/details?id=com.qvyshift.translate&amp;hl=ca&amp;gl=ES" target="_blank" rel="noopener">live page</a></figcaption></figure>
+<figure><a href="play/es-419.png" target="_blank" rel="noopener"><img loading="lazy" src="play/es-419.png" alt="Spanish (Latin America) (es-419)"></a>
+<figcaption><strong>Spanish (Latin America) (es-419)</strong><br><span>Google Play listing, localized text live since 2026-11-01</span><br><a href="https://play.google.com/store/apps/details?id=com.qvyshift.translate&amp;hl=es-419&amp;gl=MX" target="_blank" rel="noopener">live page</a></figcaption></figure>
+<figure><a href="play/fr-CA.png" target="_blank" rel="noopener"><img loading="lazy" src="play/fr-CA.png" alt="French (Canada) (fr-CA)"></a>
+<figcaption><strong>French (Canada) (fr-CA)</strong><br><span>Google Play listing, localized text live since 2026-11-01</span><br><a href="https://play.google.com/store/apps/details?id=com.qvyshift.translate&amp;hl=fr-CA&amp;gl=CA" target="_blank" rel="noopener">live page</a></figcaption></figure>
+<figure><a href="play/pt-PT.png" target="_blank" rel="noopener"><img loading="lazy" src="play/pt-PT.png" alt="Portuguese (Portugal) (pt-PT)"></a>
+<figcaption><strong>Portuguese (Portugal) (pt-PT)</strong><br><span>Google Play listing, localized text live since 2026-11-01</span><br><a href="https://play.google.com/store/apps/details?id=com.qvyshift.translate&amp;hl=pt-PT&amp;gl=PT" target="_blank" rel="noopener">live page</a></figcaption></figure>
+<figure><a href="play/it.png" target="_blank" rel="noopener"><img loading="lazy" src="play/it.png" alt="Italian (it)"></a>
+<figcaption><strong>Italian (it)</strong><br><span>Google Play listing, localized text live since 2026-11-01</span><br><a href="https://play.google.com/store/apps/details?id=com.qvyshift.translate&amp;hl=it&amp;gl=IT" target="_blank" rel="noopener">live page</a></figcaption></figure>
+<figure><a href="play/uk.png" target="_blank" rel="noopener"><img loading="lazy" src="play/uk.png" alt="Ukrainian (uk)"></a>
+<figcaption><strong>Ukrainian (uk)</strong><br><span>Google Play listing, localized text live since 2026-11-01</span><br><a href="https://play.google.com/store/apps/details?id=com.qvyshift.translate&amp;hl=uk&amp;gl=UA" target="_blank" rel="noopener">live page</a></figcaption></figure>
+<figure><a href="play/sv.png" target="_blank" rel="noopener"><img loading="lazy" src="play/sv.png" alt="Swedish (sv)"></a>
+<figcaption><strong>Swedish (sv)</strong><br><span>Google Play listing, localized text live since 2026-11-01</span><br><a href="https://play.google.com/store/apps/details?id=com.qvyshift.translate&amp;hl=sv&amp;gl=SE" target="_blank" rel="noopener">live page</a></figcaption></figure>
+<figure><a href="play/no.png" target="_blank" rel="noopener"><img loading="lazy" src="play/no.png" alt="Norwegian (no)"></a>
+<figcaption><strong>Norwegian (no)</strong><br><span>Google Play listing, localized text live since 2026-11-01</span><br><a href="https://play.google.com/store/apps/details?id=com.qvyshift.translate&amp;hl=no&amp;gl=NO" target="_blank" rel="noopener">live page</a></figcaption></figure>
+</div>
+<h2>App Store, 6 storefronts</h2>
+<p class="lead">The App Store listing exists only in en-US, so every storefront shows the English title, subtitle and description with the storefront's own chrome. The 18 localized drafts are on master under <code>ios/appstore/listings/</code>, not uploaded yet.</p>
+<div class="grid">
+<figure><a href="appstore/us.png" target="_blank" rel="noopener"><img loading="lazy" src="appstore/us.png" alt="United States storefront (us)"></a>
+<figcaption><strong>United States storefront (us)</strong><br><span>App Store page rendered with Accept-Language en-US; listing is en-US only today</span><br><a href="https://apps.apple.com/us/app/id6763014850" target="_blank" rel="noopener">live page</a></figcaption></figure>
+<figure><a href="appstore/es.png" target="_blank" rel="noopener"><img loading="lazy" src="appstore/es.png" alt="Spain storefront (es)"></a>
+<figcaption><strong>Spain storefront (es)</strong><br><span>App Store page rendered with Accept-Language es-ES; listing is en-US only today</span><br><a href="https://apps.apple.com/es/app/id6763014850" target="_blank" rel="noopener">live page</a></figcaption></figure>
+<figure><a href="appstore/fr.png" target="_blank" rel="noopener"><img loading="lazy" src="appstore/fr.png" alt="France storefront (fr)"></a>
+<figcaption><strong>France storefront (fr)</strong><br><span>App Store page rendered with Accept-Language fr-FR; listing is en-US only today</span><br><a href="https://apps.apple.com/fr/app/id6763014850" target="_blank" rel="noopener">live page</a></figcaption></figure>
+<figure><a href="appstore/pt.png" target="_blank" rel="noopener"><img loading="lazy" src="appstore/pt.png" alt="Portugal storefront (pt)"></a>
+<figcaption><strong>Portugal storefront (pt)</strong><br><span>App Store page rendered with Accept-Language pt-PT; listing is en-US only today</span><br><a href="https://apps.apple.com/pt/app/id6763014850" target="_blank" rel="noopener">live page</a></figcaption></figure>
+<figure><a href="appstore/it.png" target="_blank" rel="noopener"><img loading="lazy" src="appstore/it.png" alt="Italy storefront (it)"></a>
+<figcaption><strong>Italy storefront (it)</strong><br><span>App Store page rendered with Accept-Language it-IT; listing is en-US only today</span><br><a href="https://apps.apple.com/it/app/id6763014850" target="_blank" rel="noopener">live page</a></figcaption></figure>
+<figure><a href="appstore/se.png" target="_blank" rel="noopener"><img loading="lazy" src="appstore/se.png" alt="Sweden storefront (se)"></a>
+<figcaption><strong>Sweden storefront (se)</strong><br><span>App Store page rendered with Accept-Language sv-SE; listing is en-US only today</span><br><a href="https://apps.apple.com/se/app/id6763014850" target="_blank" rel="noopener">live page</a></figcaption></figure>
+</div>
+</body></html>
