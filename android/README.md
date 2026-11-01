@@ -44,6 +44,11 @@ monthly cron and on manual dispatch. Don't upload by hand.
   a utility name ("function/utility not found", exit 1, stdin unread). The test now writes
   `#!/bin/sh` shims that exec the tool by path. Never symlink or copy a host tool under
   another name in anything that runs on the runner.
+- **Play "Installer check" is OFF for this app** (Play Console → app → Protected with Play →
+  Automatic protection → Manage; turned off 2026-11-01). Google's automatic protection now
+  requires minSdk 24, and with the check on, Play rejects every upload of this minSdk-21 app
+  ("Play automatic protection requires a minimum SDK version of 24 or higher"; 1.0.13 still
+  uploaded fine on 2026-10-07, when the floor was 21). Don't turn it back on while minSdk is 21.
 
 ## Toolchain
 
@@ -209,6 +214,18 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
 
 ## Release log
 
+- **1.0.14** (2026110112; published 2026-11-01 to production at 5% staged by
+  release-android.yml run 41305484232, manual dispatch with default inputs, so the
+  pair-diff notes): the four pairs the monthly check found updated — fra-cat 116 → 117,
+  nno-nob g9174 → g9200, oci-fra 9 → 10, sme-nob 95 → 128. App code change: only the
+  `NativePipelineTest` shell shims (`019f2cb`). **Natives are new**: the Nov 1 cron run
+  (41272141038) missed the natives cache (expired after 7 unused days) and rebuilt every
+  tool from upstream HEAD; the dispatches reused that cache. So 1.0.14 ships 2026-11-01
+  upstream code, not the QA'd 1.0.12 natives — watch vitals during the rollout.
+  Two attempts failed first: the cron itself (two unit tests, see the `ubuntu-latest`
+  note under "Releases") and dispatch 41300955395 (Play rejected the AAB: "Play automatic
+  protection requires a minimum SDK version of 24"; fixed by turning Installer check off,
+  see "Releases"). 1.0.13 had reached 100% before this.
 - **1.0.13** (2026100720; published 2026-10-07 to production at 5% staged by
   release-android.yml run 37678897602, `force_publish` + `stock_notes`): ships `libhfst_proc.so` and
   `liblt_merge.so` for both ABIs, plus the `lt-merge` mapping in `NativePipeline`. Fixes
