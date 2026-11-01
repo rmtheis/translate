@@ -362,7 +362,10 @@ public class NativePipelineTest {
   }
 
   // runPipeline with host tools standing in for the Apertium binaries: TOOL_LIBS maps the
-  // mode-file name to a lib*.so, here a symlink to cat, true or false. Build.VERSION.SDK_INT
+  // mode-file name to a lib*.so, here a shell script that execs cat, true or false. Not a
+  // symlink: on Ubuntu 26.04 (GitHub's ubuntu-latest since November 2026) the coreutils are
+  // the uutils multicall binary, which picks the utility from argv[0] and rejects a name like
+  // liblt_proc.so with "function/utility not found" (exit 1, stdin unread). Build.VERSION.SDK_INT
   // is 0 in these tests, so the stages are cleaned up the pre-API-26 way, with destroy().
 
   /** 1 MiB: far more than a pipe holds (64 KiB on Linux, 16–64 KiB on macOS). */
@@ -373,11 +376,13 @@ public class NativePipelineTest {
     return sb.toString();
   }
 
-  private NativePipeline pipelineWith(String... toolAndTarget) throws IOException {
+  private NativePipeline pipelineWith(String... toolAndCommand) throws IOException {
     File libDir = tmp.newFolder("lib");
-    for (int i = 0; i < toolAndTarget.length; i += 2) {
-      Files.createSymbolicLink(new File(libDir, toolAndTarget[i]).toPath(),
-          new File(toolAndTarget[i + 1]).toPath());
+    for (int i = 0; i < toolAndCommand.length; i += 2) {
+      File shim = new File(libDir, toolAndCommand[i]);
+      Files.write(shim.toPath(), ("#!/bin/sh\nexec " + toolAndCommand[i + 1] + " \"$@\"\n")
+          .getBytes(StandardCharsets.UTF_8));
+      assertTrue(shim.setExecutable(true));
     }
     return new NativePipeline(libDir.getAbsolutePath());
   }

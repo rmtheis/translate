@@ -37,6 +37,13 @@ monthly cron and on manual dispatch. Don't upload by hand.
 - Signing: CI decodes `PLAY_UPLOAD_KEYSTORE_BASE64` into `app/upload.keystore` and
   passes `UPLOAD_KEYSTORE_PASSWORD` / `UPLOAD_KEY_ALIAS` / `UPLOAD_KEY_PASSWORD`.
   Without that file, `release` falls back to the debug key (local QA builds).
+- The jobs run on `ubuntu-latest`, which became **Ubuntu 26.04** in November 2026. Its
+  coreutils are the Rust **uutils** multicall binary, which picks the utility from argv[0]:
+  the 2026-11-01 cron (run 41272141038) failed two `NativePipelineTest` tests because they
+  stood in for the Apertium binaries with symlinks to `/bin/cat`, and `liblt_proc.so` is not
+  a utility name ("function/utility not found", exit 1, stdin unread). The test now writes
+  `#!/bin/sh` shims that exec the tool by path. Never symlink or copy a host tool under
+  another name in anything that runs on the runner.
 
 ## Toolchain
 
