@@ -24,6 +24,19 @@ BUNDLE_ID="com.qvyshift.translate"
 command -v magick >/dev/null || { echo "ERROR: needs ImageMagick (brew install imagemagick)"; exit 1; }
 
 # ---------------------------------------------------------------------------
+# Locales. LOCALES is a comma-separated list of App Store locales; the
+# default en-US writes to screenshots/<set>/ as before. Any other locale
+# writes to screenshots/<set>/<locale>/ and the app is launched with
+# -AppleLanguages/-AppleLocale for it, so the UI, the pair titles and the
+# status bar follow that language (the store shows en-US's images to a
+# localization without its own set, which Robert does not want). en-GB,
+# en-AU and en-CA reuse en-US's files at upload time (asc_upload_screenshots.py).
+# IOS_RUNTIME pins the simulator runtime version (e.g. 26.5); default newest.
+# ---------------------------------------------------------------------------
+: "${LOCALES:=en-US}"
+IFS=',' read -r -a LOCALE_LIST <<< "$LOCALES"
+
+# ---------------------------------------------------------------------------
 # Device selection.
 #
 # Default is iPhone 16 Pro Max (6.9" App Store tier, 1320×2868). Pass
@@ -43,7 +56,7 @@ mkdir -p "$OUT"
 # The run erases its simulator, so it uses its own device, never one that
 # happens to be booted with the same model name (other sessions share the
 # simulator set). Created on the newest available iOS runtime when missing.
-DEVICE_NAME="Translate screenshots ($DEVICE_TYPE)"
+DEVICE_NAME="Translate screenshots ($DEVICE_TYPE${IOS_RUNTIME:+, iOS $IOS_RUNTIME})"
 pick_device() {
   /usr/bin/python3 - "$DEVICE_NAME" "$DEVICE_TYPE" <<'PY'
 import json, subprocess, sys
@@ -54,8 +67,10 @@ for rt, ds in j("devices")["devices"].items():
         if d["name"] == name and d.get("isAvailable", True):
             print(d["udid"]); sys.exit(0)
 types = [t for t in j("devicetypes")["devicetypes"] if t["name"] == dtype]
+import os
 runtimes = [r for r in j("runtimes")["runtimes"]
-            if r.get("isAvailable") and r.get("platform") == "iOS"]
+            if r.get("isAvailable") and r.get("platform") == "iOS"
+            and (not os.environ.get("IOS_RUNTIME") or r["version"] == os.environ["IOS_RUNTIME"])]
 if not types or not runtimes:
     sys.exit(f"ERROR: no '{dtype}' device type or no iOS runtime available")
 runtimes.sort(key=lambda r: [int(x) for x in r["version"].split(".")])
@@ -218,19 +233,38 @@ add_island() {
 
 MASKED_DIR="$(mktemp -d -t translate-shots)"
 MASKED="$MASKED_DIR/masked.png"
-for scene in "${SCENES[@]}"; do
-  IFS='|' read -r name pkg dir input <<< "$scene"
-  echo "---- scene $name ($pkg, $dir): $input"
-  xcrun simctl terminate "$DEVICE" "$BUNDLE_ID" 2>/dev/null || true
-  xcrun simctl launch "$DEVICE" "$BUNDLE_ID" \
-    -screenshot_pair "$pkg" \
-    -screenshot_direction "$dir" \
-    -screenshot_input "$input" >/dev/null
-  set_status_bar   # re-assert; the override can lapse across launches
-  sleep "$SETTLE"
-  xcrun simctl io "$DEVICE" screenshot --type=png --mask=ignored "$OUT/$name.png"
-  xcrun simctl io "$DEVICE" screenshot --type=png --mask=black "$MASKED" >/dev/null 2>&1
-  add_island "$OUT/$name.png" "$MASKED"
+# -AppleLanguages wants a property-list array; the locale identifier uses
+# an underscore ("pt-PT" → languages (pt-PT), locale pt_PT; "ca" → ca_ES is
+# not needed: AppleLocale ca gives Catalan formats).
+locale_args() {
+  local loc="$1" lang="$1"
+  [ "$loc" = "en-US" ] && return
+  [ "$loc" = "no" ] && lang="nb"   # App Store "no" = the catalog's nb (Bokmål)
+  printf -- '-AppleLanguages\n(%s)\n-AppleLocale\n%s\n' "$lang" "${lang//-/_}"
+}
+TOTAL=0
+for LOCALE in "${LOCALE_LIST[@]}"; do
+  if [ "$LOCALE" = "en-US" ]; then LOCALE_OUT="$OUT"; else LOCALE_OUT="$OUT/$LOCALE"; fi
+  mkdir -p "$LOCALE_OUT"
+  LAUNCH_ARGS=()
+  while IFS= read -r arg; do LAUNCH_ARGS+=("$arg"); done < <(locale_args "$LOCALE")
+  for scene in "${SCENES[@]}"; do
+    IFS='|' read -r name pkg dir input <<< "$scene"
+    echo "---- [$LOCALE] scene $name ($pkg, $dir): $input"
+    xcrun simctl terminate "$DEVICE" "$BUNDLE_ID" 2>/dev/null || true
+    xcrun simctl launch "$DEVICE" "$BUNDLE_ID" \
+      "${LAUNCH_ARGS[@]}" \
+      -screenshot_pair "$pkg" \
+      -screenshot_direction "$dir" \
+      -screenshot_input "$input" >/dev/null
+    set_status_bar   # re-assert; the override can lapse across launches
+    sleep "$SETTLE"
+    xcrun simctl io "$DEVICE" screenshot --type=png --mask=ignored "$LOCALE_OUT/$name.png"
+    xcrun simctl io "$DEVICE" screenshot --type=png --mask=black "$MASKED" >/dev/null 2>&1
+    add_island "$LOCALE_OUT/$name.png" "$MASKED"
+    TOTAL=$((TOTAL + 1))
+  done
+  echo "[$LOCALE] wrote $(ls "$LOCALE_OUT"/*.png | wc -l | tr -d ' ') PNGs to $LOCALE_OUT"
 done
 rm -rf "$MASKED_DIR"
 
@@ -238,4 +272,4 @@ xcrun simctl terminate "$DEVICE" "$BUNDLE_ID" 2>/dev/null || true
 xcrun simctl status_bar "$DEVICE" clear >/dev/null 2>&1 || true
 
 echo
-echo "wrote $(ls "$OUT"/*.png | wc -l | tr -d ' ') PNGs to $OUT"
+echo "wrote $TOTAL PNGs under $OUT (${#LOCALE_LIST[@]} locale(s))"

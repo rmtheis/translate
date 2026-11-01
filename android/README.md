@@ -330,11 +330,38 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
 
 ## Play listing graphics
 
-`play/feature_graphic.png` (com.qvyshift.translate, en-US) and `play/icon_512.png`.
-The "Offline Translation" feature graphic was refitted on 2026-10-13 (content
-scaled 0.96 into the Play safe zone, x 100..924: Play web crops cards to 16:9
-and clipped the "O"). Rule + tools: `~/Documents/app-store-optimization/tools/feature-graphic/`. Push with
-`upload_feature_graphics.py --package com.qvyshift.translate --image android/play/feature_graphic.png --locales all --commit`.
+- `play/icon_512.png` is the icon. The feature graphics are generated:
+  `scripts/feature-graphic.py` sets the two text lines of every listing language
+  (its `TEXTS` table; the subtitle carries the pair count, 27 since 1.0.13) on
+  `play/feature_graphic_base.png` — the designer's background, watermark and
+  logo with the text removed (reconstructed 2026-11-01) — in Helvetica Neue via
+  CoreText (`ct_text.py` in `~/Documents/app-store-optimization/tools/feature-graphic/`,
+  so Cyrillic renders with real fonts), fitted into the Play safe box x 100..924
+  (Play web crops cards to 16:9). Output: `play/feature_graphic.png` (en-US) and
+  `play/feature_graphic_<language>.png` for the 15 other languages; en-GB/en-AU/
+  en-CA reuse en-US's. Run with `/usr/local/bin/python3` (has PyObjC); `--check`
+  writes the 16:9 preview crops next to the files.
+- Phone screenshots: six plain 1080x2400 Medium Phone captures per language
+  (Spanish → Catalan, Portuguese → Catalan, Swedish → Danish; each before and
+  after Translate), `screenshots/play-phone/<language>/`, made by
+  `scripts/screenshots-android.sh` (see its header; en-US's live set is the
+  model). No tablet images. Capture on the **Android 14** Medium Phone AVD
+  (`Screenshots_API_34`): from Android 15 the app is drawn edge-to-edge and
+  `android:statusBarColor` is ignored, so an API 35/36 emulator gives a cream
+  status bar with a near-invisible white clock instead of the dark-red bar of
+  the live set. `Screenshots_API_34` keeps its `/data` across boots despite
+  `disk.dataPartition.path=<temp>`; if `system_server` crash-loops at boot
+  with "There must be exactly one permissions manager; found []", start it
+  once with `-wipe-data`, then `bundletool install-apks --apks qa.apks
+  --device-id emulator-NNNN` (pushes the local-testing packs) and download the
+  pairs in the app (Settings → Download all fits in its 6 GB `/data`).
+- Upload: `SA_JSON_FILE=<androidpublisher key> python3 scripts/play_upload_images.py`
+  replaces the phone screenshots and the feature graphic of every language that
+  has files (en-GB/en-AU/en-CA copy en-US's live screenshots) with
+  `images.deleteall` + upload; dry run validates and deletes the edit, `--commit`
+  publishes; `--languages`, `--no-feature-graphic`, `--no-screenshots` narrow it.
+  Play shows the default language's images to a language without its own, so a
+  new listing language needs its images in the same release as its text.
 
 ## Play listing text
 

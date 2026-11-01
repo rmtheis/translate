@@ -11,10 +11,16 @@ a new version, so new screenshots must reach the editable version before it's
 submitted: create it with asc_create_version.py (the release workflow reuses
 an editable version with the same versionString), run this, then dispatch.
 
-For each localization of the version that already has a set of a display
-type, plus the app's primary locale, the set's screenshots are deleted and
-the new files uploaded in filename order. Other display types and other
-locales are left alone. Each upload is reserved, PUT in the chunks ASC asks
+Locales: by default every localization of the version that already has a
+set of a display type, plus the app's primary locale, gets the set replaced
+with the files of its own folder — screenshots/<set>/<locale>/*.png when
+that folder exists (written by `LOCALES=… screenshots-ios.sh`), else the
+en-US files at the folder root for the English locales (en-GB, en-AU,
+en-CA), else the locale is skipped with a warning. --locales all also
+creates the sets of localizations that have none yet (the 18 locales added
+on 2026-11-01) and leaves the primary locale alone; --locales ca,da limits
+the run (name en-US there to replace its sets). Other display types are
+left alone. Each upload is reserved, PUT in the chunks ASC asks
 for, committed with its MD5, and polled until ASC reports it COMPLETE. Never
 touches a version that isn't editable.
 
@@ -24,6 +30,7 @@ Environment (same as asc_create_version.py):
 
 Usage:
   python3 scripts/asc_upload_screenshots.py --version 1.0.7 [--dry-run]
+  python3 scripts/asc_upload_screenshots.py --version 1.0.8 --locales all [--dry-run]
 """
 from __future__ import annotations
 
@@ -167,12 +174,30 @@ def main() -> None:
     ap.add_argument("--version", required=True, help="versionString, e.g. 1.0.7")
     ap.add_argument("--dry-run", action="store_true",
                     help="show what would be replaced; change nothing")
+    ap.add_argument("--locales", help="'all' = every localization of the version, "
+                    "creating missing sets; or a comma-separated list; default: "
+                    "localizations that already have a set, plus the primary locale")
     args = ap.parse_args()
 
-    files = {t: sorted(d.glob("*.png")) for t, d in SETS.items()}
-    for display_type, paths in files.items():
-        if not paths:
-            sys.exit(f"ERROR: no PNGs in {SETS[display_type]}")
+    for display_type, d in SETS.items():
+        if not sorted(d.glob("*.png")):
+            sys.exit(f"ERROR: no PNGs in {d}")
+    wanted = None if not args.locales else (
+        "all" if args.locales == "all" else set(args.locales.split(",")))
+
+    def files_for(locale: str) -> dict[str, list[Path]] | None:
+        """The PNGs of a locale per display type: its own folder, else the
+        en-US root for English locales, else None."""
+        out = {}
+        for display_type, d in SETS.items():
+            own = sorted((d / locale).glob("*.png"))
+            if own:
+                out[display_type] = own
+            elif locale.startswith("en"):
+                out[display_type] = sorted(d.glob("*.png"))
+            else:
+                return None
+        return out
 
     asc = Asc(_env("ASC_KEY_ID"), _env("ASC_ISSUER_ID"), _env("ASC_P8"))
     app = find_app(asc, _env("ASC_BUNDLE_ID", "com.qvyshift.translate"))
@@ -183,14 +208,25 @@ def main() -> None:
 
     locs = asc.call("GET", f"/appStoreVersions/{version['id']}/appStoreVersionLocalizations",
                     {"limit": "200"})["data"]
-    for loc in locs:
+    for loc in sorted(locs, key=lambda l: l["attributes"]["locale"]):
         locale = loc["attributes"]["locale"]
+        if isinstance(wanted, set) and locale not in wanted:
+            continue
+        if wanted == "all" and locale == primary:
+            print(f"  {locale}: primary locale left alone under --locales all "
+                  f"(list it explicitly to replace its sets)")
+            continue
+        files = files_for(locale)
+        if files is None:
+            if wanted is not None:
+                print(f"  {locale}: WARNING no screenshots folder for this locale — skipped")
+            continue
         existing = {s["attributes"]["screenshotDisplayType"]: s for s in asc.call(
             "GET", f"/appStoreVersionLocalizations/{loc['id']}/appScreenshotSets",
             {"limit": "50", "include": "appScreenshots"})["data"]}
         for display_type, paths in files.items():
             st = existing.get(display_type)
-            if st is None and locale != primary:
+            if st is None and locale != primary and wanted is None:
                 continue
             old = [r["id"] for r in (st or {}).get("relationships", {})
                    .get("appScreenshots", {}).get("data") or []]

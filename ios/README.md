@@ -565,8 +565,18 @@ Pull these verbatim, minimal adaptation:
   `scripts/stage-pair-odrs.sh`), not stale local copies. It temporarily
   strips the ODR tags from `project.yml` and restores them on exit.
 - It erases a simulator of its own, "Translate screenshots (<device
-  type>)", created on the newest iOS runtime. Never pass it a shared
-  device: other sessions use the same simulator set.
+  type>)", created on the newest iOS runtime (`IOS_RUNTIME=26.5` pins a
+  version). Never pass it a shared device: other sessions use the same
+  simulator set.
+- `LOCALES=ca,da,es-ES,es-MX,fr-FR,fr-CA,hr,it,no,pt-BR,pt-PT,ro,ru,sv,uk`
+  (any App Store locales; default en-US) captures the same scenes with the
+  app launched in each language (`-AppleLanguages`/`-AppleLocale`; `no` maps
+  to the catalog's `nb`) and writes them to `screenshots/<set>/<locale>/`,
+  en-US staying at the folder root. Every store localization needs its own
+  images: ASC shows en-US's to a localization without a set, and Robert does
+  not want English screenshots in non-English storefronts (2026-11-01). The
+  15 non-English locales were captured that day; en-GB/en-AU/en-CA reuse
+  en-US's files at upload time.
 - Xcode 27 workarounds in the script: no Simulator.app (it captures
   headless); `status_bar --time` takes only ISO 8601 with fractional
   seconds; `--batteryState charged` draws a green bolt, so it uses
@@ -588,10 +598,12 @@ Pull these verbatim, minimal adaptation:
      `project.yml`, which is what the workflow will build and look up.
   2. `python3 scripts/asc_upload_screenshots.py --version <next>`
      (`--dry-run` first). It replaces the 6.9" and 13" sets of every
-     localization that has one (only en-US has its own; the 18 others, live from
-     1.0.8, fall back to it), in filename order, and
-     waits until ASC reports each file COMPLETE. It refuses a version that
-     isn't editable.
+     localization that has one, in filename order, from that locale's
+     folder (`screenshots/<set>/<locale>/`, else the en-US root for the
+     English locales), and waits until ASC reports each file COMPLETE.
+     `--locales all` also creates the sets of localizations that have none
+     yet and leaves en-US alone; `--locales ca,da` limits the run. It
+     refuses a version that isn't editable.
   3. Dispatch the release. The workflow reuses the editable version.
 
   Both scripts read `ASC_KEY_ID`, `ASC_ISSUER_ID` and `ASC_P8` (the .p8
