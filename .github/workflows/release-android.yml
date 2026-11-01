@@ -332,9 +332,13 @@ jobs:
         # "Unrecognized language code: en-US.txt." because the parser treats the
         # whole filename after "whatsnew-" as the locale.
         # stock_notes=true swaps in the house stock line, for app-code releases
-        # that shouldn't get pair notes. whatsnew-en-US is the only notes file:
-        # Play shows the default language's notes to the 18 other listing
-        # languages (android/play/listings/), which have no whatsnew file.
+        # that shouldn't get pair notes. The English notes go to en-US and the
+        # other English languages only; scripts/play_release_notes.py then writes
+        # every other listing language's own stock line (the whatsNew of
+        # android/play/listings/<language>.json) as whatsnew-<language>. Play
+        # shows the default language's notes to any language WITHOUT a file —
+        # 1.0.13 and 1.0.14 went out that way — so a non-English listing never
+        # goes without one (the script warns if a listing has no whatsNew).
         env:
           STOCK_NOTES: ${{ inputs.stock_notes }}
         run: |
@@ -344,6 +348,7 @@ jobs:
           else
             python3 scripts/release-notes.py prior.json pair-inventory.json > whatsnew/whatsnew-en-US
           fi
+          python3 scripts/play_release_notes.py whatsnew/whatsnew-en-US whatsnew
           cat whatsnew/whatsnew-en-US
 
       - name: Generate store listing "Languages" section

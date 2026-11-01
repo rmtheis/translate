@@ -20,6 +20,7 @@ import importlib.util
 import json
 import pathlib
 import sys
+import tempfile
 import unittest
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -37,6 +38,7 @@ def load_script(name: str):
 
 
 asc_notes = load_script("asc_release_notes")
+play_notes = load_script("play_release_notes")
 asc_desc = load_script("update-appstore-description")
 play_desc = load_script("update-store-description")
 
@@ -102,6 +104,64 @@ class ReleaseNotes(unittest.TestCase):
         self.assertEqual(set(plan), {"en-US"} | set(self.by_locale))
         self.assertEqual(plan["en-US"], ENGLISH_DIFF)
         self.assertEqual(plan["uk"], self.by_locale["uk"]["whatsNew"])
+
+
+class PlayReleaseNotes(unittest.TestCase):
+    """scripts/play_release_notes.py: the whatsnew-<language> files of a Play release."""
+    by_language = {l["language"]: l for l in PLAY_LISTINGS}
+
+    def test_every_listing_language_has_a_stock_line(self):
+        for listing in PLAY_LISTINGS:
+            self.assertTrue(listing.get("whatsNew", "").strip(), listing["language"])
+
+    def test_english_languages_get_the_english_notes(self):
+        for english in (ENGLISH_STOCK, ENGLISH_DIFF):
+            for language in ("en-US", "en-GB", "en-AU", "en-CA"):
+                self.assertEqual(play_notes.text_for_language(language, english, self.by_language), english)
+
+    def test_other_languages_get_their_own_stock_line_never_english(self):
+        for english in (ENGLISH_STOCK, ENGLISH_DIFF):
+            known_english = play_notes.english_texts(english, PLAY_LISTINGS)
+            self.assertIn(ENGLISH_STOCK, known_english)
+            for listing in PLAY_LISTINGS:
+                language = listing["language"]
+                if i18n.english_locale(language):
+                    continue
+                text = play_notes.text_for_language(language, english, self.by_language)
+                self.assertEqual(text, listing["whatsNew"].strip(), language)
+                self.assertNotIn(text, known_english, language)
+                self.assertNotIn("Behind-the-scenes", text, language)
+                play_notes.check_text(language, text, known_english)  # must not exit
+
+    def test_guard_refuses_english_text_for_a_non_english_language(self):
+        known_english = play_notes.english_texts(ENGLISH_DIFF, PLAY_LISTINGS)
+        with self.assertRaises(SystemExit):
+            play_notes.check_text("fr-FR", ENGLISH_STOCK, known_english)
+        with self.assertRaises(SystemExit):
+            play_notes.check_text("uk", ENGLISH_DIFF, known_english)
+        play_notes.check_text("en-GB", ENGLISH_DIFF, known_english)  # English may have it
+
+    def test_files_cover_en_us_and_every_listing_language(self):
+        for english in (ENGLISH_STOCK, ENGLISH_DIFF):
+            with tempfile.TemporaryDirectory() as tmp:
+                out = pathlib.Path(tmp)
+                play_notes.write_files(play_notes.plan_texts(english, PLAY_LISTINGS), out)
+                self.assertEqual({p.name for p in out.iterdir()},
+                                 {"whatsnew-en-US"} | {f"whatsnew-{l}" for l in self.by_language})
+                self.assertEqual((out / "whatsnew-en-US").read_text(), english + "\n")
+                self.assertEqual((out / "whatsnew-en-GB").read_text(), english + "\n")
+                self.assertEqual((out / "whatsnew-uk").read_text().strip(),
+                                 self.by_language["uk"]["whatsNew"].strip())
+                for path in out.iterdir():
+                    if not i18n.english_locale(path.name.removeprefix("whatsnew-")):
+                        self.assertNotIn("Behind-the-scenes", path.read_text(), path.name)
+                        self.assertNotIn("Updated:", path.read_text(), path.name)
+
+    def test_listing_without_stock_line_is_left_out_with_a_warning(self):
+        without = [dict(l, whatsNew="") if l["language"] == "fr-FR" else l for l in PLAY_LISTINGS]
+        plan = play_notes.plan_texts(ENGLISH_DIFF, without)
+        self.assertNotIn("fr-FR", plan)
+        self.assertEqual(plan["fr-CA"], self.by_language["fr-CA"]["whatsNew"].strip())
 
 
 class AppStoreDescription(unittest.TestCase):

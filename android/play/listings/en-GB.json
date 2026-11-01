@@ -4,5 +4,6 @@
   "language": "en-GB",
   "pairsHeader": "Included language pairs ({n} pairs, {mb} MB offline):",
   "shortDescription": "Demo App for the Apertium Translation Models",
-  "title": "Translate (Experimental)"
+  "title": "Translate (Experimental)",
+  "whatsNew": "Behind-the-scenes changes to keep things running smoothly."
 }

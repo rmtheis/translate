@@ -3,5 +3,6 @@
   "language": "ca",
   "pairsHeader": "Parells de llengües inclosos ({n} parells, {mb} MB sense connexió):",
   "shortDescription": "Aplicació de demostració dels models de traducció d'Apertium",
-  "title": "Tradueix (experimental)"
+  "title": "Tradueix (experimental)",
+  "whatsNew": "Canvis interns perquè tot funcioni sense problemes."
 }

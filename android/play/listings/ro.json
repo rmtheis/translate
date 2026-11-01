@@ -3,5 +3,6 @@
   "language": "ro",
   "pairsHeader": "Perechi de limbi incluse ({n} perechi, {mb} MB offline):",
   "shortDescription": "Aplicație demonstrativă pentru modelele de traducere Apertium",
-  "title": "Traducere (experimental)"
+  "title": "Traducere (experimental)",
+  "whatsNew": "Modificări în culise pentru ca totul să funcționeze fără probleme."
 }

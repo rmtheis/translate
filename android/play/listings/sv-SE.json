@@ -3,5 +3,6 @@
   "language": "sv-SE",
   "pairsHeader": "Inkluderade språkpar ({n} par, {mb} MB offline):",
   "shortDescription": "Demoapp för Apertiums översättningsmodeller",
-  "title": "Översätt (experimentell)"
+  "title": "Översätt (experimentell)",
+  "whatsNew": "Ändringar bakom kulisserna så att allt fungerar smidigt."
 }

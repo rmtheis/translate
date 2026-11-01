@@ -3,5 +3,6 @@
   "language": "da-DK",
   "pairsHeader": "Inkluderede sprogpar ({n} par, {mb} MB offline):",
   "shortDescription": "Demo-app til Apertiums oversættelsesmodeller",
-  "title": "Oversæt (eksperimentel)"
+  "title": "Oversæt (eksperimentel)",
+  "whatsNew": "Ændringer bag kulisserne, så alt kører gnidningsløst."
 }

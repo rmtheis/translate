@@ -4,5 +4,6 @@
   "language": "es-419",
   "pairsHeader": "Pares de idiomas incluidos ({n} pares, {mb} MB sin conexión):",
   "shortDescription": "App de demostración de los modelos de traducción de Apertium",
-  "title": "Traducir (experimental)"
+  "title": "Traducir (experimental)",
+  "whatsNew": "Cambios internos para que todo siga funcionando sin problemas."
 }

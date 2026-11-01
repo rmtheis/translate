@@ -3,5 +3,6 @@
   "language": "hr",
   "pairsHeader": "Uključeni jezični parovi ({n} parova, {mb} MB bez interneta):",
   "shortDescription": "Demonstracijska aplikacija za Apertium modele za prevođenje",
-  "title": "Prevedi (eksperimentalno)"
+  "title": "Prevedi (eksperimentalno)",
+  "whatsNew": "Promjene u pozadini kako bi sve radilo glatko."
 }

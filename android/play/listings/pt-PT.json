@@ -3,5 +3,6 @@
   "language": "pt-PT",
   "pairsHeader": "Pares de línguas incluídos ({n} pares, {mb} MB offline):",
   "shortDescription": "Aplicação de demonstração dos modelos de tradução do Apertium",
-  "title": "Traduzir (experimental)"
+  "title": "Traduzir (experimental)",
+  "whatsNew": "Alterações nos bastidores para manter tudo a funcionar sem problemas."
 }

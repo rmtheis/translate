@@ -3,5 +3,6 @@
   "language": "fr-FR",
   "pairsHeader": "Paires de langues incluses ({n} paires, {mb} Mo hors ligne) :",
   "shortDescription": "Application de démonstration des modèles de traduction Apertium",
-  "title": "Traduire (expérimental)"
+  "title": "Traduire (expérimental)",
+  "whatsNew": "Des modifications en coulisses pour que tout fonctionne sans accroc."
 }

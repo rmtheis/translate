@@ -18,7 +18,12 @@ monthly cron and on manual dispatch. Don't upload by hand.
   `./gradlew :app:testDebugUnitTest`, then `./gradlew :app:bundleRelease`) → **deploy**.
 - The deploy job publishes only when a pair changed since `.ci/prior-pair-inventory-android.json`,
   unless the run was dispatched with `force_publish=true`. `stock_notes=true` swaps the
-  pair-diff notes for the stock "Behind-the-scenes changes…" line.
+  pair-diff notes for the stock "Behind-the-scenes changes…" line. Either way the English
+  notes go to en-US and the other English languages only: `scripts/play_release_notes.py`
+  writes every other listing language's own stock line (the `whatsNew` of
+  `play/listings/<language>.json`) as `whatsnew/whatsnew-<language>`, so no non-English
+  listing shows English notes (added 2026-11-01; Play shows en-US's notes to any language
+  without a file, which is how 1.0.13 and 1.0.14 went out — back-filled by hand that day).
 - **Every release goes to production as a 5% staged rollout** (`status: inProgress`,
   `userFraction: 0.05`; changed from `completed` on 2026-10-06). The central advancer
   in `~/Documents/app-store-optimization/play-rollout/` walks it to 100% and holds it
@@ -257,7 +262,11 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
   Two attempts failed first: the cron itself (two unit tests, see the `ubuntu-latest`
   note under "Releases") and dispatch 41300955395 (Play rejected the AAB: "Play automatic
   protection requires a minimum SDK version of 24"; fixed by turning Installer check off,
-  see "Releases"). 1.0.13 had reached 100% before this.
+  see "Releases"). 1.0.13 had reached 100% before this. Shipped with `whatsnew-en-US`
+  only, so the 18 other listing languages showed the English pair-diff notes; on
+  2026-11-01 the stock lines were added to both 1.0.14 and 1.0.13 on the production
+  track by a `tracks.update` that left the rollout state alone, and the workflow now
+  writes them itself (see "Releases").
 - **1.0.13** (2026100720; published 2026-10-07 to production at 5% staged by
   release-android.yml run 37678897602, `force_publish` + `stock_notes`): ships `libhfst_proc.so` and
   `liblt_merge.so` for both ABIs, plus the `lt-merge` mapping in `NativePipeline`. Fixes
@@ -384,9 +393,12 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
   markers is skipped with a warning annotation, and the English block never goes into
   another language. `--dry-run` opens and deletes the edit instead of committing,
   `--render-dir DIR` writes the composed texts, `SA_JSON_FILE=<path>` stands in for
-  `SA_JSON` locally. Release notes stay `whatsnew-en-US` only: Play shows the default
-  language's notes to the other languages. `python3 scripts/test-listing-i18n.py` checks
-  all of this offline against the real listings and inventory.
+  `SA_JSON` locally. Release notes: `scripts/play_release_notes.py whatsnew/whatsnew-en-US
+  whatsnew` writes one `whatsnew-<language>` file per listing language — the English
+  languages get the English notes, every other language the `whatsNew` stock line of its
+  listing JSON, never English — because Play shows the default language's notes to any
+  language without its own file. `python3 scripts/test-listing-i18n.py` checks all of
+  this offline against the real listings and inventory.
 - Pair-list order: since 2026-11-01 `_listing_i18n.sorted_for()` uses its own collation
   key (`_TAILORING`), identical on macOS and on the ubuntu runner. Before, it used the OS
   collation, which the ubuntu runner lacks and which macOS gets wrong for Croatian (Š
