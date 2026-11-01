@@ -552,6 +552,31 @@ Pull these verbatim, minimal adaptation:
   Either way the non-English localizations get their own stock line
   (see "App Store listing text"). `release-android.yml` takes the same
   two inputs.
+- Apple refuses a submission whose age rating leaves `socialMedia` or
+  `socialMediaAgeRestricted` unanswered (enforced since about 2026-11-01:
+  409 `STATE_ERROR.ENTITY_STATE_INVALID` at `POST /reviewSubmissionItems`,
+  after the build has uploaded). This app's answer is No to both, set
+  2026-11-01 on the 1.0.8 app info with `PATCH
+  /v1/ageRatingDeclarations/{id}`. `asc_resubmit.py` does not set them, so
+  if a release fails this way, answer them on the editable app info first.
+- Finishing a run that failed at the submit step: do not rerun the job.
+  It would upload the same CFBundleVersion again, and `asc_upload.py` has
+  no handling for a duplicate build. Run the script locally with the run's
+  values, then make the skipped commit by hand (`ios/project.yml` plus
+  `.ci/prior-pair-inventory-ios.json` from the run's `ios-pairs` artifact,
+  which expires after 7 days). Without that commit the next release bumps
+  to the same version again and its pair diff repeats.
+
+  ```sh
+  ASC_KEY_ID=... ASC_ISSUER_ID=... ASC_P8="$(cat <key>.p8)" \
+  ASC_BUILD_VERSION=<build> ASC_VERSION_STRING=<version> \
+    python3 scripts/asc_resubmit.py
+  ```
+
+- The schedule gate's `FIRST_RUN_DATE` only blocks cron runs before that
+  date, and cron runs resume by themselves after it. It is 20261201 because
+  it held the 2026-11-02 run while the 18 new localizations were being
+  finished. Dispatches ignore it.
 - Per project CLAUDE.md: "Always use the App Store Connect API directly
   (via PyJWT + requests) for any ASC operations." Never Fastlane.
 - ASC credentials: check `~/Documents/keystore/` for an existing API
@@ -708,6 +733,18 @@ Pull these verbatim, minimal adaptation:
 
 ## Release log
 
+- **1.0.8** (build 202611011757; submitted to App Review 2026-11-01,
+  AFTER_APPROVAL, stock notes): the first release with the 18 new
+  localizations, each with its own listing text, stock What's New, 8 iPhone
+  and 8 iPad screenshots, and translated display name. Pair updates:
+  fra-cat 116 → 117, nno-nob g9174 → g9200, oci-fra 9 → 10, sme-nob 95 → 129.
+  **Natives are new and not QA'd**: `ios/native/` is unchanged but its cache
+  had expired, so run 41331883301 rebuilt every tool from upstream HEAD of
+  2026-11-01 (see "CI / release"). That run (manual dispatch from `9777b10`,
+  `force_publish` + `stock_notes`) uploaded the build and failed at the submit
+  step on the unanswered social-media age-rating questions. Both were answered
+  No and the submission was finished by hand with `asc_resubmit.py`; `58a2e8a`
+  is the bookkeeping commit the run skipped.
 - **1.0.7** (build 202610072025; submitted to App Review 2026-10-07 by
   release-ios.yml run 37678901292 with `force_publish` + `stock_notes`,
   AFTER_APPROVAL; natives built on CI at the same upstream commits as the
