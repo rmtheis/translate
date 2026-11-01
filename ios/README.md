@@ -586,8 +586,8 @@ Pull these verbatim, minimal adaptation:
      `project.yml`, which is what the workflow will build and look up.
   2. `python3 scripts/asc_upload_screenshots.py --version <next>`
      (`--dry-run` first). It replaces the 6.9" and 13" sets of every
-     localization that has one (en-US until the `appstore/listings/` locales go
-     up — see "App Store listing text"), in filename order, and
+     localization that has one (only en-US has its own; the 18 others, live from
+     1.0.8, fall back to it), in filename order, and
      waits until ASC reports each file COMPLETE. It refuses a version that
      isn't editable.
   3. Dispatch the release. The workflow reuses the editable version.
@@ -611,15 +611,17 @@ Pull these verbatim, minimal adaptation:
   Aragonese, Asturian, Belarusian, Galician, Macedonian, Nynorsk, Occitan, Northern Sámi
   and Sardinian have none). `scripts/_listing_i18n.py` renders the pair list per locale
   from `scripts/language-names.json` (CLDR names via `scripts/gen-language-names.py`).
-- Upload (drafted 2026-11-01, not uploaded; needs Robert's go, the `whatsNew` wording
-  included):
+- Uploaded 2026-11-01 on Robert's go, onto version 1.0.8 (created for it, PREPARE_FOR_SUBMISSION),
+  so the 18 localizations reach the store when 1.0.8 ships. The same flow for later changes:
   1. `ASC_VERSION_STRING=1.0.8 python3 scripts/asc_create_version.py` — Apple accepts
      new localizations only on an editable version, and 1.0.7 is READY_FOR_SALE. The
      localizations go live with 1.0.8.
   2. `python3 scripts/asc_upload_listings.py --version 1.0.8` (dry run; `--render-dir
      DIR` writes the composed texts, `--locales ca,da` limits it), then `--commit`.
      Existing localizations are PATCHed, missing ones POSTed, nothing deleted; name,
-     subtitle and privacy URL go to the editable appInfo, the rest to the version.
+     subtitle and privacy URL go to the editable appInfo, the rest to the version. ASC
+     creates the version localization itself when an appInfo locale is POSTed, so the
+     script re-reads the list in between (a second POST is a 409 DUPLICATE).
   Both read `ASC_KEY_ID`, `ASC_ISSUER_ID` and `ASC_P8` like the screenshot scripts.
 - Before the first release after that upload the pipeline needs two changes (the comment
   on the workflow's "Generate inventory-diff release notes" step already asks for the

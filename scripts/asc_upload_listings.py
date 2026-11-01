@@ -206,6 +206,11 @@ def main() -> None:
                                         "attributes": {"locale": locale, **info_delta},
                                         "relationships": {"appInfo": {"data": {
                                             "type": "appInfos", "id": info["id"]}}}}})
+                # ASC creates the version localization of a new appInfo locale by
+                # itself (POSTing it again is a 409 DUPLICATE), so re-read the list
+                # and fall through to a PATCH.
+                ver_locs = {l["attributes"]["locale"]: l for l in asc.paged(
+                    f"/appStoreVersions/{version['id']}/appStoreVersionLocalizations")}
         if ver_delta:
             if locale in ver_locs:
                 asc.call("PATCH", f"/appStoreVersionLocalizations/{ver_locs[locale]['id']}",
