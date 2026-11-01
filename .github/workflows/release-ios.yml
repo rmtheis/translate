@@ -44,7 +44,7 @@ jobs:
       - id: check
         env:
           # YYYYMMDD; the cron starts firing on or after this date.
-          FIRST_RUN_DATE: '20260601'
+          FIRST_RUN_DATE: '20261201'
         run: |
           if [ "${{ github.event_name }}" != "schedule" ]; then
             echo "proceed=true" >> "$GITHUB_OUTPUT"
