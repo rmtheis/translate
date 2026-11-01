@@ -1,0 +1,14 @@
+{
+  "_note": "Same text as the en-US listing: none of these strings differ between English variants. Present so the UK storefront has its own keyword slot.",
+  "description": "For people interested in using Apertium models for translation.\n\nThe app automatically updates itself monthly from the Apertium GitHub repository. Language pairs are delivered on demand as App Store On-Demand Resources (ODR) — each pair downloads only when you pick it.\n\nThe app works offline once language pairs are installed.\n\nThe \"Trunk\" and \"Staging\" categories of language pairs are supported. The language pair choices listed below are automatically updated monthly.",
+  "keywords": "apertium,Occitan,Catalan,Galician,Nynorsk,Sami,rule-based,RBMT,offline,FOSS,HFST,Constraint Grammar",
+  "locale": "en-GB",
+  "marketingUrl": "https://www.qvyshift.com",
+  "name": "Apertium Translator",
+  "pairsHeading": "Language pairs:",
+  "pairsSummary": "{n} pairs, {mb} MB on demand",
+  "privacyPolicyUrl": "https://www.qvyshift.com/privacy-policy-translate-ios.html",
+  "subtitle": "Translate with Apertium Models",
+  "supportUrl": "https://www.qvyshift.com",
+  "whatsNew": "Behind-the-scenes changes to keep things running smoothly."
+}

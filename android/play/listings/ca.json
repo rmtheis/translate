@@ -1,0 +1,7 @@
+{
+  "fullDescription": "Per a qui vulgui provar la traducció automàtica amb els models d'Apertium.\n\nL'aplicació s'actualitza automàticament cada mes a partir del repositori d'Apertium a GitHub. Els parells de llengües es lliuren a demanda com a paquets de recursos mitjançant el «Play Asset Delivery» de Google Play.\n\nL'aplicació funciona sense connexió un cop instal·lats els models de llengua, i actualitza els models dels parells de llengües cada mes si hi ha una connexió wifi disponible.\n\nS'admeten els parells de llengües de qualitat «Release» i «Staging». La llista de llengües de sota s'actualitza automàticament cada mes.",
+  "language": "ca",
+  "pairsHeader": "Parells de llengües inclosos ({n} parells, {mb} MB sense connexió):",
+  "shortDescription": "Aplicació de demostració dels models de traducció d'Apertium",
+  "title": "Tradueix (experimental)"
+}

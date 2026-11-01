@@ -185,6 +185,34 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
   `/sdcard/Android/data/`, after which pair downloads hang (uninstall and `install-apks`
   again instead).
 
+## Localization
+
+- UI strings: `values/` (English) and one `values-<lang>/` per UI language (49 besides
+  English, the same set as the iOS string catalog). Regional variants exist only where the
+  text differs from the base language; added 2026-11-01 for the App Store / Play locales:
+  `values-pt-rPT/` ("transferir", "línguas"), `values-es-rMX/` ("En preparación",
+  "se descargaron") and `values-fr-rCA/` (no space before "?", app name "Traduire").
+  en-GB / en-AU / en-CA resolve to `values/`. Keep the format placeholders (`%1$d`,
+  `%1$s`) exactly as in English and never copy English into a non-English file.
+- Pair titles in the dropdown (`LanguageTitles`): Java's `Locale.getDisplayLanguage()` in
+  the UI language, falling back to the English table. The fallback test compares against
+  the English display name, not the code: in Catalan the name of Russian is "rus", which
+  equals the ISO code. Codes Java doesn't know (hbs) show the English title in every
+  language ("Serbo-Croatian → engleski").
+- Running the app in a language on an AVD: `adb shell cmd locale set-app-locales
+  com.qvyshift.translate --user 0 --locales pt-PT` (per-app locale; the app has no
+  `localeConfig`, so only adb can set it; reset with `--locales ""`). The language splits
+  must be installed: `bundletool install-apks` pushes only the device's language, so
+  `bundletool extract-apks --apks qa.apks --output-dir d --device-spec spec.json` with a
+  `supportedLocales` list of every language needed, then `adb install-multiple -r -t
+  d/*.apk`. The `--es mode` title of the SEND cold start is the dropdown title in that
+  language (`català → espanyol`; for hbs `Serbo-Croatian → engleski`); wrap the whole
+  `am start` in `adb shell "…"` so the spaces survive.
+- Sample captures (main screen + open picker, 8 locales, Medium Phone API 36, SysUI demo
+  status bar): `screenshots/localization-sample/android/`; the gallery with iOS side by
+  side is `screenshots/localization-sample/index.html`, rendered by
+  `scripts/localization-gallery.py` and opened with `open -a "Brave Browser" <path>`.
+
 ## Known issues
 
 - In 1.0.12 and earlier, Northern Sami → Norwegian Bokmål and Norwegian Bokmål → Nynorsk
@@ -290,3 +318,25 @@ The "Offline Translation" feature graphic was refitted on 2026-10-13 (content
 scaled 0.96 into the Play safe zone, x 100..924: Play web crops cards to 16:9
 and clipped the "O"). Rule + tools: `~/Documents/app-store-optimization/tools/feature-graphic/`. Push with
 `upload_feature_graphics.py --package com.qvyshift.translate --image android/play/feature_graphic.png --locales all --commit`.
+
+## Play listing text
+
+- en-US is the only listing language CI maintains: `scripts/update-store-description.py`
+  refreshes the pair list between the `<!-- AUTO-GENERATED LANGUAGES -->` markers of the
+  en-US full description after a pair change, and the release workflow writes
+  `whatsnew-en-US` only (Play shows the default language's notes to the others).
+- 18 more languages are drafted in `play/listings/<language>.json` (title, short
+  description, full-description preamble, pair-list header): ca, da-DK, en-GB, en-AU,
+  en-CA, fr-FR, fr-CA, hr, it-IT, no-NO, pt-BR, pt-PT, ro, ru-RU, es-ES, es-419, sv-SE, uk
+  — the languages of the shipped Apertium pairs that both Play and the App Store list as
+  listing locales (Aragonese, Asturian, Belarusian, Galician, Macedonian, Nynorsk,
+  Occitan, Northern Sámi and Sardinian have no store locale). `scripts/_listing_i18n.py`
+  renders the pair list per language from `scripts/language-names.json` (CLDR names;
+  regenerate with `scripts/gen-language-names.py` when a pair adds a language) with the
+  catalog's ↔/→ arrows and the language's collation.
+- Upload: `SA_JSON_FILE=<androidpublisher key> python3 scripts/play_upload_listings.py`
+  is a dry run (stages the listings, runs Play's validation, deletes the edit); add
+  `--commit` to publish, `--languages ca,da-DK` to limit it, `--render-dir DIR` to read
+  the composed texts. Only texts are written; Play serves the en-US graphics to languages
+  without their own. Re-run it after a pair change: CI refreshes en-US only. Drafted
+  2026-11-01, not yet uploaded.

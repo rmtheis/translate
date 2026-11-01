@@ -413,6 +413,37 @@ App-level structure matches Android 1:1:
 }
 ```
 
+### Localization
+
+- `Translate/Localizable.xcstrings` holds 56 locales: English, the 49 languages of the
+  Android `values-*` set, and the regional variants Apple lists as App Store locales
+  (en-GB, en-AU, en-CA with the English text; es-MX, fr-CA, pt-PT with their own; added
+  2026-11-01) so the in-app language matches the store listing's. The file is Xcode's
+  JSON: add a locale under each key in place and keep the existing order — a re-sort is
+  a 3000-line diff.
+- Pair titles (`PairCatalog.languageName`): in an English UI the hard-coded `isoNames`
+  table, so titles match Android and the store screenshots ("Northern Sami", where
+  Foundation says "North Sámi"); in every other UI language
+  `Locale.localizedString(forLanguageCode:)`, with the alias hbs → `sh` because
+  Foundation knows no `hbs`. Foundation returns nil for an unknown code, never the code,
+  so don't add a "name == code" test: in Catalan the name of Russian is "rus".
+- Running the app in a language: `xcrun simctl launch <udid> com.qvyshift.translate
+  -AppleLanguages "(pt-PT)" -AppleLocale pt_PT`, plus the `-screenshot_pair`,
+  `-screenshot_direction` and `-screenshot_input` arguments `scripts/screenshots-ios.sh`
+  uses to preset the screen. The pair picker is a SwiftUI `Menu` that `simctl` can't
+  open; the sample captures tapped it through the iOS Simulator MCP (`tap` at x=220,
+  y=143 points on iPhone 16 Pro Max), never its `attach`/`launch` panel.
+- Sample captures (main screen + open picker, 8 locales, iPhone 16 Pro Max, iOS 26.5):
+  `screenshots/localization-sample/ios/`; the gallery with Android side by side is
+  `screenshots/localization-sample/index.html`, rendered by
+  `scripts/localization-gallery.py` and opened with `open -a "Brave Browser" <path>`.
+- Xcode 27.2 (2026-11-01): the first `simctl` call after the Xcode update blocks until
+  `xcodebuild -runFirstLaunch` finishes; the iOS 27.0 runtime vanished mid-session and
+  its device became "unavailable, runtime profile not found" (delete it and create one on
+  the newest runtime still listed). For a local build without ODR, strip `resourceTags`
+  from `project.yml` the way `screenshots-ios.sh` does and restore it; xcodegen also
+  rewrites `Translate/Info.plist`. `git checkout` both before committing.
+
 ### Testing strategy
 
 - **Stage-level unit tests** (XCTest): each C++ wrapper gets a test
@@ -555,7 +586,8 @@ Pull these verbatim, minimal adaptation:
      `project.yml`, which is what the workflow will build and look up.
   2. `python3 scripts/asc_upload_screenshots.py --version <next>`
      (`--dry-run` first). It replaces the 6.9" and 13" sets of every
-     localization that has one (today only en-US), in filename order, and
+     localization that has one (en-US until the `appstore/listings/` locales go
+     up — see "App Store listing text"), in filename order, and
      waits until ASC reports each file COMPLETE. It refuses a version that
      isn't editable.
   3. Dispatch the release. The workflow reuses the editable version.
@@ -565,6 +597,40 @@ Pull these verbatim, minimal adaptation:
   `~/.appstoreconnect/private_keys/`).
 - Through 1.0.6 the sets were in a scrambled order (iPhone led with
   02_cat_srd, iPad with 06_sme_nob). From 1.0.7 they are 01–08.
+
+### App Store listing text
+
+- en-US is the only localization CI maintains: `scripts/update-appstore-description.py`
+  splices the pair list after the `Language pairs:` anchor of the editable version's
+  description, and `scripts/asc_release_notes.py` writes the release notes.
+- 18 more locales are drafted in `appstore/listings/<locale>.json`: name, subtitle,
+  keywords, description preamble, pairs heading and summary, support / marketing /
+  privacy URLs and a stock "behind-the-scenes" `whatsNew` line (ca, da, en-GB, en-AU,
+  en-CA, fr-FR, fr-CA, hr, it, no, pt-BR, pt-PT, ro, ru, es-ES, es-MX, sv, uk: the
+  languages of the shipped Apertium pairs that Apple lists as App Store locales;
+  Aragonese, Asturian, Belarusian, Galician, Macedonian, Nynorsk, Occitan, Northern Sámi
+  and Sardinian have none). `scripts/_listing_i18n.py` renders the pair list per locale
+  from `scripts/language-names.json` (CLDR names via `scripts/gen-language-names.py`).
+- Upload (drafted 2026-11-01, not uploaded; needs Robert's go, the `whatsNew` wording
+  included):
+  1. `ASC_VERSION_STRING=1.0.8 python3 scripts/asc_create_version.py` — Apple accepts
+     new localizations only on an editable version, and 1.0.7 is READY_FOR_SALE. The
+     localizations go live with 1.0.8.
+  2. `python3 scripts/asc_upload_listings.py --version 1.0.8` (dry run; `--render-dir
+     DIR` writes the composed texts, `--locales ca,da` limits it), then `--commit`.
+     Existing localizations are PATCHed, missing ones POSTed, nothing deleted; name,
+     subtitle and privacy URL go to the editable appInfo, the rest to the version.
+  Both read `ASC_KEY_ID`, `ASC_ISSUER_ID` and `ASC_P8` like the screenshot scripts.
+- Before the first release after that upload the pipeline needs two changes (the comment
+  on the workflow's "Generate inventory-diff release notes" step already asks for the
+  first): `asc_release_notes.py` writes one notes file to every localization, so the
+  English notes or stock line would land in the 18 new locales — the `whatsNew` lines in
+  `appstore/listings/*.json` are the stock line's translations. And
+  `update-appstore-description.py` splices only descriptions containing
+  `Language pairs:\n` (the new ones carry their own `pairsHeading`), so after a pair
+  change re-run `asc_upload_listings.py --commit` on the editable version to refresh
+  them; it also sums `sizeKb` from an inventory whose field is `bytes` and so prints
+  "0 MB" (`_listing_i18n.inventory_mb()` reads both).
 
 ## Known issues
 

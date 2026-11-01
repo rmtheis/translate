@@ -1,0 +1,13 @@
+{
+  "description": "För dig som vill använda Apertium-modeller för översättning.\n\nAppen uppdaterar sig själv automatiskt varje månad från Apertiums GitHub-arkiv. Språkpar levereras vid behov som On-Demand Resources (ODR) från App Store – varje par laddas ner först när du väljer det.\n\nAppen fungerar offline när språkparen är installerade.\n\nSpråkpar i kategorierna ”Trunk” och ”Staging” stöds. Listan över språkpar nedan uppdateras automatiskt varje månad.",
+  "keywords": "apertium,occitanska,katalanska,galiciska,nynorska,samiska,regelbaserad,offline,öppen källkod,HFST",
+  "locale": "sv",
+  "marketingUrl": "https://www.qvyshift.com",
+  "name": "Apertium Översättare",
+  "pairsHeading": "Språkpar:",
+  "pairsSummary": "{n} par, {mb} MB vid behov",
+  "privacyPolicyUrl": "https://www.qvyshift.com/privacy-policy-translate-ios.html",
+  "subtitle": "Översätt med Apertium-modeller",
+  "supportUrl": "https://www.qvyshift.com",
+  "whatsNew": "Ändringar bakom kulisserna så att allt fortsätter att fungera smidigt."
+}

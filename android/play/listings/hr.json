@@ -1,0 +1,7 @@
+{
+  "fullDescription": "Za sve koji žele testirati strojno prevođenje pomoću Apertium modela.\n\nAplikacija se automatski ažurira svaki mjesec na temelju Apertiumova GitHub repozitorija. Jezični parovi isporučuju se na zahtjev kao paketi resursa putem Google Playeve usluge „Play Asset Delivery”.\n\nAplikacija radi bez internetske veze nakon što su jezični modeli instalirani. Modele jezičnih parova ažurira svaki mjesec ako je dostupna Wi-Fi veza.\n\nPodržani su jezični parovi kvalitete „Release” i „Staging”. Popis jezika u nastavku automatski se ažurira svaki mjesec.",
+  "language": "hr",
+  "pairsHeader": "Uključeni jezični parovi ({n} parova, {mb} MB bez interneta):",
+  "shortDescription": "Demonstracijska aplikacija za Apertium modele za prevođenje",
+  "title": "Prevedi (eksperimentalno)"
+}

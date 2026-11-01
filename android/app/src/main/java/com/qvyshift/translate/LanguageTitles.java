@@ -112,8 +112,12 @@ public class LanguageTitles {
 
   private static String getTitleForCode(String code) {
     String title;
-    title = new Locale(code).getDisplayLanguage();
-    if (code.equals(title)) {
+    Locale language = new Locale(code);
+    title = language.getDisplayLanguage();
+    // Locale echoes the code back when it has no name for it. Test that against the ENGLISH
+    // name, not the UI language's: in Catalan the name of Russian is "rus", the same as the
+    // Apertium code, and comparing with it sent "rus" to the English fallback ("Russian").
+    if (code.equals(language.getDisplayLanguage(Locale.ENGLISH))) {
       if (codeToTitle == null)
         initCodeToTitle();
       title = codeToTitle.get(code);

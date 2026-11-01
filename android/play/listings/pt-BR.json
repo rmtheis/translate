@@ -1,0 +1,7 @@
+{
+  "fullDescription": "Para quem quer testar a tradução automática com os modelos Apertium.\n\nO app se atualiza automaticamente todo mês com base no repositório do Apertium no GitHub. Os pares de idiomas são entregues sob demanda como pacotes de recursos pelo “Play Asset Delivery” do Google Play.\n\nO app funciona offline depois que os modelos de idioma são instalados e atualiza os modelos dos pares de idiomas todo mês quando há uma conexão Wi-Fi disponível.\n\nSão suportados os pares de idiomas de qualidade “Release” e “Staging”. A lista de idiomas abaixo é atualizada automaticamente todo mês.",
+  "language": "pt-BR",
+  "pairsHeader": "Pares de idiomas incluídos ({n} pares, {mb} MB offline):",
+  "shortDescription": "App de demonstração dos modelos de tradução do Apertium",
+  "title": "Traduzir (experimental)"
+}

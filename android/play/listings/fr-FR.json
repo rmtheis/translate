@@ -1,0 +1,7 @@
+{
+  "fullDescription": "Pour celles et ceux qui veulent essayer la traduction automatique avec les modèles Apertium.\n\nL'application se met à jour automatiquement chaque mois à partir du dépôt GitHub d'Apertium. Les paires de langues sont fournies à la demande sous forme de packs de ressources via « Play Asset Delivery » de Google Play.\n\nL'application fonctionne hors ligne une fois les modèles de langue installés. Elle met à jour ses modèles de paires de langues chaque mois lorsqu'une connexion Wi-Fi est disponible.\n\nLes paires de langues de qualité « Release » et « Staging » sont prises en charge. La liste des langues ci-dessous est mise à jour automatiquement chaque mois.",
+  "language": "fr-FR",
+  "pairsHeader": "Paires de langues incluses ({n} paires, {mb} Mo hors ligne) :",
+  "shortDescription": "Application de démonstration des modèles de traduction Apertium",
+  "title": "Traduire (expérimental)"
+}
