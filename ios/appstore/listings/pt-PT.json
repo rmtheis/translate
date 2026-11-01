@@ -1,0 +1,13 @@
+{
+  "description": "Para quem quer usar os modelos Apertium para traduzir.\n\nA aplicação atualiza-se automaticamente todos os meses a partir do repositório do Apertium no GitHub. Os pares de línguas são fornecidos a pedido como recursos a pedido (ODR) da App Store: cada par só é transferido quando o escolhe.\n\nA aplicação funciona sem ligação à Internet depois de os pares de línguas estarem instalados.\n\nAs categorias de pares «Trunk» e «Staging» são suportadas. A lista de pares de línguas abaixo é atualizada automaticamente todos os meses.",
+  "keywords": "apertium,occitano,catalão,galego,nynorsk,sami,aragonês,tradutor,offline,código aberto,HFST",
+  "locale": "pt-PT",
+  "marketingUrl": "https://www.qvyshift.com",
+  "name": "Tradutor Apertium",
+  "pairsHeading": "Pares de línguas:",
+  "pairsSummary": "{n} pares, {mb} MB a pedido",
+  "privacyPolicyUrl": "https://www.qvyshift.com/privacy-policy-translate-ios.html",
+  "subtitle": "Traduza com modelos Apertium",
+  "supportUrl": "https://www.qvyshift.com",
+  "whatsNew": "Alterações internas para que tudo continue a funcionar bem."
+}

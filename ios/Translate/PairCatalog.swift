@@ -90,12 +90,34 @@ private let isoNames: [String: String] = [
     "ukr": "Ukrainian", "uzb": "Uzbek", "vie": "Vietnamese", "zho": "Chinese",
 ]
 
+// Codes Foundation only knows under another subtag.
+private let isoAliases: [String: String] = ["hbs": "sh"]
+
+/// A language's name in the UI language. An English UI keeps the table above,
+/// so titles match Android and the App Store screenshots ("Northern Sami", where
+/// Foundation says "North Sámi"). Every other UI language gets Foundation's CLDR
+/// name — what Android's `Locale.getDisplayLanguage()` shows — with the first
+/// letter capitalized (CLDR writes "català", "français"); the English table is the
+/// fallback for a code Foundation doesn't name (it returns nil for one, never the
+/// code itself — and a name can legitimately equal the code: Catalan calls Russian "rus").
+func languageName(_ code: String) -> String {
+    let english = isoNames[code] ?? code
+    let locale = Locale.current
+    if locale.language.languageCode?.identifier == "en" { return english }
+    for candidate in [code] + (isoAliases[code].map { [$0] } ?? []) {
+        if let name = locale.localizedString(forLanguageCode: candidate), !name.isEmpty {
+            return name.prefix(1).uppercased(with: locale) + name.dropFirst()
+        }
+    }
+    return english
+}
+
 private func humanTitle(_ modeId: String) -> String {
     let parts = modeId.split(separator: "-", maxSplits: 1).map(String.init)
     guard parts.count == 2 else { return modeId }
     let src = parts[0].split(separator: "_").first.map(String.init) ?? parts[0]
     let tgt = parts[1].split(separator: "_").first.map(String.init) ?? parts[1]
-    return "\(isoNames[src] ?? src) → \(isoNames[tgt] ?? tgt)"
+    return "\(languageName(src)) → \(languageName(tgt))"
 }
 
 enum PairCatalog {
