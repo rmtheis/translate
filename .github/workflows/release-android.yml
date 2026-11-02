@@ -409,3 +409,22 @@ jobs:
             done
             [ "$pushed" = true ] || { echo "::error::could not push bookkeeping commit after 5 attempts"; exit 1; }
           }
+
+      # Play refuses a one-time product until an uploaded bundle declares BILLING, so the
+      # donation product can only be created after an upload. Last in the job on purpose:
+      # the release and its bookkeeping are done by now, and a failure here turns the run
+      # red (GitHub emails) instead of leaving the Donate button silently inert. An existing
+      # product is left untouched, so its prices are never re-converted.
+      - name: Set up Python for the Play API client
+        if: steps.gate.outputs.changed == 'true'
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Create the donation product if missing
+        if: steps.gate.outputs.changed == 'true'
+        env:
+          SA_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          python3 -m pip install google-auth google-api-python-client
+          python3 scripts/play_create_donation_product.py --create-if-missing --retries 10

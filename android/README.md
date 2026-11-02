@@ -263,9 +263,12 @@ makes a billing call.
   US$ 2.99 converted once with `monetization.convertRegionPrices`, 174 regional prices, listing
   text per store language in `scripts/_donation_i18n.py`). **Play refuses the product ("Can't
   create product. To fix, request billing permission.") until an uploaded bundle declares
-  `BILLING`**, so run `--create` right after the first release that carries this code; the button
-  stays plain "DONATE" and inert until then. Status 2026-11-02: code not released, product not
-  created. Credentials as for `play_upload_listings.py`.
+  `BILLING`**, so `release-android.yml` runs `--create-if-missing` as the last step of every
+  publish: it creates the product once and leaves it untouched afterwards, so prices are never
+  re-converted. The button stays plain "DONATE" and inert until that step has run. A failure there
+  turns the run red after the release and its bookkeeping are done; fix the cause and run the
+  script locally (credentials as for `play_upload_listings.py`). Status 2026-11-02: code not
+  released, product not created, step not yet run live.
 
 QA on 2026-11-02: unit tests; debug on API 23 and 36 emulators (button, locales, RTL, thank-you
 preview); R8 release build on API 36; debug on the moto g (Android 14, real Play: "Billing
