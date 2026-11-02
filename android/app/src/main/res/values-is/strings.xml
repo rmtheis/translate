@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Merkja óþekkt orð</string>
     <string name="displayMarkDescription">Merkja óþekkt orð með *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Styrkja</string>
+    <string name="about_support_thanks">Takk fyrir að styðja þetta forrit</string>
+    <string name="donation_thanks_title">Takk</string>
+    <string name="donation_thanks_message">Framlag þitt styður frekari þróun forritsins.</string>
 </resources>

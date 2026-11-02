@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Tandai kata yang tidak dikenal</string>
     <string name="displayMarkDescription">Tandai kata yang tidak dikenal dengan *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Donasi</string>
+    <string name="about_support_thanks">Terima kasih telah mendukung aplikasi ini</string>
+    <string name="donation_thanks_title">Terima kasih</string>
+    <string name="donation_thanks_message">Donasi Anda mendukung pengembangan aplikasi ini di masa mendatang.</string>
 </resources>

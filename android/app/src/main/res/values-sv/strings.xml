@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Markera okända ord</string>
     <string name="displayMarkDescription">Markera okända ord med en *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Donera</string>
+    <string name="about_support_thanks">Tack för att du stöder den här appen</string>
+    <string name="donation_thanks_title">Tack</string>
+    <string name="donation_thanks_message">Din donation stöder appens fortsatta utveckling.</string>
 </resources>

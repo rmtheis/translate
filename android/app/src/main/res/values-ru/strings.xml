@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Отмечать неизвестные слова</string>
     <string name="displayMarkDescription">Отмечать неизвестные слова символом *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Пожертвовать</string>
+    <string name="about_support_thanks">Спасибо за поддержку этого приложения</string>
+    <string name="donation_thanks_title">Спасибо</string>
+    <string name="donation_thanks_message">Ваше пожертвование поддерживает дальнейшую разработку приложения.</string>
 </resources>

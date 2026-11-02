@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">अज्ञात शब्दों को चिह्नित करें</string>
     <string name="displayMarkDescription">अज्ञात शब्दों को * से चिह्नित करें</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">दान करें</string>
+    <string name="about_support_thanks">इस ऐप का सहयोग करने के लिए धन्यवाद</string>
+    <string name="donation_thanks_title">धन्यवाद</string>
+    <string name="donation_thanks_message">आपका दान ऐप के भविष्य के विकास में सहायता करता है।</string>
 </resources>

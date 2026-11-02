@@ -22,6 +22,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
@@ -66,6 +67,9 @@ public class TranslatorActivity extends AppCompatActivity {
   private Button translateButton;
   private ImageButton swapButton;
   private PairListAdapter pairAdapter;
+
+  private SupportPurchase.Listener supportListener;
+  private boolean supporterShown;
 
   private String currentModeTitle = null;
   public static final String EXTRA_MODE = "mode";
@@ -378,14 +382,85 @@ public class TranslatorActivity extends AppCompatActivity {
     MaterialButton downloadAllButton = content.findViewById(R.id.downloadAllButton);
     configureDownloadAllButton(downloadAllButton);
 
+    configureDonateButton(content.findViewById(R.id.donateButton));
+
     AlertDialog dialog = new MaterialAlertDialogBuilder(this)
         .setView(content)
         .setPositiveButton(android.R.string.ok, null)
+        .setOnDismissListener(d -> detachSupportListener())
         .show();
     downloadAllButton.setOnClickListener(v -> {
       dialog.dismiss();
       triggerDownloadAll();
     });
+  }
+
+  /**
+   * "Donate" until Play's localized price is known, then "Donate • 2,99 €"; a thank-you line on
+   * the disabled button once a purchase exists. The price is fetched at app launch
+   * (App.onCreate), so attach() normally sets it here, before the first frame. No price is ever
+   * shown that Play did not supply. See SupportPurchase.
+   */
+  private void configureDonateButton(MaterialButton button) {
+    button.setText(R.string.about_donate);
+    SupportPurchase support = SupportPurchase.get(this);
+    button.setOnClickListener(v -> support.launchPurchase(this));
+    // Debuggable builds only: long-press the button to show the thank-you dialog without a
+    // purchase (screenshots on an emulator, where Play Billing is unavailable).
+    if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+      button.setOnLongClickListener(v -> {
+        showDonationThanks();
+        return true;
+      });
+    }
+    detachSupportListener();
+    supportListener = new SupportPurchase.Listener() {
+      @Override
+      public void onPriceAvailable(String formattedPrice) {
+        if (!supporterShown) {
+          // The button style is all caps. Only the label follows it: Play's price stays exactly
+          // as Play formatted it ("29,00 kr", not "29,00 KR").
+          button.setAllCaps(false);
+          button.setText(getString(R.string.about_donate_row,
+              getString(R.string.about_donate)
+                  .toUpperCase(getResources().getConfiguration().locale),
+              formattedPrice));
+        }
+      }
+
+      @Override
+      public void onSupporter(boolean justPurchased) {
+        supporterShown = true;
+        button.setAllCaps(true);
+        button.setText(R.string.about_support_thanks);
+        button.setEnabled(false);
+        if (justPurchased) showDonationThanks();
+      }
+    };
+    supporterShown = false;
+    support.attach(supportListener);
+  }
+
+  private void detachSupportListener() {
+    if (supportListener != null) {
+      SupportPurchase.get(this).detach(supportListener);
+      supportListener = null;
+    }
+  }
+
+  /** Shown once, right after a donation completes. */
+  private void showDonationThanks() {
+    new MaterialAlertDialogBuilder(this)
+        .setTitle(R.string.donation_thanks_title)
+        .setMessage(R.string.donation_thanks_message)
+        .setPositiveButton(android.R.string.ok, null)
+        .show();
+  }
+
+  @Override
+  protected void onDestroy() {
+    detachSupportListener();
+    super.onDestroy();
   }
 
   private void configureDownloadAllButton(MaterialButton btn) {

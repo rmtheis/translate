@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Onbekende woorden markeren</string>
     <string name="displayMarkDescription">Onbekende woorden markeren met een *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Doneren</string>
+    <string name="about_support_thanks">Bedankt dat je deze app steunt</string>
+    <string name="donation_thanks_title">Bedankt</string>
+    <string name="donation_thanks_message">Je donatie ondersteunt de verdere ontwikkeling van de app.</string>
 </resources>

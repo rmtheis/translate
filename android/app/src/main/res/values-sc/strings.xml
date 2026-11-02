@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Marca sas paràulas disconnotas</string>
     <string name="displayMarkDescription">Marca sas paràulas disconnotas cun unu *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Faghe una donatzione</string>
+    <string name="about_support_thanks">Gràtzias pro su suportu a custa aplicatzione</string>
+    <string name="donation_thanks_title">Gràtzias</string>
+    <string name="donation_thanks_message">Sa donatzione tua agiudat su disvilupu benidore de s\'aplicatzione.</string>
 </resources>

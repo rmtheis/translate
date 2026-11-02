@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">סמן מילים לא ידועות</string>
     <string name="displayMarkDescription">סמן מילים לא ידועות בכוכבית *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">תרומה</string>
+    <string name="about_support_thanks">תודה על התמיכה באפליקציה הזו</string>
+    <string name="donation_thanks_title">תודה</string>
+    <string name="donation_thanks_message">התרומה שלך תומכת בפיתוח העתידי של האפליקציה.</string>
 </resources>

@@ -16,6 +16,8 @@ download.
   of `../android/native/`.
 - `PairResources/` — per-pair data staged by
   `../scripts/stage-pair-odrs.sh` at build time (gitignored).
+- `TranslateTests/`, `Translate.storekit` — SupportPurchase against
+  StoreKit's local test session; neither ships in the app.
 
 ## Reference points
 
@@ -383,6 +385,40 @@ pattern maps to a `Picker` or custom `List` with section headers.
 Material About/Settings dialog → `Sheet` with a `Form`. Download
 progress → modal sheet with `ProgressView`.
 
+### Donate row (StoreKit 2)
+
+The About sheet's last section is an unobtrusive "Donate" row:
+`Translate/SupportPurchase.swift`, a port of the Android class, started by
+`.task` on the first screen so the price is normally known before the sheet
+opens. It reads plain "Donate" until the App Store supplies a price, then
+"Donate • <displayPrice>"; **no price is hardcoded in the app**. Offline or
+without a product it stays "Donate" and a tap does nothing. After a purchase
+an alert says thank you and the row becomes a thank-you line.
+
+- Product `com.qvyshift.translate.support_2026`, US$ 2.99, **consumable**, unlike
+  Android's acknowledged one-time product. A non-consumable would need a Restore
+  button for App Review, and a tip has nothing to restore. So the App Store keeps
+  no entitlement to query: the thank-you line lives in UserDefaults (`supporter`).
+  After a reinstall the row offers Donate again, and it stays a thank-you line
+  after a refund (StoreKit's test session delivers no update for one).
+- Store side: `../scripts/asc_create_donation_iap.py` (idempotent, dry run by
+  default, `--create`): product, 19 localizations (`../scripts/_donation_i18n.py`),
+  USA base price, all territories, review screenshot
+  `appstore/iap/support_review.png`. **READY_TO_SUBMIT since 2026-11-02.**
+  `asc_resubmit.py` adds any READY_TO_SUBMIT IAP to the version's review
+  submission (`POST /v1/inAppPurchaseVersions`, a 409 names the inflight version),
+  so it needs no web-UI step; that path is proven by Cold Safety's script, and
+  this one's first real run is the next release.
+- Tests: `xcodebuild test -project Translate.xcodeproj -scheme Translate
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max'
+  -parallel-testing-enabled NO` (3 tests, `$2.99` from `Translate.storekit`). The
+  scheme's Run action uses that file too. Gotchas: `failTransactionsEnabled`
+  persists across `SKTestSession`s on a simulator, and XCTest keeps finished test
+  cases alive, so nil the session in `tearDown`. "malloc: pointer being freed was
+  not allocated" when the test host exits comes from native teardown; it appears
+  without this code too. The release workflow archives the scheme, which doesn't
+  build the test target.
+
 iPad size classes work out of the box with SwiftUI. Dynamic Type is on
 by default. Accessibility labels mirror the Android
 `contentDescription` set.
@@ -511,7 +547,8 @@ puts it in Copy Bundle Resources at the root of the `.app`. It declares:
   the same-team prior use.
 - App name in the App Store: leaning "Qvyshift Translate" — plain
   "Translate" collides with Apple's built-in Translate app in search.
-- Payment/model: free, no IAP, no ads (same as Android).
+- Payment/model: free, no ads (same as Android); one optional donation IAP since
+  2026-11, see "Donate row".
 
 ## Shared tooling from the Android app
 
@@ -734,7 +771,7 @@ Pull these verbatim, minimal adaptation:
 ## Release log
 
 - **1.0.8** (build 202611011757; submitted to App Review 2026-11-01,
-  AFTER_APPROVAL, stock notes): the first release with the 18 new
+  AFTER_APPROVAL, stock notes; READY_FOR_SALE by 2026-11-02): the first release with the 18 new
   localizations, each with its own listing text, stock What's New, 8 iPhone
   and 8 iPad screenshots, and translated display name. Pair updates:
   fra-cat 116 → 117, nno-nob g9174 → g9200, oci-fra 9 → 10, sme-nob 95 → 129.

@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">نامعلوم الفاظ کو نشان زد کریں</string>
     <string name="displayMarkDescription">نامعلوم الفاظ کو * سے نشان زد کریں</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">عطیہ دیں</string>
+    <string name="about_support_thanks">اس ایپ کی حمایت کرنے کا شکریہ</string>
+    <string name="donation_thanks_title">شکریہ</string>
+    <string name="donation_thanks_message">آپ کا عطیہ ایپ کی مستقبل کی ترقی میں مدد کرتا ہے۔</string>
 </resources>

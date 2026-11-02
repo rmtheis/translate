@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Marcar palavras desconhecidas</string>
     <string name="displayMarkDescription">Marcar palavras desconhecidas com *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Doar</string>
+    <string name="about_support_thanks">Obrigado por apoiar esta aplicação</string>
+    <string name="donation_thanks_title">Obrigado</string>
+    <string name="donation_thanks_message">A sua doação apoia o desenvolvimento futuro da aplicação.</string>
 </resources>

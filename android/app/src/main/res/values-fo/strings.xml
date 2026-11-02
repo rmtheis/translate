@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Merk ókend orð</string>
     <string name="displayMarkDescription">Merk ókend orð við *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Gev eina gávu</string>
+    <string name="about_support_thanks">Takk fyri at tú stuðlar hesi appini</string>
+    <string name="donation_thanks_title">Takk</string>
+    <string name="donation_thanks_message">Gávan hjá tær stuðlar framtíðar menningini av appini.</string>
 </resources>

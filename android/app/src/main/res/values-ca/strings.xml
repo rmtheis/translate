@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Marca les paraules desconegudes</string>
     <string name="displayMarkDescription">Marca les paraules desconegudes amb un *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Fes un donatiu</string>
+    <string name="about_support_thanks">Gràcies per donar suport a aquesta aplicació</string>
+    <string name="donation_thanks_title">Gràcies</string>
+    <string name="donation_thanks_message">La teva donació dona suport al desenvolupament futur de l\'aplicació.</string>
 </resources>

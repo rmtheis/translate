@@ -217,3 +217,39 @@ targets:
         # after install, list them under `ON_DEMAND_RESOURCES_PREFETCH_ORDER`.
         ON_DEMAND_RESOURCES_INITIAL_INSTALL_TAGS: ""
         ON_DEMAND_RESOURCES_PREFETCH_ORDER: ""
+
+  # SupportPurchase against StoreKit's local test session. Local only: the
+  # release workflow archives the scheme below, which doesn't build this.
+  TranslateTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: TranslateTests
+      - path: Translate.storekit
+        buildPhase: resources
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.qvyshift.translate.tests
+        SWIFT_OBJC_BRIDGING_HEADER: "Translate/Bridging-Header.h"
+        HEADER_SEARCH_PATHS:
+          - "$(inherited)"
+          - "$(SRCROOT)/native/wrappers"
+        CODE_SIGNING_ALLOWED: NO
+    dependencies:
+      - target: Translate
+
+schemes:
+  Translate:
+    build:
+      targets:
+        Translate: all
+    run:
+      config: Debug
+      storeKitConfiguration: Translate.storekit
+    test:
+      config: Debug
+      targets:
+        - TranslateTests
+    archive:
+      config: Release

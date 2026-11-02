@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Merkañ ar gerioù dianav</string>
     <string name="displayMarkDescription">Merkañ ar gerioù dianav gant ur *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Ober un donezon</string>
+    <string name="about_support_thanks">Trugarez evit skoazellañ an arload-mañ</string>
+    <string name="donation_thanks_title">Trugarez</string>
+    <string name="donation_thanks_message">Ho tonezon a skoazell diorren an arload en amzer da zont.</string>
 </resources>

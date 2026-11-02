@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Билгесез сүзләрне билгеләү</string>
     <string name="displayMarkDescription">Билгесез сүзләрне * билгесе белән билгеләү</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Иганә итү</string>
+    <string name="about_support_thanks">Бу кушымтаны яклаганыгыз өчен рәхмәт</string>
+    <string name="donation_thanks_title">Рәхмәт</string>
+    <string name="donation_thanks_message">Сезнең иганәгез кушымтаның алга таба үсешенә ярдәм итә.</string>
 </resources>

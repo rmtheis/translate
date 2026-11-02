@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Marki nekonatajn vortojn</string>
     <string name="displayMarkDescription">Marki nekonatajn vortojn per *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Donaci</string>
+    <string name="about_support_thanks">Dankon pro via subteno de ĉi tiu aplikaĵo</string>
+    <string name="donation_thanks_title">Dankon</string>
+    <string name="donation_thanks_message">Via donaco subtenas la estontan evoluigon de la aplikaĵo.</string>
 </resources>

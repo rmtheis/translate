@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Immarka l-kliem mhux magħruf</string>
     <string name="displayMarkDescription">Immarka l-kliem mhux magħruf b\'*</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Agħmel donazzjoni</string>
+    <string name="about_support_thanks">Grazzi talli qed tappoġġja din l-app</string>
+    <string name="donation_thanks_title">Grazzi</string>
+    <string name="donation_thanks_message">Id-donazzjoni tiegħek tappoġġja l-iżvilupp futur tal-app.</string>
 </resources>

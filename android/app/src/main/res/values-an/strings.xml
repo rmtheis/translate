@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Marcar parolas desconoixidas</string>
     <string name="displayMarkDescription">Marcar parolas desconoixidas con un *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Fer una donación</string>
+    <string name="about_support_thanks">Gracias por apoyar ista aplicación</string>
+    <string name="donation_thanks_title">Gracias</string>
+    <string name="donation_thanks_message">A tuya donación apoya o desembolicamiento futuro de l\'aplicación.</string>
 </resources>

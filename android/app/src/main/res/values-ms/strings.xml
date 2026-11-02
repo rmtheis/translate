@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Tandakan perkataan yang tidak diketahui</string>
     <string name="displayMarkDescription">Tandakan perkataan yang tidak diketahui dengan *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Derma</string>
+    <string name="about_support_thanks">Terima kasih kerana menyokong aplikasi ini</string>
+    <string name="donation_thanks_title">Terima kasih</string>
+    <string name="donation_thanks_message">Derma anda menyokong pembangunan aplikasi ini pada masa hadapan.</string>
 </resources>

@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Marka liafuan ne\'ebé la hatene</string>
     <string name="displayMarkDescription">Marka liafuan ne\'ebé la hatene ho *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Halo doasaun</string>
+    <string name="about_support_thanks">Obrigadu tanba apoia aplikasaun ida-ne\'e</string>
+    <string name="donation_thanks_title">Obrigadu</string>
+    <string name="donation_thanks_message">Ita-nia doasaun apoia dezenvolvimentu futuru aplikasaun nian.</string>
 </resources>

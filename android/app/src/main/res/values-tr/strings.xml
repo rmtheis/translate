@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Bilinmeyen sözcükleri işaretle</string>
     <string name="displayMarkDescription">Bilinmeyen sözcükleri * ile işaretle</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Bağış yap</string>
+    <string name="about_support_thanks">Bu uygulamayı desteklediğiniz için teşekkürler</string>
+    <string name="donation_thanks_title">Teşekkürler</string>
+    <string name="donation_thanks_message">Bağışınız uygulamanın gelecekteki geliştirilmesini destekliyor.</string>
 </resources>

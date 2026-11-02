@@ -39,6 +39,7 @@ struct TranslateApp: App {
             TranslatorView()
                 .reviewPrompt()
                 .tint(Theme.accent)
+                .task { await SupportPurchase.shared.start() }
         }
     }
 }

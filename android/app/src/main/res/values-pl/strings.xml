@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Oznacz nieznane słowa</string>
     <string name="displayMarkDescription">Oznacz nieznane słowa znakiem *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Przekaż darowiznę</string>
+    <string name="about_support_thanks">Dziękujemy za wsparcie tej aplikacji</string>
+    <string name="donation_thanks_title">Dziękujemy</string>
+    <string name="donation_thanks_message">Twoja darowizna wspiera dalszy rozwój aplikacji.</string>
 </resources>

@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Merk onbekende woorde</string>
     <string name="displayMarkDescription">Merk onbekende woorde met \'n *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Skenk</string>
+    <string name="about_support_thanks">Dankie dat jy hierdie toep ondersteun</string>
+    <string name="donation_thanks_title">Dankie</string>
+    <string name="donation_thanks_message">Jou skenking ondersteun die toekomstige ontwikkeling van die toep.</string>
 </resources>

@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Conseñar pallabres desconocíes</string>
     <string name="displayMarkDescription">Conseñar les pallabres desconocíes con un *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Facer una donación</string>
+    <string name="about_support_thanks">Gracies por sofitar esta aplicación</string>
+    <string name="donation_thanks_title">Gracies</string>
+    <string name="donation_thanks_message">La to donación sofita\'l desendolcu futuru de l\'aplicación.</string>
 </resources>

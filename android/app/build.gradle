@@ -83,6 +83,11 @@ dependencies {
     implementation 'com.google.android.play:asset-delivery:2.2.2'
     implementation 'com.google.android.play:review:2.0.2'
 
+    // 8.0.0 is the newest release that still declares minSdkVersion 21: 8.1.0 raised it to
+    // 23. Do NOT bump past it while minSdk stays 21. Play accepts billing 8.x in updates
+    // until 2027-08-31 (extension 2027-11-01); see the Donate button section of the README.
+    implementation 'com.android.billingclient:billing:8.0.0'
+
     // Direct pins over the old fragment/activity that asset-delivery and material
     // drag in (fragment 1.1.0 is flagged as outdated by Play Console). These are the
     // newest releases that still declare minSdkVersion 21: fragment 1.9.0 and

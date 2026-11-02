@@ -45,4 +45,15 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Mark unknown words</string>
     <string name="displayMarkDescription">Mark unknown words with a *</string>
+
+    <!-- Donate button. It reads about_donate alone until Play's localized price is known
+         (looked up at app launch, see SupportPurchase.java), then
+         "<about_donate> • <price>" (about_donate_row); after a purchase the disabled button
+         shows about_support_thanks. No price is hardcoded anywhere. -->
+    <string name="about_donate">Donate</string>
+    <string name="about_support_thanks">Thank you for supporting this app</string>
+    <string name="donation_thanks_title">Thank you</string>
+    <string name="donation_thanks_message">Your donation supports future development of the app.</string>
+    <string translatable="false" name="about_donate_row">%1$s \u2022 %2$s</string>
+    <string translatable="false" name="support_product_id">support_2026</string>
 </resources>

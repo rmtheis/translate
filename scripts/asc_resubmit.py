@@ -11,9 +11,9 @@ Run this AFTER asc_upload.py has uploaded a new build. The script:
   3. Attaches the build to that version (PATCH the build relationship)
      and sets its releaseType — default AFTER_APPROVAL, so the version
      auto-releases to the App Store the moment Apple approves it.
-  4. Creates a reviewSubmission for the app, adds the version as an
-     item, and PATCHes submitted=true to send it to Apple's review
-     queue.
+  4. Creates a reviewSubmission for the app, adds the version and any
+     never-reviewed in-app purchase as items, and PATCHes submitted=true
+     to send it to Apple's review queue.
 
 Use sparingly: this is the irreversible "submit for review" click —
 once submitted, Apple will queue the version for review. There's a
@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -294,6 +295,43 @@ def add_version_to_submission(token: str, rs_id: str, version_id: str) -> None:
         sys.exit(f"HTTP {e.code} {e.reason} on POST /reviewSubmissionItems\n{detail}")
 
 
+def add_new_iaps_to_submission(token: str, app_id: str, rs_id: str) -> None:
+    """An in-app purchase that was never reviewed rides the version's
+    review submission as an inAppPurchaseVersion item; submitting without
+    it would ship a Donate row whose product the App Store doesn't serve.
+    A new IAP already has an inflight version: the POST then answers 409
+    naming it, and that one is reused."""
+    data = _request("GET", token, f"/apps/{app_id}/inAppPurchasesV2",
+                    params={"limit": "200"})
+    headers = {"Authorization": f"Bearer {token}",
+               "Content-Type": "application/json"}
+    for iap in data.get("data", []):
+        product_id = iap["attributes"].get("productId")
+        if iap["attributes"].get("state") != "READY_TO_SUBMIT":
+            continue
+        body = {"data": {"type": "inAppPurchaseVersions", "relationships": {
+            "inAppPurchase": {"data": {"type": "inAppPurchases", "id": iap["id"]}}}}}
+        req = urllib.request.Request(ASC_BASE + "/inAppPurchaseVersions", method="POST",
+                                     headers=headers, data=json.dumps(body).encode())
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                version_id = json.loads(r.read())["data"]["id"]
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode("utf-8", errors="replace")
+            inflight = re.search(r"inflight version with id '([^']+)'", detail)
+            if e.code != 409 or not inflight:
+                sys.exit(f"HTTP {e.code} {e.reason} on POST /inAppPurchaseVersions\n{detail}")
+            version_id = inflight.group(1)
+        _request("POST", token, "/reviewSubmissionItems", body={"data": {
+            "type": "reviewSubmissionItems",
+            "relationships": {
+                "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": rs_id}},
+                "inAppPurchaseVersion": {"data": {"type": "inAppPurchaseVersions",
+                                                  "id": version_id}},
+            }}})
+        print(f"  added IAP {product_id} as submission item")
+
+
 def submit_for_review(token: str, rs_id: str) -> None:
     """PATCH /v1/reviewSubmissions/{id} with submitted=true."""
     body = {
@@ -345,6 +383,7 @@ def main() -> None:
     print(f"[5/5] Create reviewSubmission and submit")
     rs_id = create_review_submission(token, app_id)
     add_version_to_submission(token, rs_id, version_id)
+    add_new_iaps_to_submission(token, app_id, rs_id)
     submit_for_review(token, rs_id)
     print(f"\nSubmitted for review: app={bundle_id} version={vs} "
           f"build={build_ver_actual}")

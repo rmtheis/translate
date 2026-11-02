@@ -1,0 +1,34 @@
+{
+  "identifier" : "TRANSLATE_SK_CONFIG",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "SUPPORT2026",
+      "localizations" : [
+        {
+          "description" : "A one-time thank-you. Nothing in the app changes.",
+          "displayName" : "Support development",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.qvyshift.translate.support_2026",
+      "referenceName" : "Support development",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6763014850",
+    "_developerTeamID" : "X5S32CFST2",
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : []
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

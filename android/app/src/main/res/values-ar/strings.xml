@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">تمييز الكلمات غير المعروفة</string>
     <string name="displayMarkDescription">تمييز الكلمات غير المعروفة بعلامة *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">تبرّع</string>
+    <string name="about_support_thanks">شكرًا لدعمك هذا التطبيق</string>
+    <string name="donation_thanks_title">شكرًا لك</string>
+    <string name="donation_thanks_message">تبرعك يدعم تطوير التطبيق في المستقبل.</string>
 </resources>

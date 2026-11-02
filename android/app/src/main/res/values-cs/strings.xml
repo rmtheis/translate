@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Označit neznámá slova</string>
     <string name="displayMarkDescription">Označit neznámá slova hvězdičkou *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Přispět</string>
+    <string name="about_support_thanks">Děkujeme za podporu této aplikace</string>
+    <string name="donation_thanks_title">Děkujeme</string>
+    <string name="donation_thanks_message">Váš dar podporuje další vývoj aplikace.</string>
 </resources>

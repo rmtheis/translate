@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Белгісіз сөздерді белгілеу</string>
     <string name="displayMarkDescription">Белгісіз сөздерді * белгісімен белгілеу</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Қайырымдылық жасау</string>
+    <string name="about_support_thanks">Осы қолданбаны қолдағаныңыз үшін рахмет</string>
+    <string name="donation_thanks_title">Рахмет</string>
+    <string name="donation_thanks_message">Қайырымдылығыңыз қолданбаның болашақ дамуына көмектеседі.</string>
 </resources>

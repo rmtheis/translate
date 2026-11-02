@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Означи непознате речи</string>
     <string name="displayMarkDescription">Означи непознате речи са *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Донирај</string>
+    <string name="about_support_thanks">Хвала што подржавате ову апликацију</string>
+    <string name="donation_thanks_title">Хвала</string>
+    <string name="donation_thanks_message">Ваша донација подржава будући развој апликације.</string>
 </resources>

@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Contrassegna parole sconosciute</string>
     <string name="displayMarkDescription">Contrassegna le parole sconosciute con un *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Dona</string>
+    <string name="about_support_thanks">Grazie per aver sostenuto questa app</string>
+    <string name="donation_thanks_title">Grazie</string>
+    <string name="donation_thanks_message">La tua donazione sostiene lo sviluppo futuro dell\'app.</string>
 </resources>

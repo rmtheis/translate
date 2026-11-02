@@ -3,6 +3,7 @@ package com.qvyshift.translate;
 import android.app.*;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -52,6 +53,23 @@ public class App extends Application {
     // re-extract. No blocking — UI keeps showing the pair as installed throughout
     // and auto-upgrades when the fetch's state listener fires COMPLETED.
     pairDownloadManager.refreshStalePacks();
+
+    // Start the Play Billing connection and the price lookup as soon as the first screen is up,
+    // so the dialog can show "Donate • <Play's localized price>" from its first frame. Not right
+    // here: on Android 14 the connection never completes when started from Application.onCreate
+    // until an activity makes a billing call (seen with billing 9.1.0 in Loyalty Card Wallet).
+    registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+      @Override public void onActivityResumed(Activity activity) {
+        unregisterActivityLifecycleCallbacks(this);
+        SupportPurchase.get(App.this);
+      }
+      @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
+      @Override public void onActivityStarted(Activity activity) {}
+      @Override public void onActivityPaused(Activity activity) {}
+      @Override public void onActivityStopped(Activity activity) {}
+      @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
+      @Override public void onActivityDestroyed(Activity activity) {}
+    });
   }
 
   public static void longToast(final String txt) {

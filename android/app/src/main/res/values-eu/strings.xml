@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Markatu hitz ezezagunak</string>
     <string name="displayMarkDescription">Markatu hitz ezezagunak * batekin</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Egin dohaintza</string>
+    <string name="about_support_thanks">Eskerrik asko aplikazio hau laguntzeagatik</string>
+    <string name="donation_thanks_title">Eskerrik asko</string>
+    <string name="donation_thanks_message">Zure dohaintzak aplikazioaren etorkizuneko garapena laguntzen du.</string>
 </resources>

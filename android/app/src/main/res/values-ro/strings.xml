@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Marchează cuvintele necunoscute</string>
     <string name="displayMarkDescription">Marchează cuvintele necunoscute cu un *</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Donează</string>
+    <string name="about_support_thanks">Mulțumim că susții această aplicație</string>
+    <string name="donation_thanks_title">Mulțumim</string>
+    <string name="donation_thanks_message">Donația ta sprijină dezvoltarea viitoare a aplicației.</string>
 </resources>

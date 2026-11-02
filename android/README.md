@@ -4,7 +4,8 @@ Package `com.qvyshift.translate`. Offline Apertium translation: the Apertium C++
 tools are cross-compiled with the NDK (`native/`), shipped as `lib*.so` executables
 in `app/src/main/jniLibs/`, and run as a stdin→stdout pipeline via `ProcessBuilder`
 (`NativePipeline.java`). There is no JNI. Language pairs are on-demand Play Asset
-Delivery packs (`pair_<src>_<tgt>/`). No ads, no billing, no Firebase.
+Delivery packs (`pair_<src>_<tgt>/`). No ads, no Firebase; one optional donation through
+Play Billing (see "Donate button").
 
 ## Releases (CI only)
 
@@ -226,6 +227,49 @@ cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:bundleRelease
   status bar): `screenshots/localization-sample/android/`; the gallery with iOS side by
   side is `screenshots/localization-sample/index.html`, rendered by
   `scripts/localization-gallery.py` and opened with `open -a "Brave Browser" <path>`.
+
+## Donate button (Play Billing)
+
+The About + Settings dialog has a "Donate" button under the download button, in the same
+outlined style (`dialog_about_settings.xml`): a one-time Play product, id `support_2026`
+(`support_product_id` in `values/strings.xml`; code in `SupportPurchase.java`, `App.java`,
+`TranslatorActivity.configureDonateButton`, modeled on Loyalty Card Wallet's). `SupportPurchase` is one instance per process: `App` creates it when
+the first activity is resumed, so the Play connection and the price lookup run in the
+background before anyone opens the dialog (logcat tag `SupportPurchase`). Not from
+`Application.onCreate` itself: on Android 14 that connection never completes until an activity
+makes a billing call.
+
+- The button reads plain `about_donate` until Play's localized price is known, then
+  "DONATE • <price>" (`about_donate_row`). The style is all caps, but only the label follows it:
+  Play's price stays exactly as Play formatted it. **No price is hardcoded anywhere**, and
+  `DonateStringsTest` fails on a digit in those strings. Without Play Billing (emulators with no
+  account, sideloads on a device with no account) it stays "DONATE", still looks enabled, and a
+  tap does nothing.
+- After a purchase, or when `queryPurchasesAsync` finds an earlier one, the button is disabled and
+  shows `about_support_thanks`, like the download button once every pair is downloaded. Right
+  after a purchase a dialog says thank you (`donation_thanks_title`, `donation_thanks_message`).
+  Purchases are acknowledged, never consumed, and unlock nothing. Debuggable builds: long-press
+  the button to preview that dialog.
+- The strings are translated in all 52 `values-*` folders (`DonateStringsTest` checks that none
+  is missing or English). The ones not taken from Loyalty Card Wallet, written 2026-11-02 and not
+  reviewed by a native speaker: af an ast br crh cy eo fo gl hr is kk mk ms mt nn oc pt-PT sc scn se
+  sr-Latn szl tet ur.
+- **Billing is pinned to 8.0.0**, the newest release with minSdkVersion 21 (8.1.0 raised it to
+  23, checked from the AAR manifests 2026-11-02). Google's deprecation table takes 8.x in new
+  updates until 2027-08-31, extension 2027-11-01. Before then minSdk has to rise to 23 or the button
+  has to go. billing pulls `play-services-location` but no location permission; the merged
+  manifest gains only `com.android.vending.BILLING` and `ACCESS_NETWORK_STATE`.
+- Play side: `scripts/play_create_donation_product.py` (dry run by default, `--create`, `--show`;
+  US$ 2.99 converted once with `monetization.convertRegionPrices`, 174 regional prices, listing
+  text per store language in `scripts/_donation_i18n.py`). **Play refuses the product ("Can't
+  create product. To fix, request billing permission.") until an uploaded bundle declares
+  `BILLING`**, so run `--create` right after the first release that carries this code; the button
+  stays plain "DONATE" and inert until then. Status 2026-11-02: code not released, product not
+  created. Credentials as for `play_upload_listings.py`.
+
+QA on 2026-11-02: unit tests; debug on API 23 and 36 emulators (button, locales, RTL, thank-you
+preview); R8 release build on API 36; debug on the moto g (Android 14, real Play: "Billing
+connected" 1 s after launch). The price and a real purchase are unverified until the product exists.
 
 ## Known issues
 

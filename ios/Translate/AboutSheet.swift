@@ -12,6 +12,16 @@ import SwiftUI
 struct AboutSheet: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage(AppStorageKey.displayMarks) private var displayMarks: Bool = true
+    @ObservedObject private var support = SupportPurchase.shared
+
+    /// "Donate" until the App Store's localized price is known, then
+    /// "Donate • 2,99 €". No price is ever shown that the App Store did
+    /// not supply. See SupportPurchase.
+    private var donateLabel: String {
+        let donate = String(localized: "Donate")
+        guard let price = support.formattedPrice else { return donate }
+        return "\(donate) \u{2022} \(price)"
+    }
 
     /// Read the marketing version from Info.plist so we don't hard-code
     /// it twice. Shown as "v1.0.0" to match the Android About dialog.
@@ -54,6 +64,27 @@ struct AboutSheet: View {
                         }
                     }
                 }
+
+                Section {
+                    if support.isSupporter {
+                        Text("Thank you for supporting this app")
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        Button {
+                            Task { await support.purchase() }
+                        } label: {
+                            Text(verbatim: donateLabel)
+                                .frame(maxWidth: .infinity)
+                        }
+                    }
+                }
+            }
+            .task { await support.loadProduct() }
+            .alert("Thank you", isPresented: $support.justPurchased) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Your donation supports future development of the app.")
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -69,6 +100,7 @@ enum AppStorageKey {
     static let displayMarks = "displayMark"    // matches Android's App.PREF_displayMark
     static let lastPairPkg  = "lastPairPkg"
     static let lastDirection = "lastDirection"
+    static let supporter = "supporter"
 }
 
 #if DEBUG

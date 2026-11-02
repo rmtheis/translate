@@ -1028,6 +1028,348 @@
         }
       }
     },
+    "Donate": {
+      "comment": "Row in the About+Settings sheet. Followed by the App Store's price once known. A verb or short label.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donate"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skenk"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تبرّع"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ахвяраваць"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дарете"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fes un donatiu"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Přispět"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donér"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donar"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Egin dohaintza"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faire un don"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Facer unha doazón"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "תרומה"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "दान करें"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doniraj"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donasi"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Styrkja"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dona"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Қайырымдылық жасау"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Донирај"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Derma"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doner"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doneren"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przekaż darowiznę"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doar"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donează"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пожертвовать"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doniraj"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Донирај"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donera"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bağış yap"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пожертвувати"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عطیہ دیں"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fer una donación"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Facer una donación"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ober un donezon"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bağış yap"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donaci"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gev eina gávu"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agħmel donazzjoni"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skeaŋke"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doner"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Far un don"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faghe una donatzione"
+          }
+        },
+        "sr-Latn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doniraj"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fai na dunazzioni"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spōmōż"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Иганә итү"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Halo doasaun"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rhoi rhodd"
+          }
+        },
+        "en-AU": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donate"
+          }
+        },
+        "en-CA": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donate"
+          }
+        },
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donate"
+          }
+        },
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donar"
+          }
+        },
+        "fr-CA": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faire un don"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doar"
+          }
+        }
+      }
+    },
     "Done": {
       "comment": "Keyboard-toolbar Done button and About sheet Done button.",
       "extractionState": "manual",
@@ -5132,6 +5474,690 @@
         }
       }
     },
+    "Thank you": {
+      "comment": "Title of the alert shown right after a donation completes.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thank you"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dankie"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "شكرًا لك"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дзякуй"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Благодарим ви"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gràcies"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Děkujeme"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tak"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gracias"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eskerrik asko"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merci"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grazas"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "תודה"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "धन्यवाद"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hvala"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terima kasih"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Takk"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grazie"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Рахмет"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ви благодариме"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terima kasih"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Takk"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedankt"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dziękujemy"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrigado"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mulțumim"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Спасибо"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hvala"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Хвала"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tack"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teşekkürler"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дякуємо"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "شکریہ"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gracias"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gracies"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trugarez"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sağ oluñız"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dankon"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Takk"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grazzi"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giitu"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Takk"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mercés"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gràtzias"
+          }
+        },
+        "sr-Latn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hvala"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grazzi"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dziynki"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Рәхмәт"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrigadu"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diolch"
+          }
+        },
+        "en-AU": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thank you"
+          }
+        },
+        "en-CA": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thank you"
+          }
+        },
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thank you"
+          }
+        },
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gracias"
+          }
+        },
+        "fr-CA": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merci"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrigado"
+          }
+        }
+      }
+    },
+    "Thank you for supporting this app": {
+      "comment": "Row in the About+Settings sheet after a donation, replaces the Donate row.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thank you for supporting this app"
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dankie dat jy hierdie toep ondersteun"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "شكرًا لدعمك هذا التطبيق"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дзякуй за падтрымку гэтай праграмы"
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Благодарим ви, че подкрепяте това приложение"
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gràcies per donar suport a aquesta aplicació"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Děkujeme za podporu této aplikace"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tak for din støtte til denne app"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gracias por apoyar esta aplicación"
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eskerrik asko aplikazio hau laguntzeagatik"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merci de soutenir cette application"
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grazas por apoiar esta aplicación"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "תודה על התמיכה באפליקציה הזו"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "इस ऐप का सहयोग करने के लिए धन्यवाद"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hvala što podržavate ovu aplikaciju"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terima kasih telah mendukung aplikasi ini"
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Takk fyrir að styðja þetta forrit"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grazie per aver sostenuto questa app"
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Осы қолданбаны қолдағаныңыз үшін рахмет"
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ви благодариме што ја поддржувате оваа апликација"
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terima kasih kerana menyokong aplikasi ini"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Takk for at du støtter denne appen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedankt dat je deze app steunt"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dziękujemy za wsparcie tej aplikacji"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrigado por apoiar este app"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mulțumim că susții această aplicație"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Спасибо за поддержку этого приложения"
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hvala, da podpirate to aplikacijo"
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Хвала што подржавате ову апликацију"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tack för att du stöder den här appen"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu uygulamayı desteklediğiniz için teşekkürler"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дякуємо за підтримку цього додатка"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اس ایپ کی حمایت کرنے کا شکریہ"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gracias por apoyar ista aplicación"
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gracies por sofitar esta aplicación"
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trugarez evit skoazellañ an arload-mañ"
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu programmağa destek bergeniñiz içün sağ oluñız"
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dankon pro via subteno de ĉi tiu aplikaĵo"
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Takk fyri at tú stuðlar hesi appini"
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grazzi talli qed tappoġġja din l-app"
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giitu go doarjut dán áppa"
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Takk for at du støttar denne appen"
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mercés de sosténer aquesta aplicacion"
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gràtzias pro su suportu a custa aplicatzione"
+          }
+        },
+        "sr-Latn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hvala što podržavate ovu aplikaciju"
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grazzi pi sustèniri sta applicazzioni"
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dziynki za podpiyranie tyj aplikacyje"
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Бу кушымтаны яклаганыгыз өчен рәхмәт"
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrigadu tanba apoia aplikasaun ida-ne'e"
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diolch am gefnogi'r ap hwn"
+          }
+        },
+        "en-AU": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thank you for supporting this app"
+          }
+        },
+        "en-CA": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thank you for supporting this app"
+          }
+        },
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thank you for supporting this app"
+          }
+        },
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gracias por apoyar esta aplicación"
+          }
+        },
+        "fr-CA": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merci de soutenir cette application"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrigado por apoiar esta aplicação"
+          }
+        }
+      }
+    },
     "This pair is one-way only.": {
       "comment": "Error shown when the user taps swap on a pair that doesn't have a backward direction (e.g. mkd→eng has no eng→mkd).",
       "extractionState": "manual",
@@ -5812,6 +6838,348 @@
           "stringUnit": {
             "state": "translated",
             "value": "Erro de tradução"
+          }
+        }
+      }
+    },
+    "Your donation supports future development of the app.": {
+      "comment": "Message of the alert shown right after a donation completes.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your donation supports future development of the app."
+          }
+        },
+        "af": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jou skenking ondersteun die toekomstige ontwikkeling van die toep."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تبرعك يدعم تطوير التطبيق في المستقبل."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваша ахвяраванне падтрымлівае далейшую распрацоўку праграмы."
+          }
+        },
+        "bg": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вашето дарение подкрепя бъдещото развитие на приложението."
+          }
+        },
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La teva donació dona suport al desenvolupament futur de l'aplicació."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Váš dar podporuje další vývoj aplikace."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Din donation støtter appens fremtidige udvikling."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu donación apoya el desarrollo futuro de la aplicación."
+          }
+        },
+        "eu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zure dohaintzak aplikazioaren etorkizuneko garapena laguntzen du."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre don soutient le développement futur de l'application."
+          }
+        },
+        "gl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A túa doazón apoia o desenvolvemento futuro da aplicación."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "התרומה שלך תומכת בפיתוח העתידי של האפליקציה."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "आपका दान ऐप के भविष्य के विकास में सहायता करता है।"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vaša donacija podržava budući razvoj aplikacije."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donasi Anda mendukung pengembangan aplikasi ini di masa mendatang."
+          }
+        },
+        "is": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Framlag þitt styður frekari þróun forritsins."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La tua donazione sostiene lo sviluppo futuro dell'app."
+          }
+        },
+        "kk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Қайырымдылығыңыз қолданбаның болашақ дамуына көмектеседі."
+          }
+        },
+        "mk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вашата донација го поддржува идниот развој на апликацијата."
+          }
+        },
+        "ms": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Derma anda menyokong pembangunan aplikasi ini pada masa hadapan."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donasjonen din støtter videre utvikling av appen."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je donatie ondersteunt de verdere ontwikkeling van de app."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twoja darowizna wspiera dalszy rozwój aplikacji."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sua doação apoia o desenvolvimento futuro do app."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donația ta sprijină dezvoltarea viitoare a aplicației."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваше пожертвование поддерживает дальнейшую разработку приложения."
+          }
+        },
+        "sl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vaša donacija podpira nadaljnji razvoj aplikacije."
+          }
+        },
+        "sr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваша донација подржава будући развој апликације."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Din donation stöder appens fortsatta utveckling."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bağışınız uygulamanın gelecekteki geliştirilmesini destekliyor."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваша пожертва підтримує подальшу розробку додатка."
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "آپ کا عطیہ ایپ کی مستقبل کی ترقی میں مدد کرتا ہے۔"
+          }
+        },
+        "an": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A tuya donación apoya o desembolicamiento futuro de l'aplicación."
+          }
+        },
+        "ast": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La to donación sofita'l desendolcu futuru de l'aplicación."
+          }
+        },
+        "br": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ho tonezon a skoazell diorren an arload en amzer da zont."
+          }
+        },
+        "crh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bağışıñız programmanıñ kelecekteki inkişafına yardım ete."
+          }
+        },
+        "eo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Via donaco subtenas la estontan evoluigon de la aplikaĵo."
+          }
+        },
+        "fo": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gávan hjá tær stuðlar framtíðar menningini av appini."
+          }
+        },
+        "mt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Id-donazzjoni tiegħek tappoġġja l-iżvilupp futur tal-app."
+          }
+        },
+        "se": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du skeaŋka doarju áppa boahtteáiggi ovdáneami."
+          }
+        },
+        "nn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donasjonen din støttar vidare utvikling av appen."
+          }
+        },
+        "oc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vòstre don sosten lo desvolopament futur de l'aplicacion."
+          }
+        },
+        "sc": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sa donatzione tua agiudat su disvilupu benidore de s'aplicatzione."
+          }
+        },
+        "sr-Latn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vaša donacija podržava budući razvoj aplikacije."
+          }
+        },
+        "scn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La to dunazzioni sustèni lu sviluppu futuru di l'applicazzioni."
+          }
+        },
+        "szl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twoja darowizna podpiyro dalszy rozwōj aplikacyje."
+          }
+        },
+        "tt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сезнең иганәгез кушымтаның алга таба үсешенә ярдәм итә."
+          }
+        },
+        "tet": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ita-nia doasaun apoia dezenvolvimentu futuru aplikasaun nian."
+          }
+        },
+        "cy": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mae eich rhodd yn cefnogi datblygiad yr ap yn y dyfodol."
+          }
+        },
+        "en-AU": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your donation supports future development of the app."
+          }
+        },
+        "en-CA": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your donation supports future development of the app."
+          }
+        },
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your donation supports future development of the app."
+          }
+        },
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu donación apoya el desarrollo futuro de la aplicación."
+          }
+        },
+        "fr-CA": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre don soutient le développement futur de l'application."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A sua doação apoia o desenvolvimento futuro da aplicação."
           }
         }
       }

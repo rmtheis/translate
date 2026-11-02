@@ -45,4 +45,10 @@
     <!-- About + Settings dialog -->
     <string name="displayMark">Merke amas sániid</string>
     <string name="displayMarkDescription">Merke amas sániid *-mearkkain</string>
+
+    <!-- Donate button -->
+    <string name="about_donate">Skeaŋke</string>
+    <string name="about_support_thanks">Giitu go doarjut dán áppa</string>
+    <string name="donation_thanks_title">Giitu</string>
+    <string name="donation_thanks_message">Du skeaŋka doarju áppa boahtteáiggi ovdáneami.</string>
 </resources>
