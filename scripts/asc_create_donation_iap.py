@@ -125,19 +125,29 @@ def main() -> None:
         }})["data"]["id"]
         print("IAP created")
 
+    # Since API 4.4.1 localizations belong to the IAP's version, not to the IAP: the per-IAP
+    # v1 localization resource goes away in early 2027. A new IAP is made with a version.
+    versions = api("GET", f"/v2/inAppPurchases/{iap_id}/versions", params={"limit": 200})["data"]
+    version_id = (max(versions, key=lambda v: v["attributes"].get("version") or 0)["id"]
+                  if versions else None)
     have = {row["attributes"]["locale"] for row in api(
-        "GET", f"/v2/inAppPurchases/{iap_id}/inAppPurchaseLocalizations",
-        params={"limit": 200})["data"]}
+        "GET", f"/v1/inAppPurchaseVersions/{version_id}/localizations",
+        params={"limit": 200})["data"]} if version_id else set()
     missing = [locale for locale in TEXT if locale not in have]
     if missing and not args.create:
         print(f"DRY RUN: would add localizations {missing}")
     elif missing:
+        if not version_id:
+            version_id = api("POST", "/v1/inAppPurchaseVersions", {"data": {
+                "type": "inAppPurchaseVersions",
+                "relationships": {"inAppPurchase": {"data": {"type": "inAppPurchases", "id": iap_id}}},
+            }})["data"]["id"]
         for locale in missing:
             name, description = TEXT[locale]
-            api("POST", "/v1/inAppPurchaseLocalizations", {"data": {
+            api("POST", "/v2/inAppPurchaseLocalizations", {"data": {
                 "type": "inAppPurchaseLocalizations",
                 "attributes": {"locale": locale, "name": name, "description": description},
-                "relationships": {"inAppPurchaseV2": {"data": {"type": "inAppPurchases", "id": iap_id}}},
+                "relationships": {"version": {"data": {"type": "inAppPurchaseVersions", "id": version_id}}},
             }})
         print(f"{len(missing)} localizations added")
 
