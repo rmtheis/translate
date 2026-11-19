@@ -618,6 +618,21 @@ Pull these verbatim, minimal adaptation:
   stays iOS 16.0 (app and natives). When GitHub adds an `xcode-28` image,
   change `runs-on` and `XCODE_MAJOR` together, then prove it with a
   build-only run (below) before it reaches `master`.
+
+  Proven 2026-11-19 by build-only run 44536435267 (image `xcode-27-arm64`
+  20261104.0337.1, Xcode 27.2 build 27B52): natives for both slices at that
+  day's upstream HEAD (lttoolbox 76e6f6f, apertium b0e6f61, cg3 4dd86c3,
+  hfst 1261f3a), signed archive (SDK `iphoneos27.2`, minimum iOS 16.0) and
+  App Store export. A Release simulator build made on the Mac with those
+  natives and that run's pair JARs (ODR tags stripped) launches and
+  translates on iOS 27.0 (iPhone 17: spa→cat, nob→nno; iPad (A16): sme→nob)
+  and on iOS 17.0 (iPhone SE: eng→spa). That is a launch check, not the
+  translation QA a natives rebuild calls for. Not covered by a build-only
+  run: the `deploy` job on the new image (altool upload, the App Store
+  Connect scripts, the bookkeeping push). altool 27.10.4 of Xcode 27.2 takes
+  the arguments `asc_upload.py` passes and still looks for the key in
+  `~/.appstoreconnect/private_keys` (checked on the Mac with a missing key,
+  so nothing could upload).
 - **Build-only runs.** To try a change to the workflow, the natives or the
   app on the runner without publishing:
 
@@ -688,7 +703,8 @@ Pull these verbatim, minimal adaptation:
   `--dry-run` runs every check and sets nothing. The certificate was rotated
   on 2026-10-13 and the old one expired on 2026-11-11; the secrets were
   refreshed on 2026-11-19, before any run reached "Archive" with the stale
-  ones, and no run has used the new ones yet. The current certificate expires
+  ones. Build-only run 44536435267 archived and exported with the new ones
+  the same day; no publishing run has used them yet. The current certificate expires
   2027-10-13. `gh secret list -R rmtheis/translate` shows when each was last
   set.
 
