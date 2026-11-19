@@ -620,6 +620,24 @@ Pull these verbatim, minimal adaptation:
   key `.p8`; otherwise generate a new App Store Connect API key. Store
   as `APP_STORE_CONNECT_API_KEY_P8`, `APP_STORE_CONNECT_API_KEY_ID`,
   `APP_STORE_CONNECT_ISSUER_ID` in GitHub secrets.
+- Signing secrets: `IOS_DISTRIBUTION_CERT_P12`,
+  `IOS_DISTRIBUTION_CERT_PASSWORD` and `IOS_PROVISIONING_PROFILE` are copies
+  of the distribution certificate and the "Translate App Store" profile, and
+  nothing refreshes them. After a certificate rotation or a profile change
+  the `build` job keeps passing until the old certificate expires, then fails
+  at "Archive". Refresh all three after either:
+
+  ```sh
+  ASC_KEY_ID=... ASC_ISSUER_ID=... \
+    python3 scripts/update_ios_signing_secrets.py --signing-dir <folder with dist.cer and dist.key>
+  ```
+
+  `--dry-run` runs every check and sets nothing. The certificate was rotated
+  on 2026-10-13 and the old one expired on 2026-11-11; the secrets were
+  refreshed on 2026-11-19, before any run reached "Archive" with the stale
+  ones, and no run has used the new ones yet. The current certificate expires
+  2027-10-13. `gh secret list -R rmtheis/translate` shows when each was last
+  set.
 
 ### App Store screenshots
 
