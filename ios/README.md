@@ -578,11 +578,55 @@ Pull these verbatim, minimal adaptation:
 - Jobs: `natives` (both xcframework slices) → `pairs` (prep-pair.sh
   unchanged, then `check-pair-tools.py --ios`) → `build` (Xcode archive)
   → `deploy` (App Store Connect API upload).
-- `natives` is cached by the tree SHA of `ios/native/`. Any change there
-  (a wrapper, `build.sh`) is a cache miss: `build.sh all` re-clones
+- `natives` is cached by the tree SHA of `ios/native/` plus the build
+  number of the Xcode that compiled it. Any change there (a wrapper,
+  `build.sh`), a newer Xcode on the runner, or a cache that GitHub dropped
+  after 7 days without use is a cache miss: `build.sh all` re-clones
   lttoolbox, apertium, cg3, HFST, ... at upstream HEAD, so every tool
   changes, and the job takes ~27 min (2026-09-29 run). Re-QA the
   translations after such a release.
+- **Xcode 27 (iOS 27 SDK).** Apple's upload warning 90725: from April 2027,
+  uploads must be built with the iOS 27 SDK (Xcode 27 or later). The three
+  macOS jobs run on the `xcode-27` runner image, the only GitHub-hosted image
+  that has Xcode 27 (`macos-15` and `macos-26` stop at Xcode 26.x). Each
+  starts with `scripts/ci-select-xcode.sh "$XCODE_MAJOR"` (`XCODE_MAJOR: '27'`
+  in the workflow's `env`), which selects the newest released Xcode 27.x and
+  fails the job if there is none; it never falls back to an older Xcode. It
+  skips betas: App Store Connect refuses builds made with one, and the image
+  links a beta under a release-looking name (`Xcode_27.3.app` points at
+  `Xcode_27.3_beta.app`), so the script resolves each path and accepts an
+  Xcode only when `licenseType` in its `LicenseInfo.plist` is `GM`. "Archive"
+  then checks the archive's own SDK, before the deploy job can upload
+  anything. `scripts/ci-select-xcode.sh 27 --print` shows the choice without
+  selecting it, and `XCODE_APPS_DIR=<dir>` points it at a fake `/Applications`
+  for testing.
+
+  The app needed no change for this. An app built with the iOS 27 SDK stops
+  at launch on iOS 27 unless it uses the scene lifecycle; this one is a
+  SwiftUI `App` with a `WindowGroup` (plus `UIApplicationSceneManifest` in
+  `project.yml`), so it is scene-based already. It has no package
+  dependencies, only `ApertiumCore.xcframework`, and the deployment target
+  stays iOS 16.0 (app and natives). When GitHub adds an `xcode-28` image,
+  change `runs-on` and `XCODE_MAJOR` together, then prove it with a
+  build-only run (below) before it reaches `master`.
+- **Build-only runs.** To try a change to the workflow, the natives or the
+  app on the runner without publishing:
+
+      gh workflow run release-ios.yml --ref <branch> -f build_only=true
+
+  The run then ends after the `build` job ("Archive Translate.ipa"): natives,
+  pair JARs, signed archive and App Store export all run, and the `deploy` job
+  (upload, App Store version, release notes, description, review submission,
+  bookkeeping commit) is skipped. A run from any branch other than `master`
+  is build-only whether or not the input is set, so only `master` can
+  publish. Three things enforce it: the `deploy` job's `if:`, its first step
+  ("Refuse to publish from a build-only run", which fails the job on any ref
+  but `master` or with the input set), and the workflow's read-only token
+  (only `deploy` asks for `contents: write`). The gate job's "Run mode" step
+  says in the run's annotations which kind of run it is, and the build job's
+  summary names the IPA, the Xcode build and the SDK. A build-only run from a
+  branch saves its natives cache under that branch, where `master` runs can't
+  read it, and keeps its IPA artifact for 1 day instead of 14.
 - Manual runs (`gh workflow run release-ios.yml -f force_publish=true`)
   ship app-code-only changes; add `-f stock_notes=true` to post the stock
   "Behind-the-scenes changes…" line instead of the pair-inventory diff.
@@ -763,7 +807,7 @@ Pull these verbatim, minimal adaptation:
 - Pair-list order: `_listing_i18n.sorted_for()` sorts with its own collation key — case
   and accents ignored, the letters a language's alphabet sorts on their own (Croatian Š,
   Ukrainian І, Nordic Å, …) placed by `_TAILORING`, the arrows ignored — so the Mac, the
-  macos-15 runner (this workflow) and the ubuntu runner (Android's) agree. It replaced
+  macOS runner (this workflow) and the ubuntu runner (Android's) agree. It replaced
   `locale.strxfrm` on 2026-11-01: ubuntu runners have no `fr_FR.UTF-8`-style locales
   (the fallback put Ukrainian "І" before "А"), and macOS sorts Croatian Š between O and
   P. For every drafted locale but hr the order is the one the Mac produced; English
