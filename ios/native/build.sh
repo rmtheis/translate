@@ -385,11 +385,39 @@ for p, s in writes:
     print("patched:", p)
 PY
 }
+# Since apertium f720ff6f (2026-11-03, "run custom normalizers") apertium's
+# `make` compiles apertium/nfcn.nrm with ICU's gennorm2. That is a host tool
+# and not on PATH on a Mac or a macOS runner, so `make` stopped with
+# "gennorm2: No such file or directory". This puts the gennorm2 of the ICU
+# host stage (build_icu) on PATH through a wrapper and prints the wrapper's
+# directory. The wrapper sets DYLD_LIBRARY_PATH itself: the host ICU dylibs
+# have bare install names (no --enable-rpath), and make and sh, both
+# SIP-protected, drop DYLD_* variables from the environment they pass on.
+# The app doesn't use nfcn.nrm (it belongs to the new apertium-normalize
+# tool, which no .mode file runs); it only has to exist for the build.
+icu_host_tools_dir() {
+  local host_install="$SCRIPT_DIR/build/icu-host-install"
+  local real="$host_install/sbin/gennorm2"
+  if [ ! -x "$real" ]; then
+    echo "ERROR: $real is missing (ICU host stage not built); run: SLICE=$SLICE ./build.sh icu" >&2
+    return 1
+  fi
+  local dir="$BUILD/host-tools"
+  mkdir -p "$dir"
+  cat > "$dir/gennorm2" <<EOF
+#!/bin/sh
+DYLD_LIBRARY_PATH="$host_install/lib" exec "$real" "\$@"
+EOF
+  chmod +x "$dir/gennorm2"
+  echo "$dir"
+}
 build_apertium() {
   banner "apertium (autotools)"
   local src="$SCRIPT_DIR/apertium"
   [ -d "$src" ] || git clone --depth 1 https://github.com/apertium/apertium.git "$src"
   patch_close_on_throw "$src" apertium
+  local host_tools
+  host_tools="$(icu_host_tools_dir)"
   if [ ! -f "$src/configure" ]; then
     pushd "$src" >/dev/null
     autoreconf -fi
@@ -414,8 +442,8 @@ build_apertium() {
     CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/libxml2 -I$PREFIX/include/utf8cpp -I$SCRIPT_DIR/deps/boost" \
     LDFLAGS="$LDFLAGS" \
     PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig"
-  make -j"$JOBS"
-  make install
+  PATH="$host_tools:$PATH" make -j"$JOBS"
+  PATH="$host_tools:$PATH" make install
   popd >/dev/null
 }
 # Shared helper for the three autotools-based Apertium sub-projects

@@ -585,6 +585,15 @@ Pull these verbatim, minimal adaptation:
   lttoolbox, apertium, cg3, HFST, ... at upstream HEAD, so every tool
   changes, and the job takes ~27 min (2026-09-29 run). Re-QA the
   translations after such a release.
+- Because the clones are unpinned, an upstream commit can break `natives`
+  with no change in this repo. apertium f720ff6f (2026-11-03, "run custom
+  normalizers") made apertium's `make` compile `nfcn.nrm` with ICU's
+  `gennorm2`, a host tool that isn't on PATH, and the job stopped with
+  "gennorm2: No such file or directory" (first seen 2026-11-19).
+  `build_apertium` in `native/build.sh` now puts the `gennorm2` of the ICU
+  host stage on PATH (`icu_host_tools_dir`). The same commit adds an
+  `apertium-normalize` tool that upstream's `apertium` wrapper script runs
+  first; no `.mode` file runs it, so the app's pipelines don't include it.
 - **Xcode 27 (iOS 27 SDK).** Apple's upload warning 90725: from April 2027,
   uploads must be built with the iOS 27 SDK (Xcode 27 or later). The three
   macOS jobs run on the `xcode-27` runner image, the only GitHub-hosted image

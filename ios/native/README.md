@@ -12,7 +12,8 @@ so the app links each Apertium tool as a library — see
 ## Build
 
 Requires:
-- Xcode 15+ (we're on 26.4.1; iPhoneOS + iPhoneSimulator SDKs must be
+- Xcode 15+ (CI builds with the newest released Xcode 27.x, see
+  `../README.md`, "CI / release"; iPhoneOS + iPhoneSimulator SDKs must be
   installed)
 - `brew install autoconf automake libtool pkg-config cmake ninja`
 - `xcode-select --install` (for the host toolchain)
